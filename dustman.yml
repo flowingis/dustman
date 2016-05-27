@@ -1,0 +1,59 @@
+---
+
+dustman:
+  file: dustman.frontsize.min.css
+  watch: ./themes/**/*
+  verbose: 3
+  themes:
+    -
+      name: default
+      file: frontsize.default.css
+      compile: ./themes/default/import.scss
+      images: './themes/default/img/**/*.*'
+      fonts: './themes/default/img/**/*.*'
+      csslint: false
+      stylestats: true
+      autoprefixer: true
+    -
+      name: testTheme
+      file: frontsize.testTheme.css
+      compile: ./test/test.scss
+      csslint: false
+      stylestats: true
+      autoprefixer: false
+
+config:
+  autoprefixer: '> 10%'
+  csslint: csslintrc.json
+  jslint: .jshintrc
+  stylestats: .stylestatsrc
+
+js:
+  file: dustman.min.js
+  watch: src/js/**/*
+  files:
+    - test/html/vendor/handlebars/handlebars.js
+    - test/html/vendor/include-js/include.js
+
+vendors:
+  css:
+    file: vendors.min.css
+    files:
+      - test/html/vendor/normalize-css/normalize.css
+      - test/html/vendor/font-awesome/css/font-awesome.css
+  fonts:
+    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.eot
+    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.svg
+    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.ttf
+    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.woff
+    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.woff2
+    - test/html/vendor/font-awesome/fonts/FontAwesome.otf
+  images:
+    - test/html/vendor/font-awesome/HELP-US-OUT.txt
+
+paths:
+  server: test/html/
+  css: test/html/css/
+  images: test/html/img/
+  fonts: test/html/fonts/
+  js: test/html/js/

@@ -1,0 +1,23 @@
+language: node_js
+
+node_js:
+    - 4.1.1
+
+before_install:
+    - gem install sass
+    - gem install casperjs
+    - npm install -g bower
+    - npm install -g gulp
+
+before_script:
+    - wget https://github.com/n1k0/casperjs/archive/1.0.2.tar.gz -O /tmp/casper.tar.gz
+    - tar -xvf /tmp/casper.tar.gz
+    - export PATH=$PATH:$PWD/casperjs-1.0.2/bin/
+    - cp ./dustman.yml.travis ./dustman.yml
+    - npm install
+    - bower install normalize-css font-awesome handlebars include-js
+
+script:
+    - gulp frontsize:build
+    - gulp frontsize:test
+    - sassdoc ./core ./themes
