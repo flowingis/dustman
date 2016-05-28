@@ -27,7 +27,7 @@
   "main": "gulpfile.js",
   "dependencies": {
     "analyze-css": "^0.12.0",
-    "browser-sync": "^2.12.8",
+    "browser-sync": "^2.12.10",
     "colors": "^1.1.2",
     "csslint": "~0.10.0",
     "execSync": "^1.0.2",
@@ -67,6 +67,6 @@
     "url": "https://github.com/vitto/dustman/issues"
   },
   "scripts": {
-    "test": "./node_modules/.bin/grunt dust:test"
+    "test": "echo hello"
   }
 }
