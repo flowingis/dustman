@@ -17,7 +17,7 @@ var gulp = require('gulp'),
   fs           = require('fs'),
   browserSync  = require('browser-sync');
 
-var c, buildIndex, buildTasks, themesTotal, cssThemes;
+var c, buildIndex, buildTasks, themesTotal, cssThemes, startBuildDate;
 
 c = false;
 buildIndex = 0;
@@ -89,6 +89,7 @@ var tasks = function(theme, taskNames) {
 var check = function(path, throwErr) {
   var throwError = throwErr || false;
   try {
+    path = path.replace(new RegExp(/\*.*$/), '');
     fs.accessSync(path, fs.F_OK);
       return true;
   } catch (e) {
@@ -232,7 +233,7 @@ var addTask = function(theme, index){
 
 if (c.dustman !== undefined && c.dustman.themes) {
   message('', true);
-  message(colors.red('  D U S T MAN   0.0.11'), true);
+  message(colors.red('  D U S T M A N   0.0.11'), true);
   message('', true);
   for (var t = 0; t < c.dustman.themes.length; t += 1) {
     addTask(c.dustman.themes[t], t);
@@ -246,6 +247,7 @@ gulp.task('frontsize:vendors:fonts', function () {
     var i = 0;
     for (i = 0; i < c.vendors.fonts.length; i += 1) {
       messageVerbose('Font vendor', c.vendors.fonts[i]);
+      check(c.vendors.fonts[i], true);
     }
     messageVerbose('Vendor fonts copied to', c.paths.fonts);
     return gulp.src(c.vendors.fonts)
@@ -263,6 +265,7 @@ gulp.task('frontsize:vendors:images', function () {
     var i = 0;
     for (i = 0; i < c.vendors.images.length; i += 1) {
       messageVerbose('Image vendor', c.vendors.images[i]);
+      check(c.vendors.images[i], true);
     }
     messageVerbose('Vendor images copied to', c.paths.images);
     return gulp.src(c.vendors.images)
@@ -324,6 +327,7 @@ gulp.task('frontsize:vendors:css', function () {
     var i = 0;
     for (i = 0; i < c.vendors.css.files.length; i += 1) {
       messageVerbose('CSS vendor', c.vendors.css.files[i]);
+      check(c.vendors.css.files[i], true);
     }
     messageVerbose('Vendor CSS files merged to', c.paths.css + c.vendors.css.file);
     return gulp.src(c.vendors.css.files)
@@ -411,11 +415,21 @@ gulp.task('frontsize:watch', function () {
   return gulp.watch(watchList, tasks);
 });
 
+gulp.task('message:finish', ['frontsize:merge'], function(){
+  messageVerbose('');
+  var stopBuildDate = Date.now();
+  var timeSpent = (stopBuildDate-startBuildDate)/1000 + ' secs';
+  message(colors.green('The dust was cleaned successfully in ' + timeSpent));
+  messageVerbose('');
+});
+
 gulp.task('frontsize:build', function(){
+  startBuildDate = Date.now();
   var tasks = [
     'frontsize:vendors',
     'frontsize:js',
-    'frontsize:merge'
+    'frontsize:merge',
+    'message:finish'
   ];
   run(buildTasks.concat(tasks));
 });
