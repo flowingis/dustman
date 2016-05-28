@@ -86,11 +86,31 @@ var tasks = function(theme, taskNames) {
   return tasks;
 };
 
+var check = function(path, throwErr) {
+  var throwError = throwErr || false;
+  try {
+    fs.accessSync(path, fs.F_OK);
+      return true;
+  } catch (e) {
+    if (throwError) {
+      messageError(path + colors.red(' not found'));
+      if (c.dustman.verbose !== undefined && c.dustman.verbose >= 3) {
+        console.log(e);
+      }
+      process.exit();
+    } else {
+      return false;
+    }
+  }
+};
+
 var addTask = function(theme, index){
 
   var compile, file, name, prefixAutoprefixer, reportStylestats, testCsslint, images, fonts, destinationPath, task, tasksToBuild, testCsslintTasks, reportStylestatsTasks, buildDependecies;
 
   compile = theme.compile;
+  check(compile, true);
+
   file = theme.file;
   name = theme.name;
   images = theme.images || false;
@@ -118,6 +138,7 @@ var addTask = function(theme, index){
   }
   if (testCsslint) { tasksToBuild.push('testCsslint'); }
   if (reportStylestats) { tasksToBuild.push('reportStylestats'); }
+  if (prefixAutoprefixer) { tasksToBuild.push('prefixAutoprefixer'); }
 
   task = tasks(theme, tasksToBuild);
   tasksToBuild = tasksToBuild.splice(1);
@@ -133,26 +154,34 @@ var addTask = function(theme, index){
       messageVerbose('Theme task', (index + 1) + ' of ' + themesTotal);
     }
     messageVerbose('File', destinationPath + file);
-    cssThemes.push(destinationPath + file);
-    if (prefixAutoprefixer) {
-      messageVerbose('Autoprefixer', 'Enabled');
-      return gulp.src(compile)
-        .pipe(sourcemaps.init())
-        .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
-        .pipe(concat(file))
-        .pipe(sourcemaps.write('./'))
-        .pipe(autoprefixer(prefixAutoprefixer))
-        .pipe(gulp.dest(destinationPath));
-    } else {
-      messageVerbose('Autoprefixer', 'Disabled');
-      return gulp.src(compile)
-        .pipe(sourcemaps.init())
-        .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
-        .pipe(concat(file))
-        .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest(destinationPath));
+    if (!prefixAutoprefixer) {
+      cssThemes.push(destinationPath + file);
     }
+    return gulp.src(compile)
+      .pipe(sourcemaps.init())
+      .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
+      .pipe(concat(file))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest(destinationPath));
   });
+
+  if (prefixAutoprefixer) {
+    cssThemes.push(destinationPath + 'autoprefixer/' + file);
+    gulp.task(task.prefixAutoprefixer, [task.css], function () {
+      messageVerbose('');
+      message('Browser compatibility');
+      if (c.config.autoprefixer.browsers) {
+        messageVerbose('Autoprefixer browsers', c.config.autoprefixer.browsers.toString().replace(new RegExp(',', 'g'), ', '));
+      } else {
+        messageVerbose('Autoprefixer', 'Enabled');
+      }
+      messageVerbose('Adding prefixes to file', destinationPath + file);
+      messageVerbose('Browser prefixes saved to', destinationPath + 'autoprefixer/' + file);
+      return gulp.src(destinationPath + file)
+        .pipe(autoprefixer(c.config.autoprefixer))
+        .pipe(gulp.dest(destinationPath + 'autoprefixer/'));
+    });
+  }
 
   if (testCsslint) {
     gulp.task(task.testCsslint, tasksList(theme, testCsslintTasks), function () {
@@ -169,9 +198,6 @@ var addTask = function(theme, index){
 
   if (reportStylestats) {
     gulp.task(task.reportStylestats, [task.css], function () {
-      // messageVerbose('');
-      // message('Stylestats', file);
-      // messageVerbose('Report for theme', name);
       return gulp.src(destinationPath + file)
         .pipe(stylestats({
           type: 'md',
@@ -254,6 +280,7 @@ gulp.task('frontsize:js', function () {
     var i = 0;
     for (i = 0; i < c.js.files.length; i += 1) {
       messageVerbose('JavaScript file', c.js.files[i]);
+      check(c.js.files[i], true);
     }
     messageVerbose('JavaScript files merged to', c.paths.js + c.js.file);
     return gulp.src(c.js.files)
@@ -298,7 +325,7 @@ gulp.task('frontsize:vendors:css', function () {
     for (i = 0; i < c.vendors.css.files.length; i += 1) {
       messageVerbose('CSS vendor', c.vendors.css.files[i]);
     }
-    messageVerbose('Vendor CSS files merged to folder', c.paths.css);
+    messageVerbose('Vendor CSS files merged to', c.paths.css + c.vendors.css.file);
     return gulp.src(c.vendors.css.files)
       .pipe(uglifyCss())
       .pipe(concat(c.vendors.css.file))
@@ -317,6 +344,7 @@ gulp.task('frontsize:merge:css', buildTasks.concat(['frontsize:vendors:css']), f
     for (var i = 0; i < cssThemes.length; i += 1) {
       messageVerbose('CSS to merge', cssThemes[i]);
     }
+    messageVerbose('All CSS files merged to', c.paths.css + c.dustman.file);
     var css = [c.paths.css + c.vendors.css.file].concat(cssThemes);
     return gulp.src(css)
       .pipe(uglifyCss())
@@ -384,8 +412,6 @@ gulp.task('frontsize:watch', function () {
 });
 
 gulp.task('frontsize:build', function(){
-  // 'frontsize:js'
-  // 'frontsize:vendors'
   var tasks = [
     'frontsize:vendors',
     'frontsize:js',

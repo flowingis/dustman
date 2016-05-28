@@ -6,24 +6,26 @@ dustman:
   verbose: 3
   themes:
     -
-      name: default
-      file: frontsize.default.css
-      compile: ./themes/default/import.scss
+      name: theme-one
+      file: frontsize.theme-one.css
+      compile: test/examples/sass/theme-one/import.scss
       images: './themes/default/img/**/*.*'
       fonts: './themes/default/img/**/*.*'
       csslint: false
       stylestats: true
       autoprefixer: true
     -
-      name: testTheme
-      file: frontsize.testTheme.css
-      compile: ./test/test.scss
+      name: theme-two
+      file: frontsize.theme-two.css
+      compile: test/examples/sass/theme-two/import.scss
       csslint: false
       stylestats: true
       autoprefixer: false
 
 config:
-  autoprefixer: '> 10%'
+  autoprefixer:
+    browsers:
+      - last 3 versions
   csslint: csslintrc.json
   jslint: .jshintrc
   stylestats: .stylestatsrc
@@ -32,28 +34,38 @@ js:
   file: dustman.min.js
   watch: src/js/**/*
   files:
-    - test/html/vendor/handlebars/handlebars.js
-    - test/html/vendor/include-js/include.js
+    - test/examples/vendor/angular/angular.jss
+    - test/examples/vendor/angular-animate/angular-animate.js
+    - test/examples/vendor/angular-bootstrap/ui-bootstrap-tpls.js
+    - test/examples/vendor/angular-bootstrap/ui-bootstrap.js
+    - test/examples/vendor/Chart.js/Chart.js
+    - test/examples/vendor/angular-chart.js/dist/angular-chart.js
+    - test/examples/vendor/angular-cookies/angular-cookies.js
+    - test/examples/vendor/angular-dynamic-locale/dist/tmhDynamicLocale.js
+    - test/examples/vendor/angular-flash/angular-flash.js
+    - test/examples/vendor/angular-route/angular-route.js
 
 vendors:
   css:
     file: vendors.min.css
     files:
-      - test/html/vendor/normalize-css/normalize.css
-      - test/html/vendor/font-awesome/css/font-awesome.css
+      - test/examples/vendor/angular/angular-csp.css
+      - test/examples/vendor/angular-bootstrap/ui-bootstrap-csp.css
+      - test/examples/vendor/font-awesome/css/font-awesome.css
+      - test/examples/vendor/angular-chart.js/dist/angular-chart.css
   fonts:
-    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.eot
-    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.svg
-    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.ttf
-    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.woff
-    - test/html/vendor/font-awesome/fonts/fontawesome-webfont.woff2
-    - test/html/vendor/font-awesome/fonts/FontAwesome.otf
+    - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.eot
+    - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.svg
+    - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.ttf
+    - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.woff
+    - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.woff2
+    - test/examples/vendor/font-awesome/fonts/FontAwesome.otf
   images:
-    - test/html/vendor/font-awesome/HELP-US-OUT.txt
+    - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.svg
 
 paths:
-  server: test/html/
-  css: test/html/css/
-  images: test/html/img/
-  fonts: test/html/fonts/
-  js: test/html/js/
+  server: test/results/
+  css: test/results/css/
+  images: test/results/img/
+  fonts: test/results/fonts/
+  js: test/results/js/
