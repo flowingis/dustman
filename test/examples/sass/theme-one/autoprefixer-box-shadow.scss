@@ -1,0 +1,9 @@
+.autoprefixer-box-shadow {
+  $first: #fff;
+  $last: #000;
+  background: linear-gradient(to bottom, $first, $last);
+  box-shadow: 1px 1px 3px $last;
+  display: flex;
+  transition: background .5s;
+  user-select: none;
+}
