@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-  autoprefixer = require('gulp-autoprefixer'), // https://github.com/sindresorhus/gulp-autoprefixer
+  autoprefixer = require('gulp-autoprefixer'),
   analyzer     = require('analyze-css'), // https://github.com/macbre/analyze-css
   colors       = require('colors'),
   concat       = require('gulp-concat'),
@@ -17,12 +17,41 @@ var gulp = require('gulp'),
   fs           = require('fs'),
   browserSync  = require('browser-sync');
 
-var c, buildIndex, buildTasks, themesTotal, cssThemes, startBuildDate;
+var c, buildIndex, buildTasks, themesTotal, cssThemes, startBuildDate, dustVersion, allTasks, watchTasks;
+
+dustVersion = '0.0.7';
 
 c = false;
 buildIndex = 0;
 buildTasks = [];
 cssThemes = [];
+
+allTasks = [
+  'message:start',
+  'timer:start',
+  'dust:vendors',
+  'dust:js',
+  'dust:merge',
+  'message:end'
+];
+
+watchTasks = [
+  'message:watch:start',
+  'message:watch:end'
+];
+
+var realTaskPipeline = [
+  'message:start',
+  'message:watch:start',
+  'timer:start',
+  'dust:theme:theme-one:build', // 'dust:theme:theme-name:css', 'dust:theme:theme-name:images', 'dust:theme:theme-name:fonts', 'dust:theme:theme-name:prefixAutoprefixer', 'dust:theme:theme-name:testCsslint', 'dust:theme:theme-name:reportStylestats'
+  'dust:theme:theme-two:build',
+  'dust:vendors',
+  'dust:js',
+  'dust:merge',
+  'message:end',
+  'message:watch:end'
+];
 
 for (var i = 0; i < process.argv.length; i += 1) {
     if (process.argv[i] === '--config') {
@@ -67,7 +96,7 @@ var messageError = function(message) {
 };
 
 var taskPrefix = function(themeName, action) {
-  return 'frontsize:theme:' + themeName + ':' + action;
+  return 'dust:theme:' + themeName + ':' + action;
 };
 
 var tasksList = function(theme, taskNames) {
@@ -143,6 +172,7 @@ var addTask = function(theme, index){
 
   task = tasks(theme, tasksToBuild);
   tasksToBuild = tasksToBuild.splice(1);
+  allTasks = allTasks.concat(tasksList(theme, tasksToBuild));
   buildTasks.push(task.build);
 
   gulp.task(task.css, function () {
@@ -231,16 +261,19 @@ var addTask = function(theme, index){
   });
 };
 
+gulp.task('message:start', function () {
+  message('', true);
+  message(colors.red('   D U S T M A N   ' + dustVersion), true);
+  message('', true);
+});
+
 if (c.dustman !== undefined && c.dustman.themes) {
-  message('', true);
-  message(colors.red('  D U S T M A N   0.0.11'), true);
-  message('', true);
   for (var t = 0; t < c.dustman.themes.length; t += 1) {
     addTask(c.dustman.themes[t], t);
   }
 }
 
-gulp.task('frontsize:vendors:fonts', function () {
+gulp.task('dust:vendors:fonts', function () {
   if (c.vendors !== undefined && c.vendors.fonts !== undefined) {
     messageVerbose('');
     message('Copying fonts from vendors');
@@ -258,7 +291,7 @@ gulp.task('frontsize:vendors:fonts', function () {
   }
 });
 
-gulp.task('frontsize:vendors:images', function () {
+gulp.task('dust:vendors:images', function () {
   if (c.vendors !== undefined && c.vendors.images !== undefined) {
     messageVerbose('');
     message('Copying images from vendors');
@@ -276,7 +309,7 @@ gulp.task('frontsize:vendors:images', function () {
   }
 });
 
-gulp.task('frontsize:js', function () {
+gulp.task('dust:js', function () {
   if (c.js !== undefined && c.js.files !== undefined) {
     messageVerbose('');
     message('Merging JavaScript files');
@@ -301,7 +334,7 @@ gulp.task('frontsize:js', function () {
 
 gulp.task('js:watch', function () {
     var tasks = [
-      'frontsize:js'
+      'dust:js'
     ];
     run(tasks);
     var watchList = [ c.dustman.watch ];
@@ -311,16 +344,16 @@ gulp.task('js:watch', function () {
     return gulp.watch(watchList, tasks);
 });
 
-gulp.task('frontsize:vendors', function () {
+gulp.task('dust:vendors', function () {
   var tasks = [
-    'frontsize:vendors:css',
-    'frontsize:vendors:fonts',
-    'frontsize:vendors:images'
+    'dust:vendors:css',
+    'dust:vendors:fonts',
+    'dust:vendors:images'
   ];
   run(tasks);
 });
 
-gulp.task('frontsize:vendors:css', function () {
+gulp.task('dust:vendors:css', function () {
   if (c.vendors !== undefined && c.vendors.css !== undefined) {
     messageVerbose('');
     message('Merging CSS vendors');
@@ -340,7 +373,7 @@ gulp.task('frontsize:vendors:css', function () {
   }
 });
 
-gulp.task('frontsize:merge:css', buildTasks.concat(['frontsize:vendors:css']), function () {
+gulp.task('dust:merge:css', buildTasks.concat(['dust:vendors:css']), function () {
   if (c.vendors !== undefined && c.vendors.css !== undefined) {
     messageVerbose('');
     message('Merging all CSS files');
@@ -360,9 +393,9 @@ gulp.task('frontsize:merge:css', buildTasks.concat(['frontsize:vendors:css']), f
   }
 });
 
-gulp.task('frontsize:merge', ['frontsize:merge:css']);
+gulp.task('dust:merge', ['dust:merge:css']);
 
-gulp.task('frontsize:http', function() {
+gulp.task('dust:http', function() {
   browserSync.init({
     server: {
         baseDir: c.server.path
@@ -371,7 +404,7 @@ gulp.task('frontsize:http', function() {
     notify: true
   });
 
-  run('frontsize:watch:http');
+  run('dust:watch:http');
 
   var watchList = [
     c.paths.server + '**/*.html',
@@ -382,32 +415,29 @@ gulp.task('frontsize:http', function() {
   gulp.watch(watchList).on('change', browserSync.reload);
 });
 
-gulp.task('frontsize:watch:http', ['frontsize:watch'], function() {
+gulp.task('dust:watch:http', ['dust:watch'], function() {
   return browserSync.stream();
 });
 
-gulp.task('frontsize:watch:message:start', function () {
-  if (buildIndex === 0) {
-    message('Starting build process...');
-  } else {
+gulp.task('message:watch:start', function () {
+  if (buildIndex > 0) {
     messageVerbose('Event', 'Hey, something changed, wait some moment...');
   }
 });
 
-gulp.task('frontsize:watch:message:end', buildTasks, function () {
+gulp.task('message:watch:end', function () {
   buildIndex += 1;
   message('Build ' + colors.yellow('[ ' + buildIndex + ' ]') + ' done at ' + colors.yellow(moment().format('HH:mm')) + ' and ' + colors.yellow(moment().format('ss')) + ' seconds.', true);
   message(colors.green('Tasks successfully finished'));
   message('Waiting for file changes...');
 });
 
-gulp.task('frontsize:watch', function () {
-  var tasks = [
-    'frontsize:watch:message:start',
-    'frontsize:build',
-    'frontsize:watch:message:end'
-  ];
-  run(tasks);
+gulp.task('dust:watch', allTasks.concat(watchTasks), function () {
+
+  // var tasks = ['message:watch:start'].concat(allTasks.concat(buildTasks)).concat(tasksToAppend).concat(['message:watch:end']);
+  // console.log(tasks);
+  // process.exit();
+  // run(tasks);
   var watchList = [ c.dustman.watch ];
   if (c.js !== undefined && c.js.watch !== undefined) {
     watchList.push(c.js.watch);
@@ -415,7 +445,7 @@ gulp.task('frontsize:watch', function () {
   return gulp.watch(watchList, tasks);
 });
 
-gulp.task('message:finish', ['frontsize:merge'], function(){
+gulp.task('message:end', ['dust:merge'], function(){
   messageVerbose('');
   var stopBuildDate = Date.now();
   var timeSpent = (stopBuildDate-startBuildDate)/1000 + ' secs';
@@ -423,17 +453,20 @@ gulp.task('message:finish', ['frontsize:merge'], function(){
   messageVerbose('');
 });
 
-gulp.task('frontsize:build', function(){
+gulp.task('timer:start', function(){
   startBuildDate = Date.now();
-  var tasks = [
-    'frontsize:vendors',
-    'frontsize:js',
-    'frontsize:merge',
-    'message:finish'
-  ];
-  run(buildTasks.concat(tasks));
+});
+
+gulp.task('dust:build', allTasks, function(){
+  // var tasks = [
+  //   'dust:vendors',
+  //   'dust:js',
+  //   'dust:merge',
+  //   'message:end'
+  // ];
+  // run(buildTasks.concat(tasks));
 });
 
 gulp.task('default', function(){
-  run('frontsize:build');
+  run('dust:build');
 });

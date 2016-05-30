@@ -27,7 +27,7 @@ config:
     browsers:
       - last 3 versions
   csslint: csslintrc.json
-  jslint: .jshintrc
+  jshint: .jshintrc
   stylestats: .stylestatsrc
 
 js:
