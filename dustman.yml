@@ -3,7 +3,7 @@
 dustman:
   file: dustman.frontsize.min.css
   watch: ./themes/**/*
-  verbose: 2
+  verbose: 3
   themes:
     -
       name: theme-one
@@ -32,7 +32,7 @@ config:
 
 js:
   file: dustman.min.js
-  watch: src/js/**/*
+  watch: test/examples/js/**/*
   files:
     - test/examples/vendor/angular/angular.js
     - test/examples/vendor/angular-animate/angular-animate.js
