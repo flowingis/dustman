@@ -1,16 +1,16 @@
 ---
 
-dustman:
+css:
   file: dustman.frontsize.min.css
-  watch: ./themes/**/*
+  watch: test/examples/sass/**/*.scss
   verbose: 3
   themes:
     -
       name: theme-one
       file: frontsize.theme-one.css
       compile: test/examples/sass/theme-one/import.scss
-      images: './themes/default/img/**/*.*'
-      fonts: './themes/default/img/**/*.*'
+      images: test/examples/sass/themes/default/img/**/*.*
+      fonts: test/examples/sass/themes/default/img/**/*.*
       csslint: false
       stylestats: false
       autoprefixer: true
@@ -32,7 +32,7 @@ config:
 
 js:
   file: dustman.min.js
-  watch: test/examples/js/**/*
+  watch: test/examples/js/**/*.js
   files:
     - test/examples/vendor/angular/angular.js
     - test/examples/vendor/angular-animate/angular-animate.js

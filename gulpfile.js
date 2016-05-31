@@ -25,7 +25,8 @@ var allTasks = [],
   themeBuildTasks = [],
   themesTotal = 0,
   startTasks = [],
-  stopTasks = [];
+  stopTasks = [],
+  phrases = {};
 
 startTasks = [
   'message:start',
@@ -37,6 +38,22 @@ stopTasks = [
   'dust:js',
   'dust:css',
   'message:end'
+];
+
+phrases.change = [
+  'Hey, something\'s happened to %file%, this is a work for DUSTMAN...',
+  'Dear %file%, do you really though I wouldn\'t noticed you? Hahaha!',
+  'Aha! %file%! You are under build!'
+];
+phrases.unlink = [
+  'We have lost %file%, this is a work for DUSTMAN...',
+  'Oh my god... %file%... Nooooo!',
+  'Another good %file% gone... I will avange you...'
+];
+phrases.add = [
+  'What the hell is %file%?? I, DUSTMAN will do something to solve this situation...',
+  'I made a sensational discovery, %file% was found right there!',
+  'Hey %file%, welcome to the build',
 ];
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
@@ -54,17 +71,17 @@ if (!c) {
   c = yaml.safeLoad(fs.readFileSync('./dustman.yml', 'utf-8'));
 }
 
-if (c.dustman === undefined) {
+if (c.css === undefined) {
   console.log(colors.red('Error: object dustman is NOT present in YAML configuration.'));
   process.exit();
 }
 
-themesTotal = c.dustman.themes.length;
+themesTotal = c.css.themes.length;
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
 
 var messageVerbose = function(title, message) {
-  if (c.dustman.verbose !== undefined && c.dustman.verbose >= 3) {
+  if (c.css.verbose !== undefined && c.css.verbose >= 3) {
     if (message !== undefined) {
       console.log(colors.yellow(title.trim() + ': ') + message.trim());
     } else {
@@ -74,15 +91,44 @@ var messageVerbose = function(title, message) {
 };
 
 var message = function(message, force) {
-  if (force !== undefined && force || c.dustman.verbose !== undefined && c.dustman.verbose >= 2) {
+  if (force !== undefined && force || c.css.verbose !== undefined && c.css.verbose >= 2) {
     console.log(message);
   }
 };
 
+var messageFile = function(phrases, file) {
+  var min, max, phrase, splitPhrase, index;
+  min = 1;
+  max = phrases.length;
+  index = (Math.floor(Math.random() * (max - min + 1)) + min) - 1;
+  phrase = phrases[index];
+  splitPhrase = phrase.split('%file%');
+  message(colors.magenta(splitPhrase[0]) + file + colors.magenta(splitPhrase[1]));
+  messageVerbose('');
+};
+
 var messageError = function(message) {
-  if (c.dustman.verbose !== undefined && c.dustman.verbose >= 1) {
+  if (c.css.verbose !== undefined && c.css.verbose >= 1) {
     console.log(colors.red('Error: ') + message.trim());
   }
+};
+
+/* = = = = = = = = = = = = = = = = = = = = = = = = = */
+
+var watchList = function() {
+  var list = [];
+  if (checkConfig('paths.server', c.paths.server)) {
+    list.push(c.paths.server + '**/*.html');
+  }
+
+  if (checkConfig('css.watch', c.css.watch)) {
+    list.push(c.css.watch);
+  }
+
+  if (checkConfig('js.watch', c.js.watch)) {
+    list.push(c.js.watch);
+  }
+  return list;
 };
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
@@ -118,7 +164,7 @@ var check = function(path, throwErr) {
   } catch (e) {
     if (throwError) {
       messageError(path + colors.red(' not found'));
-      if (c.dustman.verbose !== undefined && c.dustman.verbose >= 3) {
+      if (c.css.verbose !== undefined && c.css.verbose >= 3) {
         console.log(e);
       }
       process.exit();
@@ -180,6 +226,8 @@ var addTask = function(theme, index){
     messageVerbose('File', destinationPath + file);
     if (!prefixAutoprefixer) {
       cssThemes.push(destinationPath + file);
+    } else {
+      cssThemes.push(destinationPath + 'autoprefixer/' + file);
     }
     done();
     return gulp.src(compile)
@@ -191,7 +239,6 @@ var addTask = function(theme, index){
   });
 
   if (prefixAutoprefixer) {
-    cssThemes.push(destinationPath + 'autoprefixer/' + file);
     gulp.task(task.prefixAutoprefixer, function (done) {
       messageVerbose('');
       message('Browser compatibility');
@@ -254,7 +301,6 @@ var addTask = function(theme, index){
   gulp.task(task.build, gulp.series(themeBuildSubTasks, function(done){
     done();
   }));
-
 };
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
@@ -264,8 +310,6 @@ gulp.task('message:start', function (done) {
     message('', true);
     message(colors.magenta('   D U S T M A N   '), true);
     message('', true);
-  } else {
-    message(colors.magenta('Hey, something changed, wait some moment...'));
   }
   done();
 });
@@ -275,10 +319,10 @@ gulp.task('timer:start', function(done){
   done();
 });
 
-if (checkConfig('dustman', c.dustman)) {
-  if (checkConfig('dustman.themes', c.dustman.themes)) {
-    for (var t = 0; t < c.dustman.themes.length; t += 1) {
-      addTask(c.dustman.themes[t], t);
+if (checkConfig('dustman', c.css)) {
+  if (checkConfig('dustman.themes', c.css.themes)) {
+    for (var t = 0; t < c.css.themes.length; t += 1) {
+      addTask(c.css.themes[t], t);
     }
     allTasks = startTasks.concat(themeBuildTasks).concat(stopTasks);
   }
@@ -351,12 +395,13 @@ gulp.task('message:end', function(done){
   var timeSpent = (stopBuildDate - startBuildDate)/1000 + ' secs';
 
   messageVerbose('');
-  message(colors.green('The dust was cleaned successfully in ' + timeSpent));
 
   if (buildIndex > 0) {
     message('Build ' + colors.yellow('[ ' + buildIndex + ' ]') + ' done at ' + colors.yellow(moment().format('HH:mm')) + ' and ' + colors.yellow(moment().format('ss')) + ' seconds.', true);
-    message(colors.green('Tasks successfully finished'));
+    message(colors.green('The dust was cleaned successfully in ' + timeSpent));
     message('Waiting for file changes...');
+  } else {
+    message(colors.green('The dust was cleaned successfully in ' + timeSpent));
   }
 
   messageVerbose('');
@@ -402,12 +447,12 @@ gulp.task('dust:css', function(done){
     for (var i = 0; i < cssThemes.length; i += 1) {
       messageVerbose('CSS to merge', cssThemes[i]);
     }
-    messageVerbose('All CSS files merged to', c.paths.css + c.dustman.file);
+    messageVerbose('All CSS files merged to', c.paths.css + c.css.file);
     var css = [c.paths.css + c.vendors.css.file].concat(cssThemes);
     done();
     return gulp.src(css)
       .pipe(uglifyCss())
-      .pipe(concat(c.dustman.file))
+      .pipe(concat(c.css.file))
       .pipe(gulp.dest(c.paths.css));
   } else {
     messageVerbose('Notice', 'CSS vendors not found, skipping merge');
@@ -421,7 +466,7 @@ gulp.task('watch:js', function () {
       'dust:js'
     ];
     run(tasks);
-    var watchList = [ c.dustman.watch ];
+    var watchList = [ c.css.watch ];
     if (c.js !== undefined && c.js.watch !== undefined) {
       watchList.push(c.js.watch);
     }
@@ -438,8 +483,6 @@ gulp.task('http:watch', function(done) {
 });
 
 gulp.task('http', gulp.series(['dust:build', 'http:watch'], function(done) {
-  var watchList = [];
-
   browserSync.init({
     server: {
         baseDir: c.paths.server
@@ -448,28 +491,32 @@ gulp.task('http', gulp.series(['dust:build', 'http:watch'], function(done) {
     notify: true
   });
 
-  if (checkConfig('paths.server', c.paths.server)) {
-    watchList.push(c.paths.server + '**/*.html');
-  }
-
-  if (checkConfig('paths.css', c.paths.css)) {
-    watchList.push(c.paths.css + '**/*.css');
-  }
-
-  if (checkConfig('paths.images', c.paths.images)) {
-    watchList.push(c.paths.images + '**/*');
-  }
-
-  if (checkConfig('paths.js', c.paths.js)) {
-    watchList.push(c.paths.js + '**/*.js');
-  }
-
-  gulp.watch(watchList, gulp.series(['dust:build'], browserSync.reload));
   done();
+  return gulp.watch(watchList(), gulp.parallel(['dust:build'], browserSync.reload))
+    .on('change', function(path) {
+      messageFile(phrases.change, path);
+    })
+    .on('unlink', function(path) {
+      messageFile(phrases.unlink, path);
+    })
+    .on('add', function(path) {
+      messageFile(phrases.add, path);
+    });
 }));
 
 gulp.task('watch', gulp.series(['dust:build'], function(done) {
+
   done();
+  return gulp.watch(watchList(), gulp.parallel(['dust:build']))
+    .on('change', function(path) {
+      messageFile(phrases.change, path);
+    })
+    .on('unlink', function(path) {
+      messageFile(phrases.unlink, path);
+    })
+    .on('add', function(path) {
+      messageFile(phrases.add, path);
+    });
 }));
 
 gulp.task('default', gulp.series(['dust:build'], function(done) {
