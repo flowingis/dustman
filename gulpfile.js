@@ -115,6 +115,36 @@ var messageError = function(message) {
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
 
+var check = function(path, throwErr) {
+  var throwError = throwErr || false;
+  try {
+    path = path.replace(new RegExp(/\*.*$/), '');
+    fs.accessSync(path, fs.F_OK);
+      return true;
+  } catch (e) {
+    if (throwError) {
+      messageError(path + colors.red(' not found'));
+      if (c.css.verbose !== undefined && c.css.verbose >= 3) {
+        console.log(e);
+      }
+      process.exit();
+    } else {
+      return false;
+    }
+  }
+};
+
+var checkConfig = function(name, value) {
+  if (value === undefined) {
+    messageError('No "' + name + '" defined in config YAML');
+    process.exit();
+  } else {
+    return true;
+  }
+};
+
+/* = = = = = = = = = = = = = = = = = = = = = = = = = */
+
 var watchList = function() {
   var list = [];
   if (checkConfig('paths.server', c.paths.server)) {
@@ -151,36 +181,6 @@ var tasks = function(theme, taskNames) {
     tasks[taskNames[i]] = taskPrefix(theme.name, taskNames[i]);
   }
   return tasks;
-};
-
-/* = = = = = = = = = = = = = = = = = = = = = = = = = */
-
-var check = function(path, throwErr) {
-  var throwError = throwErr || false;
-  try {
-    path = path.replace(new RegExp(/\*.*$/), '');
-    fs.accessSync(path, fs.F_OK);
-      return true;
-  } catch (e) {
-    if (throwError) {
-      messageError(path + colors.red(' not found'));
-      if (c.css.verbose !== undefined && c.css.verbose >= 3) {
-        console.log(e);
-      }
-      process.exit();
-    } else {
-      return false;
-    }
-  }
-};
-
-var checkConfig = function(name, value) {
-  if (value === undefined) {
-    messageError('No "' + name + '" defined in config YAML');
-    process.exit();
-  } else {
-    return true;
-  }
 };
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
