@@ -3,7 +3,23 @@
 
 ---
 
+Dustman is basically a set of Gulp tasks ready to be used as a build system which helps you to:
 
+- **Build SASS** with multiple themes, CSS vendors and assets already optimized for production environments, you can perform dynamic tasks with **selective configuration** based on *CSSlint tests*, *StyleStats reports* and *Autoprefixer* tasks for a better automated browser support.
+- **Build JavaScript** apps with dependencies in sequence you need, everything minimized in one file.
+- **Build Twig templates** to HTML pages with *browser sync* ready to be tested.
+- **Watch files** automation tasks listeners to update your build automatically.
+
+---
+
+##### Gulp 4 alpha
+
+At the moment Dustman is based on **Gulp 4 which is in alpha release status** so use it on your own risk! I didn't noticed any problems, but I didn't tested it in many environments.
+
+##### Why Gulp 4?
+
+- Because it has a **superior task concatenation** system compared to Gulp 3.
+- Because the watcher and the build system are **dramatically faster**.
 
 ---
 
