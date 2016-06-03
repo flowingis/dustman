@@ -1,3 +1,5 @@
+'use strict';
+
 var gulp = require('gulp'),
   autoprefixer = require('gulp-autoprefixer'),
   analyzer     = require('analyze-css'), // https://github.com/macbre/analyze-css
@@ -15,6 +17,8 @@ var gulp = require('gulp'),
   uglifyCss    = require('gulp-uglifycss'),
   yaml         = require('js-yaml'),
   fs           = require('fs'),
+  twig         = require('gulp-twig'),
+  prettify     = require('gulp-html-prettify'),
   browserSync  = require('browser-sync');
 
 var allTasks = [],
@@ -473,16 +477,66 @@ gulp.task('watch:js', function () {
     return gulp.watch(watchList, gulp.series(tasks, function(done){ done(); }));
 });
 
-gulp.task('dust:build', gulp.series(allTasks, function(done){
+/* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
+
+// prettify
+gulp.task('twig:prettify', function (done) {
+  messageVerbose('');
+  message('Prettify HTML');
+  checkConfig('paths.server', c.paths.server);
+  done();
+  return gulp.src(c.paths.server + '*.html')
+    .pipe(prettify(c.prettify || {}))
+    .pipe(gulp.dest(c.paths.server));
+});
+
+gulp.task('twig:html', function (done) {
+  if (c.twig !== undefined && c.twig.files !== undefined) {
+    messageVerbose('');
+    message('Twig to HTML');
+    checkConfig('paths.server', c.paths.server);
+    for (var i = 0; i < c.twig.files.length; i += 1) {
+      messageVerbose('Twig view', c.twig.files[i]);
+    }
+    messageVerbose('All Twig files converted in', c.paths.server);
+    done();
+    return gulp.src(c.twig.files)
+      .pipe(twig({
+        data: {
+          title: 'Gulp and Twig',
+          benefits: [
+            'Fast',
+            'Flexible',
+            'Secure'
+          ]
+        }
+      }))
+      .pipe(gulp.dest(c.paths.server));
+  } else {
+    messageVerbose('Notice', 'Twig files not found, skipping task');
+    done();
+    return gulp;
+  }
+});
+
+gulp.task('twig', gulp.series(['twig:html', 'twig:prettify'], function(done){
   done();
 }));
+
+/* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
+
+gulp.task('css:build', gulp.series(allTasks, function(done){
+  done();
+}));
+
+/* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
 
 gulp.task('http:watch', function(done) {
   done();
   return browserSync.stream();
 });
 
-gulp.task('http', gulp.series(['dust:build', 'http:watch'], function(done) {
+gulp.task('http', gulp.series(['css:build', 'http:watch'], function(done) {
   browserSync.init({
     server: {
         baseDir: c.paths.server
@@ -492,7 +546,7 @@ gulp.task('http', gulp.series(['dust:build', 'http:watch'], function(done) {
   });
 
   done();
-  return gulp.watch(watchList(), gulp.parallel(['dust:build'], browserSync.reload))
+  return gulp.watch(watchList(), gulp.parallel(['css:build'], browserSync.reload))
     .on('change', function(path) {
       messageFile(phrases.change, path);
     })
@@ -504,10 +558,10 @@ gulp.task('http', gulp.series(['dust:build', 'http:watch'], function(done) {
     });
 }));
 
-gulp.task('watch', gulp.series(['dust:build'], function(done) {
+gulp.task('watch', gulp.series(['css:build'], function(done) {
 
   done();
-  return gulp.watch(watchList(), gulp.parallel(['dust:build']))
+  return gulp.watch(watchList(), gulp.parallel(['css:build']))
     .on('change', function(path) {
       messageFile(phrases.change, path);
     })
@@ -519,6 +573,6 @@ gulp.task('watch', gulp.series(['dust:build'], function(done) {
     });
 }));
 
-gulp.task('default', gulp.series(['dust:build'], function(done) {
+gulp.task('default', gulp.series(['css:build'], function(done) {
   done();
 }));

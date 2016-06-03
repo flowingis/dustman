@@ -28,6 +28,9 @@ config:
       - last 3 versions
   csslint: csslintrc.json
   stylestats: .stylestatsrc
+  prettify:
+    indent_char: ' '
+    indent_size: 2
 
 js:
   file: dustman.min.js
@@ -44,6 +47,11 @@ js:
     - test/examples/vendor/angular-flash/angular-flash.js
     - test/examples/vendor/angular-route/angular-route.js
     - test/examples/js/*
+
+twig:
+  watch: test/examples/twig/**/*.twig
+  files:
+    - test/examples/twig/index.twig
 
 vendors:
   css:
