@@ -38,9 +38,9 @@ startTasks = [
 ];
 
 stopTasks = [
-  'dust:vendors',
-  'dust:js',
-  'dust:css',
+  'vendors:build',
+  'js:build',
+  'css:merge',
   'message:end'
 ];
 
@@ -151,8 +151,8 @@ var checkConfig = function(name, value) {
 
 var watchList = function() {
   var list = [];
-  if (checkConfig('paths.server', c.paths.server)) {
-    list.push(c.paths.server + '**/*.html');
+  if (checkConfig('twig.watch', c.twig.watch)) {
+    list.push(c.twig.watch);
   }
 
   if (checkConfig('css.watch', c.css.watch)) {
@@ -332,7 +332,7 @@ if (checkConfig('dustman', c.css)) {
   }
 }
 
-gulp.task('dust:vendors:fonts', function (done) {
+gulp.task('vendors:fonts', function (done) {
   if (c.vendors !== undefined && c.vendors.fonts !== undefined) {
     messageVerbose('');
     message('Copying fonts from vendors');
@@ -352,7 +352,7 @@ gulp.task('dust:vendors:fonts', function (done) {
   }
 });
 
-gulp.task('dust:vendors:images', function (done) {
+gulp.task('vendors:images', function (done) {
   if (c.vendors !== undefined && c.vendors.images !== undefined) {
     messageVerbose('');
     message('Copying images from vendors');
@@ -372,7 +372,7 @@ gulp.task('dust:vendors:images', function (done) {
   }
 });
 
-gulp.task('dust:vendors:css', function (done) {
+gulp.task('vendors:css', function (done) {
   if (c.vendors !== undefined && c.vendors.css !== undefined) {
     messageVerbose('');
     message('Merging CSS vendors');
@@ -414,7 +414,7 @@ gulp.task('message:end', function(done){
   done();
 });
 
-gulp.task('dust:js', function (done) {
+gulp.task('js:build', function (done) {
   if (c.js !== undefined && c.js.files !== undefined) {
     messageVerbose('');
     message('Merging JavaScript files');
@@ -439,11 +439,11 @@ gulp.task('dust:js', function (done) {
   }
 });
 
-gulp.task('dust:vendors', gulp.series(['dust:vendors:css', 'dust:vendors:images', 'dust:vendors:fonts'], function (done) {
+gulp.task('vendors:build', gulp.series(['vendors:css', 'vendors:images', 'vendors:fonts'], function (done) {
   done();
 }));
 
-gulp.task('dust:css', function(done){
+gulp.task('css:merge', function(done){
   if (c.vendors !== undefined && c.vendors.css !== undefined) {
     messageVerbose('');
     message('Merging all CSS files');
@@ -467,7 +467,7 @@ gulp.task('dust:css', function(done){
 
 gulp.task('watch:js', function () {
     var tasks = [
-      'dust:js'
+      'js:build'
     ];
     run(tasks);
     var watchList = [ c.css.watch ];
@@ -479,7 +479,6 @@ gulp.task('watch:js', function () {
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
 
-// prettify
 gulp.task('twig:prettify', function (done) {
   messageVerbose('');
   message('Prettify HTML');
@@ -519,7 +518,7 @@ gulp.task('twig:html', function (done) {
   }
 });
 
-gulp.task('twig', gulp.series(['twig:html', 'twig:prettify'], function(done){
+gulp.task('twig:build', gulp.series(['twig:html', 'twig:prettify'], function(done){
   done();
 }));
 
@@ -546,7 +545,7 @@ gulp.task('http', gulp.series(['css:build', 'http:watch'], function(done) {
   });
 
   done();
-  return gulp.watch(watchList(), gulp.parallel(['css:build'], browserSync.reload))
+  return gulp.watch(watchList(), gulp.parallel(['css:build', 'twig:build', 'js:build'], browserSync.reload))
     .on('change', function(path) {
       messageFile(phrases.change, path);
     })
@@ -558,10 +557,10 @@ gulp.task('http', gulp.series(['css:build', 'http:watch'], function(done) {
     });
 }));
 
-gulp.task('watch', gulp.series(['css:build'], function(done) {
+gulp.task('watch', gulp.series(['css:build', 'twig:build', 'js:build'], function(done) {
 
   done();
-  return gulp.watch(watchList(), gulp.parallel(['css:build']))
+  return gulp.watch(watchList(), gulp.parallel(['css:build', 'twig:build', 'js:build']))
     .on('change', function(path) {
       messageFile(phrases.change, path);
     })
@@ -573,6 +572,6 @@ gulp.task('watch', gulp.series(['css:build'], function(done) {
     });
 }));
 
-gulp.task('default', gulp.series(['css:build'], function(done) {
+gulp.task('default', gulp.series(['css:build', 'twig:build', 'js:build'], function(done) {
   done();
 }));

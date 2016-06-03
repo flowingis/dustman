@@ -1,6 +1,14 @@
 # dustman
 **Gulp + YAML config** based front-end automation boilerplate
 
+---
+
+
+
+---
+
+## Config example
+
 ```yaml
 
 ---
@@ -33,6 +41,9 @@ config:
       - last 3 versions
   csslint: csslintrc.json
   stylestats: .stylestatsrc
+  prettify:
+    indent_char: ' '
+    indent_size: 2
 
 js:
   file: app-with-vendors.min.js
@@ -67,6 +78,11 @@ vendors:
     - vendor/font-awesome/fonts/FontAwesome.otf
   images:
     - vendor/font-awesome/fonts/fontawesome-webfont.svg
+
+twig:
+  watch: test/examples/twig/**/*.twig
+  files:
+    - test/examples/twig/index.twig
 
 paths:
   server: my/build/
