@@ -221,7 +221,13 @@ var addTask = function(theme, index){
   themeBuildTasks.push(task.build);
   themeBuildSubTasks = tasksList(theme, tasksToBuild.slice(1));
 
-  gulp.task(task.css, function (done) {
+  if (!prefixAutoprefixer) {
+    cssThemes.push(destinationPath + file);
+  } else {
+    cssThemes.push(destinationPath + 'autoprefixer/' + file);
+  }
+
+  gulp.task(task.css, function () {
     if (buildIndex === 0 && index > 0 ) {
       messageVerbose('');
     }
@@ -231,12 +237,7 @@ var addTask = function(theme, index){
       messageVerbose('Theme task', name + ' ' + (index + 1) + ' of ' + themesTotal);
     }
     messageVerbose('File', destinationPath + file);
-    if (!prefixAutoprefixer) {
-      cssThemes.push(destinationPath + file);
-    } else {
-      cssThemes.push(destinationPath + 'autoprefixer/' + file);
-    }
-    done();
+
     return gulp.src(compile)
       .pipe(sourcemaps.init())
       .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
@@ -246,7 +247,7 @@ var addTask = function(theme, index){
   });
 
   if (prefixAutoprefixer) {
-    gulp.task(task.prefixAutoprefixer, function (done) {
+    gulp.task(task.prefixAutoprefixer, function () {
       messageVerbose('');
       message('Browser compatibility');
       messageVerbose('Theme', name);
@@ -257,7 +258,6 @@ var addTask = function(theme, index){
       }
       messageVerbose('Adding prefixes to file', destinationPath + file);
       messageVerbose('Browser prefixes saved to', destinationPath + 'autoprefixer/' + file);
-      done();
       return gulp.src(destinationPath + file)
         .pipe(autoprefixer(c.config.autoprefixer))
         .pipe(gulp.dest(destinationPath + 'autoprefixer/'));
@@ -265,11 +265,10 @@ var addTask = function(theme, index){
   }
 
   if (testCsslint) {
-    gulp.task(task.testCsslint, function (done) {
+    gulp.task(task.testCsslint, function () {
       messageVerbose('');
       message('CSSlint');
       messageVerbose('Theme', name);
-      done();
       return gulp.src(destinationPath + file)
         .pipe(csslint(c.config.csslint))
         .pipe(csslint.reporter());
@@ -277,8 +276,7 @@ var addTask = function(theme, index){
   }
 
   if (reportStylestats) {
-    gulp.task(task.reportStylestats, function (done) {
-      done();
+    gulp.task(task.reportStylestats, function () {
       return gulp.src(destinationPath + file)
         .pipe(stylestats({
           type: 'md',
@@ -288,18 +286,16 @@ var addTask = function(theme, index){
   }
 
   if (images) {
-    gulp.task(task.images, function (done) {
+    gulp.task(task.images, function () {
       messageVerbose('Copy theme images', c.paths.images + name);
-      done();
       return gulp.src(images)
         .pipe(gulp.dest(c.paths.images + name));
     });
   }
 
   if (fonts) {
-    gulp.task(task.fonts, function (done) {
+    gulp.task(task.fonts, function () {
       messageVerbose('Copy theme fonts', c.paths.fonts + name);
-      done();
       return gulp.src(fonts)
         .pipe(gulp.dest(c.paths.fonts + name));
     });
@@ -345,14 +341,11 @@ gulp.task('vendors:fonts', function (done) {
       check(c.vendors.fonts[i], true);
     }
     messageVerbose('Vendor fonts copied to', c.paths.fonts);
-    done();
     return gulp.src(c.vendors.fonts)
       .pipe(gulp.dest(c.paths.fonts));
-  } else {
-    messageVerbose('Notice', 'Vendor\'s Fonts not found, skipping task');
-    done();
-    return gulp;
   }
+  messageVerbose('Notice', 'Vendor\'s Fonts not found, skipping task');
+  done();
 });
 
 gulp.task('vendors:images', function (done) {
@@ -365,14 +358,11 @@ gulp.task('vendors:images', function (done) {
       check(c.vendors.images[i], true);
     }
     messageVerbose('Vendor images copied to', c.paths.images);
-    done();
     return gulp.src(c.vendors.images)
       .pipe(gulp.dest(c.paths.images));
-  } else {
-    messageVerbose('Notice', 'Vendor\'s Images not found, skipping task');
-    done();
-    return gulp;
   }
+  messageVerbose('Notice', 'Vendor\'s Images not found, skipping task');
+  done();
 });
 
 gulp.task('vendors:css', function (done) {
@@ -385,16 +375,13 @@ gulp.task('vendors:css', function (done) {
       check(c.vendors.css.files[i], true);
     }
     messageVerbose('Vendor CSS files merged to', c.paths.css + c.vendors.css.file);
-    done();
     return gulp.src(c.vendors.css.files)
       .pipe(uglifyCss())
       .pipe(concat(c.vendors.css.file))
       .pipe(gulp.dest(c.paths.css));
-  } else {
-    messageVerbose('Notice', 'Vendor\'s CSS not found, skipping task');
-    done();
-    return gulp;
   }
+  messageVerbose('Notice', 'Vendor\'s CSS not found, skipping task');
+  done();
 });
 
 gulp.task('message:end', function(done){
@@ -427,7 +414,6 @@ gulp.task('js:build', function (done) {
       check(c.js.files[i], true);
     }
     messageVerbose('JavaScript files merged to', c.paths.js + c.js.file);
-    done();
     return gulp.src(c.js.files)
       .pipe(sourcemaps.init())
       .pipe(uglify())
@@ -435,11 +421,9 @@ gulp.task('js:build', function (done) {
       .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest(c.paths.js));
 
-  } else {
-    messageVerbose('Notice', 'Vendor\'s JavaScript not found, skipping task');
-    done();
-    return gulp;
   }
+  messageVerbose('Notice', 'Vendor\'s JavaScript not found, skipping task');
+  done();
 });
 
 gulp.task('vendors:build', gulp.series(['vendors:css', 'vendors:images', 'vendors:fonts'], function (done) {
@@ -456,16 +440,13 @@ gulp.task('css:merge', function(done){
     }
     messageVerbose('All CSS files merged to', c.paths.css + c.css.file);
     var css = [c.paths.css + c.vendors.css.file].concat(cssThemes);
-    done();
     return gulp.src(css)
       .pipe(uglifyCss())
       .pipe(concat(c.css.file))
       .pipe(gulp.dest(c.paths.css));
-  } else {
-    messageVerbose('Notice', 'CSS vendors not found, skipping merge');
-    done();
-    return gulp;
   }
+  messageVerbose('Notice', 'CSS vendors not found, skipping merge');
+  done();
 });
 
 gulp.task('watch:js', function () {
@@ -500,16 +481,13 @@ gulp.task('twig:html', function (done) {
       messageVerbose('Twig view', c.twig.files[i]);
     }
     messageVerbose('All Twig files converted in', c.paths.server);
-    done();
     return gulp.src(c.twig.files)
       .pipe(twig(twigConfig))
       .pipe(prettify(c.prettify || {}))
       .pipe(gulp.dest(c.paths.server));
-  } else {
-    messageVerbose('Notice', 'Twig files not found, skipping task');
-    done();
-    return gulp;
   }
+  messageVerbose('Notice', 'Twig files not found, skipping task');
+  done();
 });
 
 gulp.task('twig:build', gulp.series(['twig:html'], function(done){
@@ -524,12 +502,11 @@ gulp.task('css:build', gulp.series(allTasks, function(done){
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
 
-gulp.task('http:watch', function(done) {
-  done();
+gulp.task('http:watch', function() {
   return browserSync.stream();
 });
 
-gulp.task('http', gulp.series(['css:build', 'http:watch'], function(done) {
+gulp.task('http', gulp.series(['css:build', 'http:watch'], function() {
   browserSync.init({
     server: {
         baseDir: c.paths.server
@@ -538,7 +515,6 @@ gulp.task('http', gulp.series(['css:build', 'http:watch'], function(done) {
     notify: true
   });
 
-  done();
   return gulp.watch(watchList(), gulp.parallel(['css:build', 'twig:build', 'js:build'], browserSync.reload))
     .on('change', function(path) {
       messageFile(phrases.change, path);
@@ -551,9 +527,7 @@ gulp.task('http', gulp.series(['css:build', 'http:watch'], function(done) {
     });
 }));
 
-gulp.task('watch', gulp.series(['css:build', 'twig:build', 'js:build'], function(done) {
-
-  done();
+gulp.task('watch', gulp.series(['css:build', 'twig:build', 'js:build'], function() {
   return gulp.watch(watchList(), gulp.parallel(['css:build', 'twig:build', 'js:build']))
     .on('change', function(path) {
       messageFile(phrases.change, path);
