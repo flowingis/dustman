@@ -19,6 +19,8 @@ var gulp = require('gulp'),
   fs           = require('fs'),
   twig         = require('gulp-twig'),
   prettify     = require('gulp-html-prettify'),
+  faker        = require('faker'),
+  clean        = require('gulp-clean'),
   browserSync  = require('browser-sync');
 
 var allTasks = [],
@@ -41,6 +43,7 @@ stopTasks = [
   'vendors:build',
   'js:build',
   'css:merge',
+  'twig:build',
   'message:end'
 ];
 
@@ -80,6 +83,7 @@ if (c.css === undefined) {
   process.exit();
 }
 
+faker.locale = c.config.faker ? c.config.faker.locale ? c.config.faker.locale : 'en' : 'en';
 themesTotal = c.css.themes.length;
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
@@ -479,18 +483,17 @@ gulp.task('watch:js', function () {
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
 
-gulp.task('twig:prettify', function (done) {
-  messageVerbose('');
-  message('Prettify HTML');
-  checkConfig('paths.server', c.paths.server);
-  done();
-  return gulp.src(c.paths.server + '*.html')
-    .pipe(prettify(c.prettify || {}))
-    .pipe(gulp.dest(c.paths.server));
-});
 
 gulp.task('twig:html', function (done) {
   if (c.twig !== undefined && c.twig.files !== undefined) {
+    var twigConfig = {};
+    if (c.config !== undefined && c.config.twig !== undefined) {
+      twigConfig = c.config.twig;
+    }
+    twigConfig.data = {
+      faker: faker
+    };
+
     messageVerbose('');
     message('Twig to HTML');
     checkConfig('paths.server', c.paths.server);
@@ -500,16 +503,8 @@ gulp.task('twig:html', function (done) {
     messageVerbose('All Twig files converted in', c.paths.server);
     done();
     return gulp.src(c.twig.files)
-      .pipe(twig({
-        data: {
-          title: 'Gulp and Twig',
-          benefits: [
-            'Fast',
-            'Flexible',
-            'Secure'
-          ]
-        }
-      }))
+      .pipe(twig(twigConfig))
+      .pipe(prettify(c.prettify || {}))
       .pipe(gulp.dest(c.paths.server));
   } else {
     messageVerbose('Notice', 'Twig files not found, skipping task');
@@ -518,7 +513,7 @@ gulp.task('twig:html', function (done) {
   }
 });
 
-gulp.task('twig:build', gulp.series(['twig:html', 'twig:prettify'], function(done){
+gulp.task('twig:build', gulp.series(['twig:html'], function(done){
   done();
 }));
 
@@ -572,6 +567,6 @@ gulp.task('watch', gulp.series(['css:build', 'twig:build', 'js:build'], function
     });
 }));
 
-gulp.task('default', gulp.series(['css:build', 'twig:build', 'js:build'], function(done) {
+gulp.task('default', gulp.series(['css:build'], function(done) {
   done();
 }));

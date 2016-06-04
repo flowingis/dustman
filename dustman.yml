@@ -31,6 +31,10 @@ config:
   prettify:
     indent_char: ' '
     indent_size: 2
+  faker:
+    locale: it
+  twig:
+    cache: false
 
 js:
   file: dustman.min.js
