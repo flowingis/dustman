@@ -1,7 +1,7 @@
 dustman
 ---
 
-[![Version](http://img.shields.io/:version-0.0.16-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-0.0.21-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 4.2.2](http://img.shields.io/:nodejs-4.1.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -33,6 +33,7 @@ At the moment Dustman is based on **Gulp 4 which is in alpha release status** so
 
 - Faker integration in Twig templates to get fake data on views
 - Travis integration
+- Fix callback tasks to get correct async tasks pipelines
 
 ---
 
