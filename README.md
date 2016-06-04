@@ -21,6 +21,11 @@ At the moment Dustman is based on **Gulp 4 which is in alpha release status** so
 - Because it has a **superior task concatenation** system compared to Gulp 3.
 - Because the watcher and the build system are **dramatically faster**.
 
+##### Release details
+
+- Faker integration in Twig templates to get fake data on views
+- Travis integration
+
 ---
 
 ## Config example

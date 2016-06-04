@@ -20,7 +20,6 @@ var gulp = require('gulp'),
   twig         = require('gulp-twig'),
   prettify     = require('gulp-html-prettify'),
   faker        = require('faker'),
-  clean        = require('gulp-clean'),
   browserSync  = require('browser-sync');
 
 var allTasks = [],
@@ -327,8 +326,8 @@ gulp.task('timer:start', function(done){
   done();
 });
 
-if (checkConfig('dustman', c.css)) {
-  if (checkConfig('dustman.themes', c.css.themes)) {
+if (checkConfig('css', c.css)) {
+  if (checkConfig('css.themes', c.css.themes)) {
     for (var t = 0; t < c.css.themes.length; t += 1) {
       addTask(c.css.themes[t], t);
     }
