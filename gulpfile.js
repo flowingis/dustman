@@ -22,29 +22,13 @@ var gulp = require('gulp'),
   faker        = require('faker'),
   browserSync  = require('browser-sync');
 
-var allTasks = [],
-  buildIndex = 0,
+var buildIndex = 0,
   c = false,
   cssThemes = [],
   startBuildDate,
   themeBuildTasks = [],
   themesTotal = 0,
-  startTasks = [],
-  stopTasks = [],
   phrases = {};
-
-startTasks = [
-  'message:start',
-  'timer:start'
-];
-
-stopTasks = [
-  'vendors:build',
-  'js:build',
-  'css:merge',
-  'twig:build',
-  'message:end'
-];
 
 phrases.change = [
   'Hey, something\'s happened to %file%, this is a work for DUSTMAN...',
@@ -171,7 +155,7 @@ var watchList = function() {
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
 
 var taskPrefix = function(themeName, action) {
-  return 'dust:theme:' + themeName + ':' + action;
+  return 'css:theme:' + themeName + ':' + action;
 };
 
 var tasksList = function(theme, taskNames) {
@@ -327,7 +311,6 @@ if (checkConfig('css', c.css)) {
     for (var t = 0; t < c.css.themes.length; t += 1) {
       addTask(c.css.themes[t], t);
     }
-    allTasks = startTasks.concat(themeBuildTasks).concat(stopTasks);
   }
 }
 
@@ -496,17 +479,21 @@ gulp.task('twig:build', gulp.series(['twig:html'], function(done){
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
 
-gulp.task('css:build', gulp.series(allTasks, function(done){
+gulp.task('css:build', gulp.series(
+  themeBuildTasks.concat([
+  'vendors:build',
+  'css:merge'
+]), function(done){
   done();
 }));
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
 
-gulp.task('http:watch', function() {
+gulp.task('watch:http', function() {
   return browserSync.stream();
 });
 
-gulp.task('http', gulp.series(['css:build', 'http:watch'], function() {
+gulp.task('http', gulp.series(['css:build', 'watch:http'], function() {
   browserSync.init({
     server: {
         baseDir: c.paths.server
@@ -527,7 +514,11 @@ gulp.task('http', gulp.series(['css:build', 'http:watch'], function() {
     });
 }));
 
-gulp.task('watch', gulp.series(['css:build', 'twig:build', 'js:build'], function() {
+gulp.task('watch', gulp.series([
+  'css:build',
+  'twig:build',
+  'js:build'
+], function() {
   return gulp.watch(watchList(), gulp.parallel(['css:build', 'twig:build', 'js:build']))
     .on('change', function(path) {
       messageFile(phrases.change, path);
@@ -540,6 +531,15 @@ gulp.task('watch', gulp.series(['css:build', 'twig:build', 'js:build'], function
     });
 }));
 
-gulp.task('default', gulp.series(['css:build'], function(done) {
+gulp.task('default', gulp.series([
+  'message:start',
+  'timer:start']
+  .concat(themeBuildTasks).concat([
+  'vendors:build',
+  'css:merge',
+  'js:build',
+  'twig:build',
+  'message:end'
+]), function(done) {
   done();
 }));

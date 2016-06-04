@@ -26,7 +26,7 @@ At the moment Dustman is based on **Gulp 4 which is in alpha release status** so
 
 ##### Why Gulp 4?
 
-- Because it has a **superior task concatenation** system compared to Gulp 3.
+- Because it has a **superior task concatenation** system compared to the previous major release.
 - Because the watcher and the build system are **dramatically faster**.
 
 ##### Release details
@@ -34,6 +34,64 @@ At the moment Dustman is based on **Gulp 4 which is in alpha release status** so
 - Faker integration in Twig templates to get fake data on views
 - Travis integration
 - Fix callback tasks to get correct async tasks pipelines
+
+---
+
+## Build tasks
+
+All tasks can run locally with `./node_modules/.bin/gulp taskname` in the tasks table will be used `gulp taskname` to be easy to read.
+
+Note all task has `--silent` or `-S` flag to avoid Gulp logs.
+
+### Tasks dependency trees
+
+```bash
+──┬ css:build
+  └─┬─┬ css:theme:theme-id:build
+    ├─┬ css:theme:theme-two:build
+    ├─┬ vendors:build
+    └── css:merge
+─── css:merge
+──┬ css:theme:theme-id:build
+  └─┬── css:theme:theme-id:css
+    ├── css:theme:theme-id:prefixAutoprefixer
+    ├── css:theme:theme-id:testCsslint
+    ├── css:theme:theme-id:reportStylestats
+    ├── css:theme:theme-id:images
+    └── css:theme:theme-id:fonts
+─── css:theme:theme-id:css
+─── css:theme:theme-id:fonts
+─── css:theme:theme-id:images
+─── css:theme:theme-id:prefixAutoprefixer
+─── css:theme:theme-id:testCsslint
+─── css:theme:theme-id:reportStylestats
+──┬ default
+  └─┬─┬ css:theme:theme-id:build
+    ├─┬ vendors:build
+    ├── css:merge
+    ├── js:build
+    └─┬ twig:build
+──┬ http
+  └─┬─┬ css:build
+    └── watch:http
+─── js:build
+──┬ twig:build
+  └──── twig:html
+─── twig:html
+──┬ vendors:build
+  └─┬── vendors:css
+    ├── vendors:images
+    └── vendors:fonts
+─── vendors:css
+─── vendors:fonts
+─── vendors:images
+──┬ watch
+  └─┬─┬ css:build
+    ├─┬ twig:build
+    └── js:build
+─── watch:http
+─── watch:js
+```
 
 ---
 
