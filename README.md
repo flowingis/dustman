@@ -1,4 +1,12 @@
-# dustman
+dustman
+---
+
+[![Version](http://img.shields.io/:version-0.0.16-5F97b9.svg)][node]
+[![TravisCI](https://travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
+[![Built with nodejs 4.2.2](http://img.shields.io/:nodejs-4.1.1-80BD01.svg)](https://nodejs.org/en/)
+[![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
+[![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
+
 **Gulp + YAML config** based front-end automation boilerplate
 
 ---
@@ -114,3 +122,6 @@ paths:
 
 
 ```
+
+
+[node]: https://www.npmjs.com/package/dustman
