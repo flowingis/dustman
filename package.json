@@ -70,6 +70,6 @@
     "url": "https://github.com/vitto/dustman/issues"
   },
   "scripts": {
-    "install": "echo && echo To use dustman, copy gulpfile.js and dustman.yml from node_modules/dustman/ folder where you need it && echo"
+    "install": "pwd && cp node_modules/dustman/gulpfile.js gulpfile.js && cp node_modules/dustman/dustman.yml dustman.yml"
   }
 }
