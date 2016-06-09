@@ -14,6 +14,8 @@ css:
       csslint: false
       stylestats: false
       autoprefixer: true
+      concat: false
+      path: hexo/themes/miniml/source/css/
     -
       name: theme-two
       file: frontsize.theme-two.css
