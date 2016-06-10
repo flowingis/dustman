@@ -38,7 +38,7 @@ At the moment Dustman is based on **Gulp 4 which is in alpha release status** so
 
 ---
 
-## Build suite
+# Build suite
 
 Dustman has a set of **main tasks** which uses a set of **sub tasks** in sequence.
 
@@ -88,7 +88,7 @@ A server based on browser sync node module will serve the HTML templates.
 $ gulp http
 ```
 
-### Sub tasks
+# Sub tasks
 
 In the `dustman.yml` config, you can use one or all of these tasks `css:build`, `js:build` or `html:build` to make the build as you need.
 
@@ -121,7 +121,7 @@ tasks:
 
 ---
 
-## Config example
+# Config example
 
 ```yaml
 ---
@@ -214,5 +214,8 @@ paths:
   js: my/build/js/
 ```
 
+Dustman is coded with love by [vitto][vitto] @ [ideato][ideato]
 
 [node]: https://www.npmjs.com/package/dustman
+[vitto]: https://github.com/vitto
+[ideato]: http://www.ideato.it
