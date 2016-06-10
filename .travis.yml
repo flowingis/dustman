@@ -15,4 +15,4 @@ script:
   - gulp --silent
   - gulp js:build --silent
   - gulp css:build --silent
-  - gulp twig:build --silent
+  - gulp html:build --silent
