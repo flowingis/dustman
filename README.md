@@ -34,6 +34,7 @@ At the moment Dustman is based on **Gulp 4 which is in alpha release status** so
 ##### Release details
 
 - Sub tasks can now be selected directly from YAML config
+- Performance optimizations for vendors tasks on watcher
 
 ---
 

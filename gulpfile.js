@@ -330,56 +330,71 @@ if (checkConfig('css', c.css)) {
 }
 
 gulp.task('vendors:fonts', function (done) {
-  if (c.vendors !== undefined && c.vendors.fonts !== undefined) {
-    messageVerbose('');
-    message('Copying fonts from vendors');
-    var i = 0;
-    for (i = 0; i < c.vendors.fonts.length; i += 1) {
-      messageVerbose('Font vendor', c.vendors.fonts[i]);
-      check(c.vendors.fonts[i], true);
+  if (buildIndex > 0) {
+    messageVerbose('Notice', 'Vendors Fonts already built, if you need to update them, re-run the watcher');
+    done();
+  } else {
+    if (c.vendors !== undefined && c.vendors.fonts !== undefined) {
+      messageVerbose('');
+      message('Copying fonts from vendors');
+      var i = 0;
+      for (i = 0; i < c.vendors.fonts.length; i += 1) {
+        messageVerbose('Font vendor', c.vendors.fonts[i]);
+        check(c.vendors.fonts[i], true);
+      }
+      messageVerbose('Vendor fonts copied to', c.paths.fonts);
+      return gulp.src(c.vendors.fonts)
+        .pipe(gulp.dest(c.paths.fonts));
     }
-    messageVerbose('Vendor fonts copied to', c.paths.fonts);
-    return gulp.src(c.vendors.fonts)
-      .pipe(gulp.dest(c.paths.fonts));
+    messageVerbose('Notice', 'Vendor\'s Fonts not found, skipping task');
+    done();
   }
-  messageVerbose('Notice', 'Vendor\'s Fonts not found, skipping task');
-  done();
 });
 
 gulp.task('vendors:images', function (done) {
-  if (c.vendors !== undefined && c.vendors.images !== undefined) {
-    messageVerbose('');
-    message('Copying images from vendors');
-    var i = 0;
-    for (i = 0; i < c.vendors.images.length; i += 1) {
-      messageVerbose('Image vendor', c.vendors.images[i]);
-      check(c.vendors.images[i], true);
-    }
-    messageVerbose('Vendor images copied to', c.paths.images);
-    return gulp.src(c.vendors.images)
+  if (buildIndex > 0) {
+    messageVerbose('Notice', 'Vendors Images already built, if you need to update them, re-run the watcher');
+    done();
+  } else {
+    if (c.vendors !== undefined && c.vendors.images !== undefined) {
+      messageVerbose('');
+      message('Copying images from vendors');
+      var i = 0;
+      for (i = 0; i < c.vendors.images.length; i += 1) {
+        messageVerbose('Image vendor', c.vendors.images[i]);
+        check(c.vendors.images[i], true);
+      }
+      messageVerbose('Vendor images copied to', c.paths.images);
+      return gulp.src(c.vendors.images)
       .pipe(gulp.dest(c.paths.images));
+    }
+    messageVerbose('Notice', 'Vendor\'s Images not found, skipping task');
+    done();
   }
-  messageVerbose('Notice', 'Vendor\'s Images not found, skipping task');
-  done();
 });
 
 gulp.task('vendors:css', function (done) {
-  if (c.vendors !== undefined && c.vendors.css !== undefined) {
-    messageVerbose('');
-    message('Merging CSS vendors');
-    var i = 0;
-    for (i = 0; i < c.vendors.css.files.length; i += 1) {
-      messageVerbose('CSS vendor', c.vendors.css.files[i]);
-      check(c.vendors.css.files[i], true);
-    }
-    messageVerbose('Vendor CSS files merged to', c.paths.css + c.vendors.css.file);
-    return gulp.src(c.vendors.css.files)
+  if (buildIndex > 0) {
+    messageVerbose('Notice', 'Vendors CSS already built, if you need to update them, re-run the watcher');
+    done();
+  } else {
+    if (c.vendors !== undefined && c.vendors.css !== undefined) {
+      messageVerbose('');
+      message('Merging CSS vendors');
+      var i = 0;
+      for (i = 0; i < c.vendors.css.files.length; i += 1) {
+        messageVerbose('CSS vendor', c.vendors.css.files[i]);
+        check(c.vendors.css.files[i], true);
+      }
+      messageVerbose('Vendor CSS files merged to', c.paths.css + c.vendors.css.file);
+      return gulp.src(c.vendors.css.files)
       .pipe(uglifyCss())
       .pipe(concat(c.vendors.css.file))
       .pipe(gulp.dest(c.paths.css));
+    }
+    messageVerbose('Notice', 'Vendor\'s CSS not found, skipping task');
+    done();
   }
-  messageVerbose('Notice', 'Vendor\'s CSS not found, skipping task');
-  done();
 });
 
 gulp.task('message:end', function(done){
