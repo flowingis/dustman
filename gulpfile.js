@@ -22,14 +22,6 @@ var gulp = require('gulp'),
   faker        = require('faker'),
   browserSync  = require('browser-sync');
 
-var dustmanTasks = [
-  'message:start',
-  'timer:start',
-  'css:build',
-  'js:build',
-  'message:end'
-];
-
 var buildIndex = 0,
   c = false,
   cssThemes = [],
@@ -37,7 +29,15 @@ var buildIndex = 0,
   themeBuildTasks = [],
   themesTotal = 0,
   phrases = {},
-  isWatching = false;
+  isWatching = false,
+  configTasks = [],
+  configTasksDefaults = [];
+
+configTasksDefaults = [
+  'css:build',
+  'js:build',
+  'html:build'
+];
 
 phrases.change = [
   'Hey, something\'s happened to %file%, this is a work for DUSTMAN...',
@@ -77,6 +77,12 @@ if (c.css === undefined) {
 
 faker.locale = c.config.faker ? c.config.faker.locale ? c.config.faker.locale : 'en' : 'en';
 themesTotal = c.css.themes.length;
+
+if (c.tasks !== undefined) {
+  configTasks = ['message:start', 'timer:start'].concat(c.tasks).concat(['message:end']);
+} else {
+  configTasks = ['message:start', 'timer:start'].concat(configTasksDefaults).concat(['message:end']);
+}
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
 
@@ -482,7 +488,7 @@ gulp.task('twig:html', function (done) {
   done();
 });
 
-gulp.task('twig:build', gulp.series(['twig:html'], function(done){
+gulp.task('html:build', gulp.series(['twig:html'], function(done){
   done();
 }));
 
@@ -508,7 +514,7 @@ gulp.task('watch:http', function(done) {
   done();
 });
 
-gulp.task('http', gulp.series(['state:watch', 'watch:http'].concat(dustmanTasks), function() {
+gulp.task('http', gulp.series(['state:watch', 'watch:http'].concat(configTasks), function() {
   browserSync.init({
     server: {
         baseDir: c.paths.server
@@ -517,7 +523,7 @@ gulp.task('http', gulp.series(['state:watch', 'watch:http'].concat(dustmanTasks)
     notify: true
   });
 
-  return gulp.watch(watchList(), gulp.series(dustmanTasks, browserSync.reload))
+  return gulp.watch(watchList(), gulp.series(configTasks, browserSync.reload))
     .on('change', function(path) {
       messageFile(phrases.change, path);
     })
@@ -529,8 +535,8 @@ gulp.task('http', gulp.series(['state:watch', 'watch:http'].concat(dustmanTasks)
     });
 }));
 
-gulp.task('watch', gulp.series(['state:watch'].concat(dustmanTasks), function() {
-  return gulp.watch(watchList(), gulp.series(dustmanTasks))
+gulp.task('watch', gulp.series(['state:watch'].concat(configTasks), function() {
+  return gulp.watch(watchList(), gulp.series(configTasks))
     .on('change', function(path) {
       messageFile(phrases.change, path);
     })
@@ -542,6 +548,6 @@ gulp.task('watch', gulp.series(['state:watch'].concat(dustmanTasks), function() 
     });
 }));
 
-gulp.task('default', gulp.series(dustmanTasks, function(done) {
+gulp.task('default', gulp.series(configTasks, function(done) {
   done();
 }));

@@ -1,28 +1,9 @@
 ---
 
-css:
-  file: dustman.frontsize.min.css
-  watch: test/examples/sass/**/*.scss
-  verbose: 3
-  themes:
-    -
-      name: theme-one
-      file: frontsize.theme-one.css
-      compile: test/examples/sass/theme-one/import.scss
-      images: test/examples/sass/themes/default/img/**/*.*
-      fonts: test/examples/sass/themes/default/img/**/*.*
-      csslint: false
-      stylestats: false
-      autoprefixer: true
-      concat: false
-      path: hexo/themes/miniml/source/css/
-    -
-      name: theme-two
-      file: frontsize.theme-two.css
-      compile: test/examples/sass/theme-two/import.scss
-      csslint: false
-      stylestats: false
-      autoprefixer: false
+tasks:
+  - css:build
+  - js:build
+  - html:build
 
 config:
   autoprefixer:
@@ -37,6 +18,30 @@ config:
     locale: it
   twig:
     cache: false
+
+css:
+  file: dustman.frontsize.min.css
+  watch: test/examples/sass/**/*.scss
+  verbose: 3
+  themes:
+    -
+      name: theme-one
+      file: frontsize.theme-one.css
+      compile: test/examples/sass/theme-one/import.scss
+      images: test/examples/sass/themes/default/img/**/*.*
+      fonts: test/examples/sass/themes/default/img/**/*.*
+      csslint: false
+      stylestats: false
+      autoprefixer: true
+#      concat: false
+#      path: hexo/themes/miniml/source/css/
+    -
+      name: theme-two
+      file: frontsize.theme-two.css
+      compile: test/examples/sass/theme-two/import.scss
+      csslint: false
+      stylestats: false
+      autoprefixer: false
 
 js:
   file: dustman.min.js

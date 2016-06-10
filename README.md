@@ -1,7 +1,7 @@
-dustman
+d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-0.1.27-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-0.2.27-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 4.2.2](http://img.shields.io/:nodejs-4.1.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -29,68 +29,93 @@ At the moment Dustman is based on **Gulp 4 which is in alpha release status** so
 - Because it has a **superior task concatenation** system compared to the previous major release.
 - Because the watcher and the build system are **dramatically faster**.
 
+---
+
 ##### Release details
 
-- Fix watch tasks sequence
-- Add better watch tasks message handling
-- Made sub-tasks more easy to be changed
+- Sub tasks can now be selected directly from YAML config
 
 ---
 
-## Build tasks
+## Build suite
+
+Dustman has a set of **main tasks** which uses a set of **sub tasks** in sequence.
+
+### Main tasks
+
+The idea behind Dustman is to use a set of Gulp **main tasks** which shouldn't be changed, and decide how to build by adding or removing che **sub tasks** defined in the YAML configuration.
+
+#### Default
+
+```bash
+$ gulp
+```
+
+You can choose a different config by using `--config` paramter.
+
+```bash
+$ gulp --config another-config.yml
+```
 
 All tasks can run locally with `./node_modules/.bin/gulp taskname` in the tasks table will be used `gulp taskname` to be easy to read.
 
-Note all task has `--silent` or `-S` flag to avoid Gulp logs.
+```bash
+$ ./node_modules/.bin/gulp --config another-config.yml --silent
+```
+
+Note: Tasks with `--silent` or `-S` flag will avoid Gulp task logs.
+
+---
+
+#### Watcher
+
+If `js.watch`, `css.watch` and `html.watch` watched folder's files changes, the watcher will perform a new build.
+
+```bash
+$ gulp watch
+```
+
+---
+
+#### Server + watcher
+
+If `js.watch`, `css.watch` and `html.watch` watched folder's files changes, the watcher will perform a new build.
+
+A server based on browser sync node module will serve the HTML templates.
+
+```bash
+$ gulp http
+```
+
+### Sub tasks
+
+In the `dustman.yml` config, you can use one or all of these tasks `css:build`, `js:build` or `html:build` to make the build as you need.
+
+```yaml
+tasks:
+  - css:build
+  - js:build
+  - html:build
+```
+
+---
 
 ### Tasks dependency trees
 
 ```bash
-──┬ css:build
-  └─┬─┬ css:theme:theme-id:build
-    ├─┬ css:theme:theme-two:build
-    ├─┬ vendors:build
-    └── css:merge
-─── css:merge
-──┬ css:theme:theme-id:build
-  └─┬── css:theme:theme-id:css
-    ├── css:theme:theme-id:prefixAutoprefixer
-    ├── css:theme:theme-id:testCsslint
-    ├── css:theme:theme-id:reportStylestats
-    ├── css:theme:theme-id:images
-    └── css:theme:theme-id:fonts
-─── css:theme:theme-id:css
-─── css:theme:theme-id:fonts
-─── css:theme:theme-id:images
-─── css:theme:theme-id:prefixAutoprefixer
-─── css:theme:theme-id:testCsslint
-─── css:theme:theme-id:reportStylestats
 ──┬ default
-  └─┬─┬ css:theme:theme-id:build
-    ├─┬ vendors:build
-    ├── css:merge
+  └─┬─┬ css:build
     ├── js:build
-    └─┬ twig:build
+    └─┬ html:build
 ──┬ http
   └─┬─┬ css:build
+    ├── js:build
+    ├─┬ html:build
     └── watch:http
-─── js:build
-──┬ twig:build
-  └──── twig:html
-─── twig:html
-──┬ vendors:build
-  └─┬── vendors:css
-    ├── vendors:images
-    └── vendors:fonts
-─── vendors:css
-─── vendors:fonts
-─── vendors:images
 ──┬ watch
   └─┬─┬ css:build
-    ├─┬ twig:build
-    └── js:build
-─── watch:http
-─── watch:js
+    ├── js:build
+    └─┬ html:build
 ```
 
 ---
@@ -98,8 +123,26 @@ Note all task has `--silent` or `-S` flag to avoid Gulp logs.
 ## Config example
 
 ```yaml
-
 ---
+
+tasks:
+  - css:build
+  - js:build
+  - html:build
+
+config:
+  autoprefixer:
+    browsers:
+      - last 3 versions
+  csslint: csslintrc.json
+  stylestats: .stylestatsrc
+  prettify:
+    indent_char: ' '
+    indent_size: 2
+  faker:
+    locale: it
+  twig:
+    cache: false
 
 css:
   file: themes-with-vendors.min.css
@@ -122,16 +165,6 @@ css:
       csslint: false
       stylestats: false
       autoprefixer: false
-
-config:
-  autoprefixer:
-    browsers:
-      - last 3 versions
-  csslint: csslintrc.json
-  stylestats: .stylestatsrc
-  prettify:
-    indent_char: ' '
-    indent_size: 2
 
 js:
   file: app-with-vendors.min.js
@@ -178,8 +211,6 @@ paths:
   images: my/build/img/
   fonts: my/build/fonts/
   js: my/build/js/
-
-
 ```
 
 

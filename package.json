@@ -1,6 +1,6 @@
 {
   "name": "dustman",
-  "version": "0.1.27",
+  "version": "0.2.27",
   "description": "A Gulp based front-end automation boilerplate that helps you to keep your builds clean",
   "authors": [
     {
