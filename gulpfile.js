@@ -89,7 +89,7 @@ if (c.tasks !== undefined) {
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
 
 var messageVerbose = function(title, message) {
-  if (c.css.verbose !== undefined && c.css.verbose >= 3) {
+  if (c.config.verbose !== undefined && c.config.verbose >= 3) {
     if (message !== undefined) {
       console.log(colors.yellow(title.trim() + ': ') + message.trim());
     } else {
@@ -99,7 +99,7 @@ var messageVerbose = function(title, message) {
 };
 
 var message = function(message, force) {
-  if (force !== undefined && force || c.css.verbose !== undefined && c.css.verbose >= 2) {
+  if (force !== undefined && force || c.config.verbose !== undefined && c.config.verbose >= 2) {
     console.log(message);
   }
 };
@@ -116,7 +116,7 @@ var messageFile = function(phrases, file) {
 };
 
 var messageError = function(message) {
-  if (c.css.verbose !== undefined && c.css.verbose >= 1) {
+  if (c.config.verbose !== undefined && c.config.verbose >= 1) {
     console.log(colors.red('Error: ') + message.trim());
   }
 };
@@ -132,7 +132,7 @@ var check = function(path, throwErr) {
   } catch (e) {
     if (throwError) {
       messageError(path + colors.red(' not found'));
-      if (c.css.verbose !== undefined && c.css.verbose >= 3) {
+      if (c.config.verbose !== undefined && c.config.verbose >= 3) {
         console.log(e);
       }
       process.exit();
@@ -196,13 +196,12 @@ var tasks = function(theme, taskNames) {
 var addTask = function(theme, index){
 
   var compile = theme.compile,
-    destinationPath = c.paths.css,
     file = theme.file,
     merge = theme.merge !== undefined ? theme.merge : true,
-    path = theme.path || c.paths.css,
-    fonts = theme.fonts || false,
-    images = theme.images || false,
-    name = theme.name,
+    path = theme.path !== undefined ? theme.path : c.paths.css,
+    fonts = theme.fonts !== undefined ? theme.fonts : false,
+    images = theme.images !== undefined ? theme.images : false,
+    name = theme.name !== undefined ? theme.name : 'theme-' + index,
     prefixAutoprefixer = c.config.autoprefixer ? theme.autoprefixer ? true : false : false,
     reportStylestats = c.config.stylestats ? theme.stylestats ? true : false : false,
     task = {},
@@ -245,7 +244,7 @@ var addTask = function(theme, index){
     if (themesTotal >= 1) {
       messageVerbose('Theme task', name + ' ' + (index + 1) + ' of ' + themesTotal);
     }
-    messageVerbose('File', destinationPath + file);
+    messageVerbose('File', path + file);
 
     return gulp.src(compile)
       .pipe(sourcemaps.init())
@@ -257,7 +256,7 @@ var addTask = function(theme, index){
         )
       .pipe(concat(file))
       .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest(destinationPath));
+      .pipe(gulp.dest(path));
   });
 
   if (prefixAutoprefixer) {
@@ -271,12 +270,12 @@ var addTask = function(theme, index){
       } else {
         messageVerbose('Autoprefixer', 'Enabled');
       }
-      messageVerbose('Adding prefixes to file', destinationPath + file);
-      messageVerbose('Browser prefixes saved to', destinationPath + fileName);
-      return gulp.src(destinationPath + file)
+      messageVerbose('Adding prefixes to file', path + file);
+      messageVerbose('Browser prefixes saved to', path + fileName);
+      return gulp.src(path + file)
         .pipe(autoprefixer(c.config.autoprefixer))
         .pipe(rename(fileName))
-        .pipe(gulp.dest(destinationPath));
+        .pipe(gulp.dest(path));
     });
   }
 
@@ -285,7 +284,7 @@ var addTask = function(theme, index){
       messageVerbose('');
       message('CSSlint');
       messageVerbose('Theme', name);
-      return gulp.src(destinationPath + file)
+      return gulp.src(path + file)
         .pipe(csslint(c.config.csslint))
         .pipe(csslint.reporter());
     });
@@ -293,7 +292,7 @@ var addTask = function(theme, index){
 
   if (reportStylestats) {
     gulp.task(task.reportStylestats, function () {
-      return gulp.src(destinationPath + file)
+      return gulp.src(path + file)
         .pipe(stylestats({
           type: 'md',
           config: c.config.stylestats
@@ -460,7 +459,7 @@ gulp.task('vendors:build', gulp.series(['vendors:css', 'vendors:images', 'vendor
   done();
 }));
 
-gulp.task('css:merge', function(done){
+gulp.task('css:merge', function(){
   var themes, mergeVendors;
   themes = [];
   messageVerbose('');

@@ -1,58 +1,51 @@
 ---
-
-tasks:
-  - css:build
-  - js:build
-  - html:build
-
 config:
   autoprefixer:
     browsers:
-      - last 3 versions
+      - "last 3 versions"
   csslint: csslintrc.json
-  stylestats: .stylestatsrc
-  prettify:
-    indent_char: ' '
-    indent_size: 2
   faker:
     locale: it
+  prettify:
+    indent_char: " "
+    indent_size: 2
+  stylestats: .stylestatsrc
   twig:
     cache: false
+  verbose: 3
 
 css:
   file: dustman.frontsize.min.css
-  watch: test/examples/sass/**/*.scss
-  verbose: 3
   themes:
     -
-      name: theme-one
-      file: frontsize.theme-one.css
-      compile: test/examples/sass/theme-one/import.scss
-      images: test/examples/sass/themes/default/img/**/*.*
-      fonts: test/examples/sass/themes/default/img/**/*.*
-      csslint: false
-      stylestats: false
       autoprefixer: true
+      compile: test/examples/sass/theme-one/import.scss
+      csslint: false
+      file: frontsize.theme-one.css
+      fonts: test/examples/sass/themes/default/img/**/*.*
+      images: test/examples/sass/themes/default/img/**/*.*
       merge: false
+      name: theme-one
       path: test/results/css/custom/
+      stylestats: false
     -
-      name: theme-two
-      file: frontsize.theme-two.css
+      autoprefixer: false
       compile: test/examples/sass/theme-two/import.scss
       csslint: false
+      file: frontsize.theme-two.css
+      name: theme-two
       stylestats: false
-      autoprefixer: false
     -
-      name: theme-three
-      file: frontsize.theme-three.css
+      autoprefixer: false
       compile: test/examples/less/theme-three/import.less
       csslint: true
+      file: frontsize.theme-three.css
+      name: theme-three
       stylestats: false
-      autoprefixer: false
+  watch: test/examples/sass/**/*.scss
 
 js:
   file: dustman.min.js
-  watch: test/examples/js/**/*.js
   files:
     - test/examples/vendor/angular/angular.js
     - test/examples/vendor/angular-animate/angular-animate.js
@@ -65,21 +58,34 @@ js:
     - test/examples/vendor/angular-flash/angular-flash.js
     - test/examples/vendor/angular-route/angular-route.js
     - test/examples/js/*
+  watch: test/examples/js/**/*.js
+
+paths:
+  css: test/results/css/
+  fonts: test/results/fonts/
+  images: test/results/img/
+  js: test/results/js/
+  server: test/results/
+
+tasks:
+  - "css:build"
+  - "js:build"
+  - "html:build"
 
 twig:
-  watch: test/examples/twig/**/*.twig
   files:
     - test/examples/twig/index.twig
+  watch: test/examples/twig/**/*.twig
 
 vendors:
   css:
     file: vendors.min.css
-    merge: true
     files:
       - test/examples/vendor/angular/angular-csp.css
       - test/examples/vendor/angular-bootstrap/ui-bootstrap-csp.css
       - test/examples/vendor/font-awesome/css/font-awesome.css
       - test/examples/vendor/angular-chart.js/dist/angular-chart.css
+    merge: true
   fonts:
     - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.eot
     - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.svg
@@ -89,10 +95,3 @@ vendors:
     - test/examples/vendor/font-awesome/fonts/FontAwesome.otf
   images:
     - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.svg
-
-paths:
-  server: test/results/
-  css: test/results/css/
-  images: test/results/img/
-  fonts: test/results/fonts/
-  js: test/results/js/

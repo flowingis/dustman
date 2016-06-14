@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-0.5.30-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-0.6.32-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 4.2.2](http://img.shields.io/:nodejs-4.1.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -216,6 +216,96 @@ paths:
   fonts: my/build/fonts/
   js: my/build/js/
 ```
+
+---
+
+# Config parameters
+
+#### Config
+
+Config parameters with links comes from related plug-in configurations
+
+| Parameter            | Example value        | Type      | Description                     |
+| -------------------- | -------------------- | --------- | ------------------------------- |
+| `config` | *mixed* | *Object* | It contains CSS options |
+| `config.autoprefixer` | *mixed* | *Object*  | https://www.npmjs.com/package/gulp-autoprefixer         |
+| `config.csslint` | *path/csslintrc.json* | *String* | It contains CSSlint options path |
+| `config.faker` | *mixed* | *Object* | https://github.com/marak/Faker.js/ |
+| `config.prettify` | *mixed* | *Object* | https://www.npmjs.com/package/gulp-html-prettify |
+| `config.stylestats` | *path/.stylestatsrc* | *String* | It contains Stylestats options path |
+| `config.twig` | *mixed* | *Object* | https://www.npmjs.com/package/gulp-twig |
+| `config.verbose` | *3* | *Integer* | The verbose value, 0: no messages, 3: all message logs |
+
+#### CSS
+
+| Parameter            | Example value        | Type      | Description                     |
+| -------------------- | -------------------- | --------- | ------------------------------- |
+| `css`                | *mixed*              | *Object*  | It contains CSS options         |
+| `css.file` | *dustman.min.css* | *String* | The name of the merged and minified CSS with vendors and SASS or LESS themes |
+| `css.themes` | *mixed* | *Array*   | It contains theme with it's config |
+| `css.themes` | *mixed* | *Array*   | It contains theme object with it's config |
+| `css.themes[].autoprefixer` | *true*  | *Boolean* | If the build will add prefixes to the CSS theme |
+| `css.themes[].compile` | *-path/theme.sass*  | *String* | Path to the CSS theme, can be SASS or LESS |
+| `css.themes[].csslint` | *true*  | *Boolean* | If theme need to be tested |
+| `css.themes[].file` | *theme-name.min.css*  | *String* | The name of the single theme built |
+| `css.themes[].fonts` | *path/\*\*/\*.\**  | *String* | Fonts path related to theme |
+| `css.themes[].images` | *path/\*\*/\*.\**  | *String* | Images path related to theme |
+| `css.themes[].merge` | *true*  | *Boolean* | If this theme should be in the final merged CSS file |
+| `css.themes[].name`  | *theme-name*  | *String* | The name will be listed in the build logs, based on `config.verbose` |
+| `css.themes[].path` | *path/to/css/* | *String* | If this theme should be built in a specific folder |
+| `css.themes[].stylestats` | *true* | *Boolean* | If this theme is passed to stylestats report |
+| `css.watch` | *path/\*\*/\*.js*    | *String*  | Files watched from the main task watcher |
+
+#### JavaScript
+
+| Parameter            | Example value        | Type      | Description                     |
+| -------------------- | -------------------- | --------- | ------------------------------- |
+| `js`                 | *mixed*              | *Object*  | It contains JavaScript options  |
+| `js.file`            | *dustman.min.js*     | *String*  | The name of the merged and minified JavaScript |
+| `js.watch`           | *path/\*\*/\*.js*    | *String*  | Files watched from the main task watcher |
+| `js.files`           | *-path/file.js*      | *Array*   | Files listed for the JavaScript build, it can also be a conatiner path like ´-path/app/*´ |
+
+#### Paths
+
+| Parameter      | Example value   | Type     | Description                                                                            |
+| -------------- | --------------- | -------- | -------------------------------------------------------------------------------------- |
+| `paths`        | *mixed*        | *Object* | It contains build path targets                                                         |
+| `paths.server` | *path/to/html/* | *String* | Path where the **Browser sync** local server will point and **Twig** will be generated |
+| `paths.css` | *path/to/html/css/* | *String* | Where **CSS files** will be moved from source targets to the production folders |
+| `paths.images` | *path/to/html/images/* | *String* | Where **images files** will be moved from source targets to the production folders |
+| `paths.fonts` | *path/to/html/fonts/* | *String* | Where **fonts files** will be moved from source targets to the production folders |
+| `paths.js` | *path/to/html/js/* | *String* | Where **js files** will be moved from source targets to the production folders |
+
+#### Tasks
+
+| Parameter            | Example value        | Type      | Description                     |
+| -------------------- | -------------------- | --------- | ------------------------------- |
+| `tasks` | *-css:build* | *Array*  | It contains the sub tasks pipeline build sequence |
+
+You can add `css:build`, `js:build` and `html:build`
+
+#### Twig
+
+| Parameter      | Example value       | Type     | Description              |
+| -------------- | ------------------- | -------- | -----------------------  |
+| `twig`         | *mixed*            | *Object* | It contains twig options |
+| `twig.watch`   | *path/\*\*/\*.twig* | *String* | Files watched from the main task watcher |
+| `twig.files`   | *-path/file.twig*  | *Array*  | Files listed for the HTML build |
+
+#### Vendors
+
+| Parameter            | Example value        | Type      | Description                     |
+| -------------------- | -------------------- | --------- | ------------------------------- |
+| `vendors`            | *mixed*              | *Object*  | It contains vendors options     |
+| `vendors.css`        | *mixed*              | *Object*  | It contains CSS vendors options |
+| `vendors.css.file`   | *vendors.min.css*    | *String*  | The name of the merged and minified vendors CSS |
+| `vendors.css.merge`  | *true*               | *Boolean* | If vendors will be merged into the final CSS file |
+| `vendors.css.files`  | *-vendors/file.css*  | *Array*   | Files listed for the merged CSS vendors build |
+| `vendors.fonts`      | *-vendors/font.ttf*  | *Array*   | Files listed to be moved on fonts production folder |
+| `vendors.images`     | *-vendors/image.svg* | *Array*   | Files listed to be moved on images production folder |
+
+
+---
 
 Dustman is coded with love by [vitto][vitto] @ [ideato][ideato]
 
