@@ -10,6 +10,7 @@ var gulp = require('gulp'),
   plugins      = require('gulp-load-plugins')(),
   run          = require('run-sequence'),
   sass         = require('gulp-sass'),
+  less         = require('gulp-less'),
   rename       = require('gulp-rename'),
   jshint       = require('gulp-jshint'), // https://github.com/spalger/gulp-jshint
   sourcemaps   = require('gulp-sourcemaps'),
@@ -248,7 +249,12 @@ var addTask = function(theme, index){
 
     return gulp.src(compile)
       .pipe(sourcemaps.init())
-      .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
+      .pipe(
+        compile.indexOf('.scss') !== -1 ?
+          sass({ outputStyle: 'expanded' }).on('error', sass.logError)
+        :
+          less()
+        )
       .pipe(concat(file))
       .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest(destinationPath));

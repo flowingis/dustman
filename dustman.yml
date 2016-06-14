@@ -34,12 +34,19 @@ css:
       stylestats: false
       autoprefixer: true
       merge: false
-#      path: hexo/themes/miniml/source/css/
+      path: test/results/css/custom/
     -
       name: theme-two
       file: frontsize.theme-two.css
       compile: test/examples/sass/theme-two/import.scss
       csslint: false
+      stylestats: false
+      autoprefixer: false
+    -
+      name: theme-three
+      file: frontsize.theme-three.css
+      compile: test/examples/less/theme-three/import.less
+      csslint: true
       stylestats: false
       autoprefixer: false
 
