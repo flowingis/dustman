@@ -1,6 +1,6 @@
 {
   "name": "dustman",
-  "version": "0.2.28",
+  "version": "0.4.29",
   "description": "A Gulp based front-end automation boilerplate that helps you to keep your builds clean",
   "authors": [
     {
@@ -44,6 +44,7 @@
     "gulp-jshint": "^2.0.1",
     "gulp-load-plugins": "^1.2.2",
     "gulp-prompt": "^0.1.2",
+    "gulp-rename": "^1.2.2",
     "gulp-run": "^1.6.11",
     "gulp-sass": "^2.0.4",
     "gulp-sass-lint": "^1.1.1",

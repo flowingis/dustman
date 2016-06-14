@@ -33,7 +33,7 @@ css:
       csslint: false
       stylestats: false
       autoprefixer: true
-#      concat: false
+      merge: false
 #      path: hexo/themes/miniml/source/css/
     -
       name: theme-two
@@ -67,6 +67,7 @@ twig:
 vendors:
   css:
     file: vendors.min.css
+    merge: true
     files:
       - test/examples/vendor/angular/angular-csp.css
       - test/examples/vendor/angular-bootstrap/ui-bootstrap-csp.css
