@@ -68,14 +68,21 @@ paths:
   server: test/results/
 
 tasks:
-  - "css:build"
-  - "js:build"
-  - "html:build"
+  - css:build
+  - js:build
+  - html:build
 
 twig:
   files:
     - test/examples/twig/index.twig
   watch: test/examples/twig/**/*.twig
+
+shell:
+  before:
+    - echo before build task command 01
+    - echo before build task command 02
+  after:
+    - echo after build task command
 
 vendors:
   css:

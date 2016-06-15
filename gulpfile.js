@@ -8,7 +8,8 @@ var gulp = require('gulp'),
   csslint      = require('gulp-csslint'),
   moment       = require('moment'),
   plugins      = require('gulp-load-plugins')(),
-  run          = require('run-sequence'),
+  sequence     = require('run-sequence'),
+  exec          = require('child_process').exec,
   sass         = require('gulp-sass'),
   less         = require('gulp-less'),
   rename       = require('gulp-rename'),
@@ -33,7 +34,9 @@ var buildIndex = 0,
   phrases = {},
   isWatching = false,
   configTasks = [],
-  configTasksDefaults = [];
+  configTasksDefaults = [],
+  shellBeforeCommands = [],
+  shellAfterCommands = [];
 
 configTasksDefaults = [
   'css:build',
@@ -81,9 +84,9 @@ faker.locale = c.config.faker ? c.config.faker.locale ? c.config.faker.locale : 
 themesTotal = c.css.themes.length;
 
 if (c.tasks !== undefined) {
-  configTasks = ['message:start', 'timer:start'].concat(c.tasks).concat(['message:end']);
+  configTasks = ['message:start', 'timer:start'].concat('shell:before').concat(c.tasks).concat('shell:after').concat(['message:end']);
 } else {
-  configTasks = ['message:start', 'timer:start'].concat(configTasksDefaults).concat(['message:end']);
+  configTasks = ['message:start', 'timer:start'].concat('shell:before').concat(configTasksDefaults).concat('shell:after').concat(['message:end']);
 }
 
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
@@ -351,6 +354,61 @@ if (checkConfig('css', c.css)) {
   }
 }
 
+/* = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = */
+
+var addTaskShellCommand = function(when, command, index){
+  var commandName = 'shell:' + when + ':' + index;
+  if (when === 'before') {
+    shellBeforeCommands.push(commandName);
+  } else {
+    shellAfterCommands.push(commandName);
+  }
+  gulp.task(commandName, function(done){
+    exec(command, function (err, stdout, stderr) {
+      messageVerbose(stdout);
+      messageVerbose(stderr);
+      done(err);
+    });
+  });
+};
+
+if (checkConfig('shell', c.shell)) {
+  if (checkConfig('shell.before', c.shell.before)) {
+    for (var i = 0; i < c.shell.before.length; i += 1) {
+      addTaskShellCommand('before', c.shell.before[i], i);
+    }
+  }
+  if (checkConfig('shell.after', c.shell.after)) {
+    for (var i = 0; i < c.shell.after.length; i += 1) {
+      addTaskShellCommand('after', c.shell.after[i]);
+    }
+  }
+}
+
+gulp.task('shell:before:message', function(done) {
+  if (shellBeforeCommands.length > 0) {
+    messageVerbose('');
+    message('Executing before build commands');
+  }
+  done();
+});
+
+gulp.task('shell:after:message', function(done) {
+  if (shellAfterCommands.length > 0) {
+    messageVerbose('');
+    message('Executing after build commands');
+  }
+  done();
+});
+
+gulp.task('shell:before', gulp.series(['shell:before:message'].concat(shellBeforeCommands), function(done) {
+  done();
+}));
+
+gulp.task('shell:after', gulp.series(['shell:after:message'].concat(shellAfterCommands), function(done) {
+  done();
+}));
+
 gulp.task('vendors:fonts', function (done) {
   if (buildIndex > 0) {
     messageVerbose('Notice', 'Vendors Fonts already built, if you need to update them, re-run the watcher');
@@ -507,7 +565,7 @@ gulp.task('watch:js', function () {
     var tasks = [
       'js:build'
     ];
-    run(tasks);
+    sequence(tasks);
     var watchList = [ c.css.watch ];
     if (c.js !== undefined && c.js.watch !== undefined) {
       watchList.push(c.js.watch);

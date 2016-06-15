@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-0.6.34-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-0.7.34-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 4.2.2](http://img.shields.io/:nodejs-4.1.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -33,8 +33,7 @@ At the moment Dustman is based on **Gulp 4 which is in alpha release status** so
 
 ##### Release details
 
-- Add warning messages
-- Merge warnings are now thrown if there is an empty build pipeline
+- Add shell command series which can be added before and after the build tasks
 
 ---
 
@@ -99,24 +98,43 @@ tasks:
   - html:build
 ```
 
+# Shell commands
+
+You can run shell commands with `shell` parameters in config:
+
+```yaml
+shell:
+  before:
+    - echo before build task command 01
+    - echo before build task command 02
+  after:
+    - echo after build task command
+```
+
 ---
 
 ### Tasks dependency trees
 
 ```bash
 ──┬ default
-  └─┬─┬ css:build
-    ├── js:build
-    └─┬ html:build
-──┬ http
-  └─┬─┬ css:build
+  └─┬─┬ shell:before
+    ├─┬ css:build
     ├── js:build
     ├─┬ html:build
+    └─┬ shell:after
+──┬ http
+  └─┬─┬ shell:before
+    ├─┬ css:build
+    ├── js:build
+    ├─┬ html:build
+    ├─┬ shell:after
     └── watch:http
 ──┬ watch
-  └─┬─┬ css:build
+  └─┬─┬ shell:before
+    ├─┬ css:build
     ├── js:build
-    └─┬ html:build
+    ├─┬ html:build
+    └─┬ shell:after
 ```
 
 ---
@@ -182,6 +200,13 @@ js:
     - vendor/angular-flash/angular-flash.js
     - vendor/angular-route/angular-route.js
     - my/js/files/*
+
+shell:
+  before:
+    - echo before build task command 01
+    - echo before build task command 02
+  after:
+    - echo after build task command
 
 vendors:
   css:
@@ -272,6 +297,14 @@ Config parameters with links comes from related plug-in configurations
 | `paths.images` | *path/to/html/images/* | *String* | Where **images files** will be moved from source targets to the production folders |
 | `paths.fonts` | *path/to/html/fonts/* | *String* | Where **fonts files** will be moved from source targets to the production folders |
 | `paths.js` | *path/to/html/js/* | *String* | Where **js files** will be moved from source targets to the production folders |
+
+#### Shell
+
+| Parameter      | Example value       | Type     | Description              |
+| -------------- | ------------------- | -------- | -----------------------  |
+| `shell`        | *mixed*             | *Object* | It contains shell tasks options |
+| `shell.before` | *-bash command*     | *Array*  | Bash commands will be executed in series **before** the build tasks |
+| `shell.after`  | *-bash command*     | *Array*  | Bash commands will be executed in series **after** the build tasks |
 
 #### Tasks
 
