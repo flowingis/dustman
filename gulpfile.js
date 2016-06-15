@@ -121,6 +121,12 @@ var messageError = function(message) {
   }
 };
 
+var messageWarning = function(message) {
+  if (c.config.verbose !== undefined && c.config.verbose >= 2) {
+    console.log(colors.magenta('Warning: ') + message.trim());
+  }
+};
+
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
 
 var check = function(path, throwErr) {
@@ -492,7 +498,7 @@ gulp.task('css:merge', function(done){
       .pipe(concat(c.css.file))
       .pipe(gulp.dest(c.paths.css));
   } else {
-    messageVerbose('Warning', 'No vendors or themes will be merged');
+    messageWarning('No vendors or themes will be merged');
     done();
   }
 });

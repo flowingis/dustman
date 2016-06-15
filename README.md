@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-0.6.33-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-0.6.34-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 4.2.2](http://img.shields.io/:nodejs-4.1.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -33,6 +33,7 @@ At the moment Dustman is based on **Gulp 4 which is in alpha release status** so
 
 ##### Release details
 
+- Add warning messages
 - Merge warnings are now thrown if there is an empty build pipeline
 
 ---
