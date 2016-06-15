@@ -459,7 +459,7 @@ gulp.task('vendors:build', gulp.series(['vendors:css', 'vendors:images', 'vendor
   done();
 }));
 
-gulp.task('css:merge', function(){
+gulp.task('css:merge', function(done){
   var themes, mergeVendors;
   themes = [];
   messageVerbose('');
@@ -485,11 +485,16 @@ gulp.task('css:merge', function(){
       messageVerbose('CSS skipped from merge', cssThemes[i].file);
     }
   }
-  messageVerbose('All CSS files merged to', c.paths.css + c.css.file);
-  return gulp.src(themes)
-    .pipe(uglifyCss())
-    .pipe(concat(c.css.file))
-    .pipe(gulp.dest(c.paths.css));
+  if (themes.length > 0) {
+    messageVerbose('All CSS files merged to', c.paths.css + c.css.file);
+    return gulp.src(themes)
+      .pipe(uglifyCss())
+      .pipe(concat(c.css.file))
+      .pipe(gulp.dest(c.paths.css));
+  } else {
+    message('Warning', 'No vendors or themes are listed to be merged');
+    done();
+  }
 });
 
 gulp.task('watch:js', function () {

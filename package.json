@@ -1,6 +1,6 @@
 {
   "name": "dustman",
-  "version": "0.6.32",
+  "version": "0.6.33",
   "description": "A Gulp based front-end automation boilerplate that helps you to keep your builds clean",
   "authors": [
     {
@@ -72,6 +72,6 @@
     "url": "https://github.com/vitto/dustman/issues"
   },
   "scripts": {
-    "install": "cp ./node_modules/dustman/gulpfile.js gulpfile.js || true && cp ./node_modules/dustman/dustman.yml dustman.yml || true"
+    "install": "sleep 3 && cp ./node_modules/dustman/gulpfile.js gulpfile.js || true && cp -n ./node_modules/dustman/dustman.yml dustman.yml || true"
   }
 }
