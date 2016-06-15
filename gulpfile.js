@@ -492,7 +492,7 @@ gulp.task('css:merge', function(done){
       .pipe(concat(c.css.file))
       .pipe(gulp.dest(c.paths.css));
   } else {
-    message('Warning', 'No vendors or themes are listed to be merged');
+    messageVerbose('Warning', 'No vendors or themes will be merged');
     done();
   }
 });
