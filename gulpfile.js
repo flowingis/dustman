@@ -625,6 +625,20 @@ gulp.task('watch:http', function(done) {
   done();
 });
 
+var watcher = function(tasks, useBrowserSync) {
+  var callback = useBrowserSync ? browserSync.reload : function(){};
+  return gulp.watch(watchList(), gulp.series(configTasks, callback))
+    .on('change', function(path) {
+      messageFile(phrases.change, path);
+    })
+    .on('unlink', function(path) {
+      messageFile(phrases.unlink, path);
+    })
+    .on('add', function(path) {
+      messageFile(phrases.add, path);
+    });
+};
+
 gulp.task('http', gulp.series(['state:watch', 'watch:http'].concat(configTasks), function() {
   browserSync.init({
     server: {
@@ -634,29 +648,11 @@ gulp.task('http', gulp.series(['state:watch', 'watch:http'].concat(configTasks),
     notify: true
   });
 
-  return gulp.watch(watchList(), gulp.series(configTasks, browserSync.reload))
-    .on('change', function(path) {
-      messageFile(phrases.change, path);
-    })
-    .on('unlink', function(path) {
-      messageFile(phrases.unlink, path);
-    })
-    .on('add', function(path) {
-      messageFile(phrases.add, path);
-    });
+  return watcher(configTasks, true);
 }));
 
 gulp.task('watch', gulp.series(['state:watch'].concat(configTasks), function() {
-  return gulp.watch(watchList(), gulp.series(configTasks))
-    .on('change', function(path) {
-      messageFile(phrases.change, path);
-    })
-    .on('unlink', function(path) {
-      messageFile(phrases.unlink, path);
-    })
-    .on('add', function(path) {
-      messageFile(phrases.add, path);
-    });
+  return watcher(configTasks, false);
 }));
 
 gulp.task('default', gulp.series(configTasks, function(done) {
