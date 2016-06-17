@@ -2,18 +2,16 @@
 
 var gulp = require('gulp'),
   autoprefixer = require('gulp-autoprefixer'),
-  analyzer     = require('analyze-css'), // https://github.com/macbre/analyze-css
   colors       = require('colors'),
   concat       = require('gulp-concat'),
   csslint      = require('gulp-csslint'),
   moment       = require('moment'),
   plugins      = require('gulp-load-plugins')(),
   sequence     = require('run-sequence'),
-  exec          = require('child_process').exec,
+  exec         = require('child_process').exec,
   sass         = require('gulp-sass'),
   less         = require('gulp-less'),
   rename       = require('gulp-rename'),
-  jshint       = require('gulp-jshint'), // https://github.com/spalger/gulp-jshint
   sourcemaps   = require('gulp-sourcemaps'),
   stylestats   = require('gulp-stylestats'),
   uglify       = require('gulp-uglify'),
