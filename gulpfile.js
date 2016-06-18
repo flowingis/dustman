@@ -2,23 +2,23 @@
 
 var gulp = require('gulp'),
   autoprefixer = require('gulp-autoprefixer'),
-  colors       = require('colors'),
   concat       = require('gulp-concat'),
   csslint      = require('gulp-csslint'),
-  moment       = require('moment'),
-  sequence     = require('run-sequence'),
-  exec         = require('child_process').exec,
   sass         = require('gulp-sass'),
   less         = require('gulp-less'),
   rename       = require('gulp-rename'),
   sourcemaps   = require('gulp-sourcemaps'),
   stylestats   = require('gulp-stylestats'),
   uglify       = require('gulp-uglify'),
+  twig         = require('gulp-twig'),
   uglifyCss    = require('gulp-uglifycss'),
+  prettify     = require('gulp-html-prettify'),
+  colors       = require('colors'),
+  moment       = require('moment'),
+  sequence     = require('run-sequence'),
+  exec         = require('child_process').exec,
   yaml         = require('js-yaml'),
   fs           = require('fs'),
-  twig         = require('gulp-twig'),
-  prettify     = require('gulp-html-prettify'),
   faker        = require('faker'),
   browserSync  = require('browser-sync');
 
@@ -44,12 +44,12 @@ configTasksDefaults = [
 phrases.change = [
   'Hey, something\'s happened to %file%, this is a work for DUSTMAN...',
   'Dear %file%, do you really though I wouldn\'t noticed you? Hahaha!',
-  'Aha! %file%! You are under build!'
+  'Aha! %file%! You are under build!',
 ];
 phrases.unlink = [
   'We have lost %file%, this is a work for DUSTMAN...',
   'Oh my god... %file%... Nooooo!',
-  'Another good %file% gone... I will avange you...'
+  'Another good %file% gone... I will avange you...',
 ];
 phrases.add = [
   'What the hell is %file%?? I, DUSTMAN will do something to solve this situation...',
@@ -60,12 +60,12 @@ phrases.add = [
 /* = = = = = = = = = = = = = = = = = = = = = = = = = */
 
 for (var i = 0; i < process.argv.length; i += 1) {
-    if (process.argv[i] === '--config') {
-        if (process.argv[i+1] !== undefined) {
-            var file = process.argv[i + 1];
-            c = yaml.safeLoad(fs.readFileSync(file, 'utf-8'));
-        }
+  if (process.argv[i] === '--config') {
+    if (process.argv[i+1] !== undefined) {
+      var file = process.argv[i+1];
+      c = yaml.safeLoad(fs.readFileSync(file, 'utf-8'));
     }
+  }
 }
 
 if (!c) {

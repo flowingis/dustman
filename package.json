@@ -55,7 +55,7 @@
     "gulp-uglify": "^1.5.3",
     "gulp-uglifycss": "^1.0.6",
     "js-yaml": "^3.6.0",
-    "jshint": "^2.9.2",
+    "merge": "^1.2.0",
     "mkpath": "^0.1.0",
     "moment": "^2.13.0",
     "run-sequence": "^1.1.2",
@@ -70,6 +70,10 @@
     "url": "https://github.com/vitto/dustman/issues"
   },
   "scripts": {
+    "build": "node build.js && ./node_modules/.bin/gulp --gulpfile gulpfile.dustman.js",
     "install": "sleep 3 && cp ./node_modules/dustman/gulpfile.js gulpfile.js || true && cp -n ./node_modules/dustman/dustman.yml dustman.yml || true"
+  },
+  "devDependencies": {
+    "buildify": "^0.4.0"
   }
 }

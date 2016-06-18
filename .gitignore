@@ -56,3 +56,5 @@ test/*.diff
 
 test/examples/vendor/
 test/results/
+
+gulpfile.test.js
