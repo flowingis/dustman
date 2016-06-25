@@ -8,32 +8,34 @@
   by https://github.com/vitto
 */
 
-var gulp = require('gulp'),
-    autoprefixer = require('gulp-autoprefixer'),
-    concat       = require('gulp-concat'),
-    csslint      = require('gulp-csslint'),
-    sass         = require('gulp-sass'),
-    less         = require('gulp-less'),
-    rename       = require('gulp-rename'),
-    sourcemaps   = require('gulp-sourcemaps'),
-    stylestats   = require('gulp-stylestats'),
-    uglify       = require('gulp-uglify'),
-    twig         = require('gulp-twig'),
-    uglifyCss    = require('gulp-uglifycss'),
-    prettify     = require('gulp-html-prettify'),
-    moment       = require('moment'),
-    sequence     = require('run-sequence'),
-    exec         = require('child_process').exec,
-    fs           = require('fs'),
-    faker        = require('faker'),
-    browserSync  = require('browser-sync');
+var gulp = require('gulp');
+
+    // autoprefixer = require('gulp-autoprefixer'),
+    // concat       = require('gulp-concat'),
+    // csslint      = require('gulp-csslint'),
+    // sass         = require('gulp-sass'),
+    // less         = require('gulp-less'),
+    // rename       = require('gulp-rename'),
+    // sourcemaps   = require('gulp-sourcemaps'),
+    // stylestats   = require('gulp-stylestats'),
+    // uglify       = require('gulp-uglify'),
+    // twig         = require('gulp-twig'),
+    // uglifyCss    = require('gulp-uglifycss'),
+    // prettify     = require('gulp-html-prettify'),
+    // moment       = require('moment'),
+    // sequence     = require('run-sequence'),
+    // exec         = require('child_process').exec,
+    // fs           = require('fs'),
+    // faker        = require('faker'),
+    // browserSync  = require('browser-sync');
 
 
 var config = (function(){
-  var colors = require('colors');
+  var colour = require('colour');
   var fs = require('fs');
   var yaml = require('js-yaml');
   var merge = require('merge');
+  var path = require('path');
 
   var configFile = 'dustman.yml';
 
@@ -56,11 +58,31 @@ var config = (function(){
       },
       verbose: 3
     },
+    css: {
+      file: 'dustman.min.css',
+      watch: './**/*.css'
+    },
+    js: {
+      file: 'dustman.min.js',
+      watch: './**/*.js'
+    },
+    paths: {
+      css: 'dustman/css/',
+      fonts: 'dustman/fonts/',
+      images: 'dustman/img/',
+      js: 'dustman/js/',
+      server: 'dustman/'
+    },
     tasks: [
       'css:build',
       'js:build',
       'html:build'
-    ]
+    ],
+    vendors: {
+      css: {
+        merge: true
+      }
+    }
   };
 
   var configFileExists = function(configFile) {
@@ -68,7 +90,7 @@ var config = (function(){
       fs.accessSync(configFile, fs.F_OK);
       return true;
     } catch (e) {
-      console.log(colors.red('Error: config file ') + colors.yellow(configFile) + colors.red(' NOT found'));
+      console.log(colour.red('Error: config file ') + colour.yellow(configFile) + colour.red(' NOT found'));
       process.exit();
     }
   };
@@ -76,8 +98,13 @@ var config = (function(){
   var checkDefaultConfig = function(loadedConfig, configFile){
     if (!loadedConfig) {
       configFileExists(configFile);
-      loadedConfig = yaml.safeLoad(fs.readFileSync(configFile, 'utf-8'));
+      return yaml.safeLoad(fs.readFileSync(configFile, 'utf-8'));
     }
+    return loadedConfig;
+  };
+
+  var pathClean = function(configPath) {
+    return path.normalize(configPath).replace(/\/$/, '') + '/';
   };
 
   var checkArguments = function(){
@@ -89,12 +116,23 @@ var config = (function(){
         loadedConfig = yaml.safeLoad(fs.readFileSync(configFile, 'utf-8'));
       }
     }
-    checkDefaultConfig(loadedConfig, configFile);
+    loadedConfig = checkDefaultConfig(loadedConfig, configFile);
     data = merge.recursive(true, data, loadedConfig);
+
+    data.paths.css = pathClean(data.paths.css);
+    data.paths.fonts = pathClean(data.paths.fonts);
+    data.paths.images = pathClean(data.paths.images);
+    data.paths.js = pathClean(data.paths.js);
+    data.paths.server = pathClean(data.paths.server);
   };
 
   var ifProp = function(propName) {
     return typeof data[propName] !== 'undefined' ? true : false;
+  };
+
+  var error = function(message) {
+    console.log(colour.red('Error:') + message);
+    process.exit();
   };
 
   return {
@@ -103,23 +141,47 @@ var config = (function(){
     },
     get: function(propName){
       if (!ifProp(propName)) {
-        console.log(colors.red('Error: property ') + colors.yellow(propName) + colors.red(' NOT found in ') + colors.yellow(configFile));
-        process.exit();
+        error('Required property ' + colour.yellow(propName) + ' NOT found in ' + colour.yellow(configFile));
       }
       return data[propName];
+    },
+    hasTask: function(taskName) {
+      if (!ifProp('tasks')) {
+        error('Required property ' + colour.yellow('tasks') + ' NOT found in ' + colour.yellow(configFile));
+      }
+      for (var i = 0; i < data.tasks.length; i += 1) {
+        if (data.tasks[i] === taskName) {
+          return true;
+        }
+      }
+      return false;
     },
     if: function(propName){
       return ifProp(propName);
     },
     load: function(){
       checkArguments();
+    },
+    pathClean : function(configPath) {
+      return path.normalize(configPath).replace(/\/$/, '') + '/';
     }
   };
 })();
 
 
 var message = (function(){
-  var colors = require('colors');
+  var colour = require('colour');
+  colour.setTheme({
+    annoy: 'grey',
+    error: 'red bold',
+    event: 'magenta',
+    intro: 'rainbow',
+    speak: 'white',
+    success: 'green',
+    task: 'white',
+    verbose: 'blue',
+    warning: 'yellow bold'
+  });
 
   var phrases = {
     add: [
@@ -150,26 +212,18 @@ var message = (function(){
     }
   };
 
-  var logReturn = function() {
-    log(3, '');
-  };
-
   return {
-    speak: function(message) {
-      log(2, message);
+    annoy: function(message) {
+      log(4, colour.annoy(message.trim()));
     },
-    verbose: function(title, message) {
-      if (typeof message !== 'undefined') {
-        log(3, colors.blue(title.trim() + ': ') + message.trim());
-      } else {
-        log(3, colors.blue(title.trim()));
-      }
-    },
-    warning: function(message){
-      log(2, colors.yellow('Warning: ') + message.trim());
+    intro: function() {
+      console.log('');
+      console.log(colour.intro('   D U S T M A N   '));
+      console.log('');
     },
     error: function(message) {
-      log(0, colors.red('Error: ') + message.trim());
+      log(0, colour.error('Error: ') + message.trim());
+      process.exit();
     },
     event: function(eventType, file) {
       var min, max, phrase, splitPhrase, index;
@@ -178,12 +232,779 @@ var message = (function(){
       index = (Math.floor(Math.random() * (max - min + 1)) + min) - 1;
       phrase = phrases[eventType][index];
       splitPhrase = phrase.split('%file%');
-      log(1, colors.magenta(splitPhrase[0]) + file + colors.magenta(splitPhrase[1]));
-      logReturn();
+      log(1, colour.event(splitPhrase[0]) + file + colour.event(splitPhrase[1]));
+    },
+    notice: function(message) {
+      log(3, colour.verbose('Notice: ') + message.trim());
+    },
+    speak: function(message) {
+      log(2, colour.speak(message));
+    },
+    success: function(message) {
+      log(2, colour.success(message.trim()));
+    },
+    task: function(message) {
+      log(3, '');
+      log(2, colour.task(message));
+    },
+    verbose: function(title, message) {
+      if (typeof message !== 'undefined') {
+        log(3, colour.verbose(title.trim() + ': ') + message.trim());
+      } else {
+        log(3, colour.verbose(title.trim()));
+      }
+    },
+    warning: function(message){
+      log(2, colour.warning('Warning: ') + message.trim());
+    },
+  };
+})();
+
+var tasks = (function(){
+  var pipeline = {
+    before:[],
+    middle:[],
+    after:[]
+  };
+
+  var addToPipeline = function(subTaskPipeline) {
+    pipeline.before = pipeline.before.concat(subTaskPipeline.before);
+    pipeline.middle = pipeline.middle.concat(subTaskPipeline.middle);
+    pipeline.after = pipeline.after.concat(subTaskPipeline.after.reverse());
+  };
+
+  return {
+    init: function(){
+      var buildPipeline = [];
+      addToPipeline(task.timer.get());
+      addToPipeline(task.shell.get());
+      addToPipeline(task.css.get());
+      addToPipeline(task.js.get());
+      addToPipeline(task.vendors.get());
+      addToPipeline(task.html.get());
+      pipeline.after.reverse();
+      buildPipeline = pipeline.before.concat(pipeline.middle.concat(pipeline.after));
+      // console.log(buildPipeline);
+      wrapper.default.set(buildPipeline);  // build
+      // wrapper.watch.set(buildPipeline); // watch build
+      // wrapper.http.set(buildPipeline);  // watch build http
+    }
+  };
+})();
+
+var task = task || {};
+
+task.core = (function(){
+
+  var fs = require('fs');
+
+  return {
+    action: function(name, actionName) {
+      return name + ':' + actionName;
+    },
+    fileCheck: function(path){
+      try {
+        path = path.replace(new RegExp(/\*.*$/), '');
+        fs.accessSync(path, fs.F_OK);
+        return true;
+      } catch (e) {
+        message.error(path + ' NOT found');
+        console.log(e);
+        process.exit();
+      }
+    },
+    fileExists: function(path) {
+      try {
+        path = path.replace(new RegExp(/\*.*$/), '');
+        fs.accessSync(path, fs.F_OK);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+    has: function(task, property) {
+      return property in task ? true : false;
+    }
+  };
+})();
+
+var task = task || {};
+
+task.timer = (function(){
+  var moment = require('moment');
+
+  var name = 'timer';
+  var startBuildDate;
+  var buildIndex = 1;
+
+  var pipeline = {
+    before:[],
+    middle:[],
+    after:[]
+  };
+
+  var start = function(){
+    var taskName = task.core.action(name, 'start');
+    gulp.task(taskName, function(done){
+      startBuildDate = Date.now();
+      done();
+    });
+    pipeline.before.push(taskName);
+  };
+
+  var stop = function(){
+    var taskName = task.core.action(name, 'stop');
+    gulp.task(taskName, function(done){
+      var stopBuildDate = Date.now();
+      var timeSpent = (stopBuildDate - startBuildDate)/1000 + ' secs';
+      message.success('The dust was cleaned successfully in ' + timeSpent);
+      message.success('Build [ ' + buildIndex + ' ] done at ' + moment().format('HH:mm') + ' and ' + moment().format('ss') + ' seconds.');
+      buildIndex += 1;
+      done();
+    });
+    pipeline.after.push(taskName);
+  };
+
+  return {
+    duration: function(){
+
+    },
+    get: function(){
+      start();
+      stop();
+      return pipeline;
+    }
+  };
+})();
+
+var task = task || {};
+
+task.vendors = (function(){
+
+  var name = 'vendors';
+  var paths = {};
+  var vendorsConfig = {};
+  var vendorsFontsBuilt = false;
+  var vendorsImagesBuilt = false;
+
+  var pipeline = {
+    before:[],
+    middle:[],
+    after:[]
+  };
+
+  var init = function() {
+    paths = config.get('paths');
+    vendorsConfig = config.if('vendors') ? config.get('vendors') : {};
+  };
+
+  var images = function() {
+    if (config.if('vendors') && task.core.has(vendorsConfig, 'images')) {
+      var taskName = task.core.action(name, 'images');
+      gulp.task(taskName, function (done) {
+        if (vendorsImagesBuilt) {
+          message.notice('Vendors Images already built, if you need to update them, re-run the watcher');
+          done();
+        } else {
+          vendorsImagesBuilt = true;
+            message.task('Copying images from vendors');
+            for (var i = 0; i < vendorsConfig.images.length; i += 1) {
+              message.verbose('Image vendor', vendorsConfig.images[i]);
+              task.core.fileCheck(vendorsConfig.images[i]);
+            }
+            message.verbose('Vendor images copied to', paths.images);
+            return gulp.src(vendorsConfig.images)
+            .pipe(gulp.dest(paths.images));
+        }
+      });
+      return [taskName];
+    } else {
+      message.warning('Vendor\'s Images not found, skipping task');
+    }
+    return [];
+  };
+
+  var fonts = function(){
+    if (config.if('vendors') && task.core.has(vendorsConfig, 'fonts')) {
+      var taskName = task.core.action(name, 'fonts');
+      gulp.task(taskName, function (done) {
+        if (vendorsFontsBuilt) {
+          message.notice('Vendors Fonts already built, if you need to update them, re-run the watcher');
+          done();
+        } else {
+          vendorsFontsBuilt = true;
+            message.task('Copying fonts from vendors');
+            var i = 0;
+            for (i = 0; i < vendorsConfig.fonts.length; i += 1) {
+              message.verbose('Font vendor', vendorsConfig.fonts[i]);
+              task.core.fileCheck(vendorsConfig.fonts[i]);
+            }
+            message.verbose('Vendor fonts copied to', paths.fonts);
+            return gulp.src(vendorsConfig.fonts)
+              .pipe(gulp.dest(paths.fonts));
+        }
+      });
+      return [taskName];
+    } else {
+      message.warning('Vendor\'s Fonts not found, skipping task');
+    }
+    return [];
+  };
+
+  return {
+    get: function(){
+      init();
+      pipeline.middle = pipeline.middle.concat(fonts());
+      pipeline.middle = pipeline.middle.concat(images());
+      return pipeline;
+    }
+  };
+})();
+
+var task = task || {};
+
+task.shell = (function(){
+  var exec = require('child_process').exec;
+  var name = 'shell';
+  var taskConfig = [];
+  var pipeline = {
+    before: [],
+    middle:[],
+    after: []
+  };
+
+  var init = function() {
+    taskConfig = config.if('shell') ? config.get('shell') : [];
+  };
+
+  var afterMessage = function(){
+    if (task.core.has(taskConfig, 'after')) {
+      var taskName = task.core.action(name, 'after-message');
+      gulp.task(taskName, function(done){
+        message.task('Executing shell tasks after build');
+        done();
+      });
+      pipeline.after.push(taskName);
+    }
+  };
+
+  var afterTask = function(index) {
+    var taskName = task.core.action(name, 'after-' + index);
+    pipeline.after.push(taskName);
+    gulp.task(taskName, function(done){
+      exec(taskConfig.after[index], function (err) {
+        done(err);
+      });
+    });
+  };
+
+  var after = function(){
+    if (task.core.has(taskConfig, 'after')) {
+      afterMessage();
+      for (var i = 0; i < taskConfig.after.length; i += 1) {
+        afterTask(i);
+      }
+    }
+  };
+
+  var beforeMessage = function(){
+    if (task.core.has(taskConfig, 'before')) {
+      var taskName = task.core.action(name, 'before-message');
+      gulp.task(taskName, function(done){
+        message.task('Executing shell tasks before build');
+        done();
+      });
+      pipeline.before.push(taskName);
+    }
+  };
+
+  var beforeTask = function(index) {
+    var taskName = task.core.action(name, 'before-' + index);
+    pipeline.before.push(taskName);
+    gulp.task(taskName, function(done){
+      console.log('before shell task', taskConfig.before[index]);
+      exec(taskConfig.before[index], function (err) {
+        console.log('before shell task DONE');
+        done(err);
+      });
+    });
+  };
+
+  var before = function(){
+    if (task.core.has(taskConfig, 'before')) {
+      beforeMessage();
+      for (var i = 0; i < taskConfig.before.length; i += 1) {
+        beforeTask(i);
+      }
+    }
+  };
+
+  return {
+    get: function(){
+      init();
+      before();
+      after();
+      return pipeline.before.length > 1 || pipeline.after.length > 1 ? pipeline : false;
+    }
+  };
+})();
+
+var task = task || {};
+
+task.html = (function(){
+
+  var faker = require('faker');
+  var prettify = require('gulp-html-prettify');
+  var twig = require('gulp-twig');
+
+  var name = 'html';
+  var paths = {};
+  var twigConfig = {};
+  var twigPages;
+
+  var pipeline = {
+    before:[],
+    middle:[],
+    after:[]
+  };
+
+  var init = function() {
+    paths = config.get('paths');
+    twigPages = config.if('twig') ? config.get('twig') : {};
+    twigConfig = config.if('config') ? config.get('config') : {};
+    faker.locale = 'en';
+  };
+
+  var build = function() {
+    if (config.if('twig') && task.core.has(twigPages, 'files')) {
+      var taskName = task.core.action(name, 'build');
+      gulp.task(taskName, function () {
+        message.task('Twig to HTML');
+        if (!task.core.has(twigConfig, 'twig')) {
+          twigConfig.twig = {};
+        }
+        twigConfig.twig.data = {
+          faker: faker
+        };
+        for (var i = 0; i < twigPages.files.length; i += 1) {
+          message.verbose('Twig view', twigPages.files[i]);
+        }
+        message.verbose('All Twig files converted in', paths.server);
+        return gulp.src(twigPages.files)
+          .pipe(twig(twigConfig.twig))
+          .pipe(prettify(twigConfig.prettify || {}))
+          .pipe(gulp.dest(paths.server));
+      });
+      return [taskName];
+    } else {
+      message.warning('Twig files not set, skipping task');
+    }
+    return [];
+  };
+
+  return {
+    get: function(){
+      if (!config.hasTask('html:build')) {
+        return pipeline;
+      }
+      init();
+      pipeline.middle = pipeline.middle.concat(build());
+      return pipeline;
+    }
+  };
+})();
+
+var task = task || {};
+
+task.css = (function(){
+  var autoprefixer = require('gulp-autoprefixer');
+  var concat = require('gulp-concat');
+  var less = require('gulp-less');
+  var merge = require('merge');
+  var rename = require('gulp-rename');
+  var sass = require('gulp-sass');
+  var stylestats = require('gulp-stylestats');
+  var sourcemaps = require('gulp-sourcemaps');
+  var uglifyCss = require('gulp-uglifycss');
+
+  var name = 'css';
+  var paths = {};
+  var tasksConfig = {};
+  var themeTasks = [];
+  var themeBuilds = [];
+  var vendorsBuilt = false;
+  var vendorsConfig = {};
+  var pipeline = {
+    before: [],
+    middle: [],
+    after: []
+  };
+
+  var themesCleaned = [];
+
+  var init = function() {
+    pipeline.middle.push('css:build');
+    paths = config.get('paths');
+    themeTasks = config.if('css') ? config.get('css') : [];
+    tasksConfig = config.if('config') ? config.get('config') : {};
+    vendorsConfig = config.if('vendors') ? config.get('vendors') : {};
+  };
+
+  var fonts = function(theme) {
+    if (theme.fonts) {
+      var taskName = task.core.action(name, theme.name + '-fonts');
+      var target = paths.fonts + theme.name;
+      gulp.task(taskName, function () {
+        message.verbose('Copy theme fonts to', target);
+        return gulp.src(paths.fonts)
+          .pipe(gulp.dest(target));
+      });
+      return [taskName];
+    }
+    return [];
+  };
+
+  var images = function(theme) {
+    if (theme.images) {
+      var taskName = task.core.action(name, theme.name + '-images');
+      var target = paths.images + theme.name;
+      gulp.task(taskName, function () {
+        message.verbose('Copy theme images to', target);
+        return gulp.src(paths.images)
+          .pipe(gulp.dest(target));
+      });
+      return [taskName];
+    }
+    return [];
+  };
+
+  var css = function(theme, index, totalThemes) {
+    var taskName = task.core.action(name, theme.name + '-css');
+    gulp.task(taskName, function () {
+      if (totalThemes >= 1) {
+        message.task('Build CSS theme ' + (index + 1) + ' of ' + totalThemes);
+      } else {
+        message.task('Build CSS theme');
+      }
+      message.verbose('Theme', theme.name);
+      message.verbose('File', theme.path + theme.file);
+      return gulp.src(theme.compile)
+        .pipe(sourcemaps.init())
+        .pipe(
+          theme.compile.indexOf('.scss') !== -1 ?
+            sass({ outputStyle: 'expanded' }).on('error', sass.logError)
+          :
+            less()
+          )
+        .pipe(concat(theme.file))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(theme.path));
+    });
+    return [taskName];
+  };
+
+  var autoprefixerRename = function(file) {
+    return file.replace('.css', '.autoprefixer.css');
+  };
+
+  var getAutoprefixer = function(theme) {
+    if (theme.autoprefixer) {
+      var taskName = task.core.action(name, theme.name + '-autoprefixer');
+      gulp.task(taskName, function () {
+        var fileName = autoprefixerRename(theme.file);
+        message.task('Browser compatibility');
+        message.verbose('Theme', theme.name);
+        if (task.core.has(tasksConfig.autoprefixer, 'browsers')) {
+          message.verbose('Autoprefixer browsers', tasksConfig.autoprefixer.browsers.toString().replace(new RegExp(',', 'g'), ', '));
+        } else {
+          message.verbose('Autoprefixer', 'Enabled');
+        }
+        message.verbose('Adding prefixes to file', theme.path + theme.file);
+        message.verbose('Browser prefixes saved to', theme.path + fileName);
+        return gulp.src(theme.path + theme.file)
+          .pipe(
+            autoprefixer(theme.autoprefixer instanceof Object ?
+              theme.autoprefixer
+              :
+              tasksConfig.autoprefixer
+            )
+          )
+          .pipe(rename(fileName))
+          .pipe(gulp.dest(theme.path));
+      });
+      return [taskName];
+    }
+    return [];
+  };
+
+  var getStylestats = function(theme) {
+    if (theme.stylestats) {
+      var taskName = task.core.action(name, theme.name + '-stylestats');
+      var fileName = autoprefixerRename(theme.file);
+
+      gulp.task(taskName, function () {
+        return gulp.src(theme.autoprefixer !== false ?
+            theme.path + fileName
+            :
+            theme.path + theme.file
+          )
+          .pipe(stylestats({
+            type: 'md',
+            config: theme.stylestats instanceof Object ? theme.stylestats : tasksConfig.stylestats
+          }));
+      });
+      return [taskName];
+    }
+    return [];
+  };
+
+  var themeBuild = function(theme, themePipeline) {
+    var taskName = task.core.action(name, theme.name + '-build');
+    gulp.task(taskName, gulp.series(themePipeline, function(done){
+      done();
+    }));
+    return [taskName];
+  };
+
+  var add = function(theme, index, totalThemes) {
+    var themePipeline = [];
+    var defaults = {
+      autoprefixer: false,
+      compile: null,
+      csslint: false,
+      file: 'theme-' + index.toString() + '.css',
+      fonts: false,
+      images: false,
+      merge: true,
+      name: 'theme-' + index.toString(),
+      path: paths.css,
+      stylestats: false
+    };
+
+    themeTasks.themes[index] = merge.recursive(true, defaults, theme);
+
+    if (!themeTasks.themes[index].path) {
+      themeTasks.themes[index].path = paths.css;
+    }
+
+    themeTasks.themes[index].path = config.pathClean(themeTasks.themes[index].path);
+
+    if (themeTasks.themes[index].compile === null) {
+      message.error(themeTasks.themes[index].name + ' "compile" attribute must be specified');
+    }
+
+    theme = themeTasks.themes[index];
+
+    themePipeline = themePipeline.concat(fonts(theme));
+    themePipeline = themePipeline.concat(images(theme));
+    themePipeline = themePipeline.concat(css(theme, index, totalThemes));
+    themePipeline = themePipeline.concat(getAutoprefixer(theme));
+    themePipeline = themePipeline.concat(getStylestats(theme));
+    themeBuilds = themeBuilds.concat(themeBuild(theme, themePipeline));
+  };
+
+  var themes = function() {
+    for (var i = 0; i < themeTasks.themes.length; i += 1) {
+      add(themeTasks.themes[i], i, themeTasks.themes.length);
+    }
+    return themeBuilds;
+  };
+
+  var vendors = function() {
+    if (task.core.has(vendorsConfig, 'css') && task.core.has(vendorsConfig.css, 'files')) {
+      var taskName = task.core.action(name, 'vendors');
+      gulp.task(taskName, function (done) {
+        if (vendorsBuilt) {
+          message.annoy('Vendors CSS already built, if you need to update them, re-run the task');
+          done();
+        } else {
+          vendorsBuilt = true;
+          message.task('Merging CSS vendors');
+          for (var i = 0; i < vendorsConfig.css.files.length; i += 1) {
+            message.verbose('CSS vendor', vendorsConfig.css.files[i]);
+            task.core.fileCheck(vendorsConfig.css.files[i]);
+          }
+          message.verbose('Vendor CSS files merged to', paths.css + vendorsConfig.css.file);
+          return gulp.src(vendorsConfig.css.files)
+          .pipe(uglifyCss())
+          .pipe(concat(vendorsConfig.css.file))
+          .pipe(gulp.dest(paths.css));
+        }
+      });
+      return [taskName];
+    }
+    return [];
+  };
+
+  var needsMerge = function() {
+    var theme;
+    for (var i = 0; i < themeTasks.themes.length; i += 1) {
+      theme = merge.recursive(true, themeTasks.themes[i], { merge: true });
+      if (theme.merge === true) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  var getVendorsToMerge = function() {
+    if (vendorsConfig.css.merge) {
+      message.verbose('CSS vendors to merge', paths.css + vendorsConfig.css.file);
+      return [paths.css + vendorsConfig.css.file];
+    }
+    message.verbose('CSS vendors skipped from merge', paths.css + vendorsConfig.css.file);
+    return [];
+  };
+
+  var getThemesToMerge = function() {
+    var fileName, theme, themes = [];
+    for (var i = 0; i < themeTasks.themes.length; i += 1) {
+      theme = themeTasks.themes[i];
+      fileName = theme.autoprefixer ? autoprefixerRename(theme.file) : theme.file;
+      if (theme.merge) {
+        message.verbose('CSS theme to merge', theme.path + fileName);
+        themes.push(theme.path + fileName);
+      } else {
+        message.verbose('CSS theme skipped from merge', theme.path + fileName);
+      }
+    }
+    return themes;
+  };
+
+  var mergeCss = function() {
+    if (needsMerge()) {
+      var taskName = task.core.action(name, 'merge');
+      gulp.task(taskName, function(done){
+        var themes = [];
+        message.task('Checking CSS files to merge');
+
+        themes = themes.concat(getVendorsToMerge());
+        themes = themes.concat(getThemesToMerge());
+        console.log(themes);
+
+        if (themes.length > 0) {
+          message.verbose('All CSS files merged to', paths.css + themeTasks.file);
+          return gulp.src(themes)
+            .pipe(uglifyCss())
+            .pipe(concat(themeTasks.file))
+            .pipe(gulp.dest(paths.css));
+        } else {
+          message.warning('No vendors or themes will be merged');
+          done();
+        }
+      });
+      return [taskName];
+    }
+    return [];
+  };
+
+  var build = function(subTaskPipeline) {
+    var taskName = task.core.action(name, 'build');
+    gulp.task(taskName, gulp.series(subTaskPipeline, function(done){
+      done();
+    }));
+    return [taskName];
+  };
+
+  return {
+    get: function(){
+      if (!config.hasTask('css:build')) {
+        return pipeline;
+      }
+      init();
+      var subTaskPipeline = [];
+      subTaskPipeline = subTaskPipeline.concat(themes());
+      subTaskPipeline = subTaskPipeline.concat(vendors());
+      subTaskPipeline = subTaskPipeline.concat(mergeCss());
+      pipeline.middle.concat(build(subTaskPipeline));
+      return pipeline;
+    }
+  };
+})();
+
+var task = task || {};
+
+task.js = (function(){
+
+  var concat = require('gulp-concat');
+  var sourcemaps = require('gulp-sourcemaps');
+  var uglify = require('gulp-uglify');
+
+  var name = 'js';
+  var js = {};
+  var paths = {};
+  var vendorsConfig = {};
+
+  var pipeline = {
+    before:[],
+    middle:[],
+    after:[]
+  };
+
+  var init = function() {
+    js = config.if('js') ? config.get('js') : [];
+    paths = config.get('paths');
+    vendorsConfig = config.if('vendors') ? config.get('vendors') : {};
+  };
+
+  var build = function(taskName){
+    if (config.if('js')) {
+      gulp.task(taskName, function (done) {
+        message.task('Merging JavaScript files');
+        var notFoundLength = 0;
+        for (var i = 0; i < js.files.length; i += 1) {
+          if (task.core.fileExists(js.files[i])) {
+            message.verbose('JavaScript file', js.files[i]);
+          } else {
+            notFoundLength += 1;
+            message.warning('JavaScript file ' + js.files[i] + ' NOT found');
+          }
+        }
+        if (notFoundLength === js.files.length) {
+          message.error('None of the JavaScript files where found, check your "js.files" propery in your configuration file');
+          done();
+          return;
+        }
+        message.verbose('JavaScript files merged to', paths.js + js.file);
+        return gulp.src(js.files)
+          .pipe(sourcemaps.init())
+          .pipe(uglify())
+          .pipe(concat(js.file))
+          .pipe(sourcemaps.write('./'))
+          .pipe(gulp.dest(paths.js));
+      });
+      return [taskName];
+    }
+    return [];
+  };
+
+  return {
+    get: function(){
+      if (!config.hasTask('js:build')) {
+        return pipeline;
+      }
+      init();
+      pipeline.middle = pipeline.middle.concat(build(task.core.action(name, 'build')));
+      return pipeline;
+    }
+  };
+})();
+
+var wrapper = wrapper || {};
+
+wrapper.default = (function(){
+  var taskName = 'default';
+  return {
+    set: function(pipeline){
+      gulp.task(taskName, gulp.series(pipeline, function(done){
+        done();
+      }));
     }
   };
 })();
 
 
+message.intro();
 config.load();
 message.verbose('Config loaded', config.file());
+tasks.init();

@@ -28,7 +28,7 @@
   "dependencies": {
     "analyze-css": "^0.12.0",
     "browser-sync": "^2.13.0",
-    "colors": "^1.1.2",
+    "colour": "^0.7.1",
     "csslint": "~0.10.0",
     "execSync": "^1.0.2",
     "faker": "^3.1.0",
@@ -70,7 +70,7 @@
     "url": "https://github.com/vitto/dustman/issues"
   },
   "scripts": {
-    "build": "node build.js && ./node_modules/.bin/gulp --gulpfile gulpfile.dustman.js",
+    "build": "node build.js && ./node_modules/.bin/gulp --gulpfile gulpfile.dustman.js --config dustman.test.yml",
     "install": "sleep 3 && cp ./node_modules/dustman/gulpfile.js gulpfile.js || true && cp -n ./node_modules/dustman/dustman.yml dustman.yml || true"
   },
   "devDependencies": {

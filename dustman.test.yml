@@ -24,7 +24,7 @@ css:
       file: frontsize.theme-one.css
       fonts: test/examples/sass/themes/default/img/**/*.*
       images: test/examples/sass/themes/default/img/**/*.*
-      merge: false
+      merge: true
       name: theme-one
       path: test/results/css/custom/
       stylestats: false
@@ -34,6 +34,7 @@ css:
       csslint: false
       file: frontsize.theme-two.css
       name: theme-two
+      merge: false
       stylestats: false
     -
       autoprefixer: false
@@ -61,7 +62,7 @@ js:
   watch: test/examples/js/**/*.js
 
 paths:
-  css: test/results/csss
+  css: test/results/css/
   fonts: test/results/fonts/
   images: test/results/img/
   js: test/results/js/
@@ -79,7 +80,7 @@ twig:
 
 shell:
   before:
-    - echo "before build task command 01"
+    - pwd
     - echo "before build task command 02"
   after:
     - echo "after build task command"

@@ -1,6 +1,11 @@
 {
   "globals": {
-    "module": true
+    "config": true,
+    "gulp":true,
+    "message": true,
+    "module": true,
+    "task": true,
+    "wrapper": true
   },
   "maxerr": 50,
   "bitwise": true,
