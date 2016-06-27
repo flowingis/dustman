@@ -70,8 +70,8 @@
     "url": "https://github.com/vitto/dustman/issues"
   },
   "scripts": {
-    "build": "node build.js && ./node_modules/.bin/gulp --gulpfile gulpfile.dustman.js --config dustman.test.yml",
     "build-all": "node build.js && ./node_modules/.bin/gulp --gulpfile gulpfile.dustman.js --config dustman.test.yml && ./node_modules/.bin/gulp css --gulpfile gulpfile.dustman.js --config dustman.test.yml && ./node_modules/.bin/gulp js --gulpfile gulpfile.dustman.js --config dustman.test.yml && ./node_modules/.bin/gulp html --gulpfile gulpfile.dustman.js --config dustman.test.yml",
+    "build": "node build.js && ./node_modules/.bin/gulp --gulpfile gulpfile.dustman.js --config dustman.test.yml",
     "build-watch": "node build.js && ./node_modules/.bin/gulp watch --gulpfile gulpfile.dustman.js --config dustman.test.yml",
     "build-http": "node build.js && ./node_modules/.bin/gulp http --gulpfile gulpfile.dustman.js --config dustman.test.yml"
   },
