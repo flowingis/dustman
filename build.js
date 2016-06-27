@@ -17,4 +17,4 @@ buildify()
     'lib/task/js.js'
   ])
   .wrap('lib/template.js', { version: pkg.version })
-  .save('gulpfile.dustman.js');
+  .save('gulpfile.js');

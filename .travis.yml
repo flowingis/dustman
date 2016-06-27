@@ -9,7 +9,7 @@ before_install:
 
 before_script:
   - npm install
-  - cd test/examples && bower install
+  - cd test/examples && bower install && cd ../
 
 script:
   - gulp --gulpfile gulpfile.dustman.js
