@@ -12,7 +12,7 @@ before_script:
   - cd test/examples && bower install
 
 script:
-  - gulp --silent
-  - gulp js:build --silent
-  - gulp css:build --silent
-  - gulp html:build --silent
+  - gulp --gulpfile gulpfile.dustman.js
+  - gulp js --gulpfile gulpfile.dustman.js
+  - gulp css --gulpfile gulpfile.dustman.js
+  - gulp html --gulpfile gulpfile.dustman.js

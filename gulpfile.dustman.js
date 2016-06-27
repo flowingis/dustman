@@ -74,9 +74,9 @@ var config = (function(){
       server: 'dustman/'
     },
     tasks: [
-      'css:build',
-      'js:build',
-      'html:build'
+      'css',
+      'js',
+      'html'
     ],
     vendors: {
       css: {
@@ -676,8 +676,7 @@ task.html = (function(){
 
   var build = function() {
     if (config.if('twig') && task.core.has(twigPages, 'files')) {
-      var taskName = task.core.action(name, 'build');
-      gulp.task(taskName, function () {
+      gulp.task(name, function () {
         message.task('Twig to HTML');
         if (!task.core.has(twigConfig, 'twig')) {
           twigConfig.twig = {};
@@ -694,7 +693,7 @@ task.html = (function(){
           .pipe(prettify(twigConfig.prettify || {}))
           .pipe(gulp.dest(paths.server));
       });
-      return [taskName];
+      return [name];
     } else {
       message.warning('Twig files not set, skipping task');
     }
@@ -703,7 +702,7 @@ task.html = (function(){
 
   return {
     get: function(){
-      if (!config.hasTask('html:build')) {
+      if (!config.hasTask(name)) {
         return pipeline;
       }
       init();
@@ -739,10 +738,8 @@ task.css = (function(){
     after: []
   };
 
-  var themesCleaned = [];
-
   var init = function() {
-    pipeline.middle.push('css:build');
+    pipeline.middle.push(name);
     paths = config.get('paths');
     themeTasks = config.if('css') ? config.get('css') : [];
     tasksConfig = config.if('config') ? config.get('config') : {};
@@ -997,16 +994,15 @@ task.css = (function(){
   };
 
   var build = function(subTaskPipeline) {
-    var taskName = task.core.action(name, 'build');
-    gulp.task(taskName, gulp.series(subTaskPipeline, function(done){
+    gulp.task(name, gulp.series(subTaskPipeline, function(done){
       done();
     }));
-    return [taskName];
+    return [name];
   };
 
   return {
     get: function(){
-      if (!config.hasTask('css:build')) {
+      if (!config.hasTask(name)) {
         return pipeline;
       }
       init();
@@ -1040,14 +1036,14 @@ task.js = (function(){
   };
 
   var init = function() {
-    js = config.if('js') ? config.get('js') : [];
+    js = config.if(name) ? config.get(name) : [];
     paths = config.get('paths');
     vendorsConfig = config.if('vendors') ? config.get('vendors') : {};
   };
 
-  var build = function(taskName){
-    if (config.if('js')) {
-      gulp.task(taskName, function (done) {
+  var build = function(){
+    if (config.if(name)) {
+      gulp.task(name, function (done) {
         message.task('Merging JavaScript files');
         var notFoundLength = 0;
         for (var i = 0; i < js.files.length; i += 1) {
@@ -1071,18 +1067,18 @@ task.js = (function(){
           .pipe(sourcemaps.write('./'))
           .pipe(gulp.dest(paths.js));
       });
-      return [taskName];
+      return [name];
     }
     return [];
   };
 
   return {
     get: function(){
-      if (!config.hasTask('js:build')) {
+      if (!config.hasTask(name)) {
         return pipeline;
       }
       init();
-      pipeline.middle = pipeline.middle.concat(build(task.core.action(name, 'build')));
+      pipeline.middle = pipeline.middle.concat(build());
       return pipeline;
     }
   };
