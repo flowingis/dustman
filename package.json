@@ -71,6 +71,8 @@
   },
   "scripts": {
     "build": "node build.js && ./node_modules/.bin/gulp --gulpfile gulpfile.dustman.js --config dustman.test.yml",
+    "build-watch": "node build.js && ./node_modules/.bin/gulp watch --gulpfile gulpfile.dustman.js --config dustman.test.yml",
+    "build-http": "node build.js && ./node_modules/.bin/gulp http --gulpfile gulpfile.dustman.js --config dustman.test.yml",
     "install": "sleep 3 && cp ./node_modules/dustman/gulpfile.js gulpfile.js || true && cp -n ./node_modules/dustman/dustman.yml dustman.yml || true"
   },
   "devDependencies": {

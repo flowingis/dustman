@@ -199,6 +199,11 @@ var message = (function(){
       'We have lost %file%, this is a work for DUSTMAN...',
       'Oh my god... %file%... Nooooo!',
       'Another good %file% gone... I will avange you...',
+    ],
+    wait: [
+      'Waiting silently if something changes, is unlinked or added',
+      'Dustman is watching them',
+      'The dust is never clear totally, waiting for changes'
     ]
   };
 
@@ -210,6 +215,23 @@ var message = (function(){
     if (isVerboseEnough(level)) {
       console.log(message);
     }
+  };
+
+  var event = function(eventType, file) {
+    var min, max, phrase, splitPhrase, finalPhrase, index;
+    min = 1;
+    max = phrases[eventType].length;
+    index = (Math.floor(Math.random() * (max - min + 1)) + min) - 1;
+    phrase = phrases[eventType][index];
+
+    if (typeof file !== 'undefined') {
+      splitPhrase = phrase.split('%file%');
+      finalPhrase = colour.event(splitPhrase[0]) + file + colour.event(splitPhrase[1]);
+    } else {
+      finalPhrase = colour.event(phrase + '...');
+    }
+
+    log(1, finalPhrase);
   };
 
   return {
@@ -226,13 +248,11 @@ var message = (function(){
       process.exit();
     },
     event: function(eventType, file) {
-      var min, max, phrase, splitPhrase, index;
-      min = 1;
-      max = phrases[eventType].length;
-      index = (Math.floor(Math.random() * (max - min + 1)) + min) - 1;
-      phrase = phrases[eventType][index];
-      splitPhrase = phrase.split('%file%');
-      log(1, colour.event(splitPhrase[0]) + file + colour.event(splitPhrase[1]));
+      event(eventType, file);
+    },
+    wait: function() {
+      log(3, '');
+      event('wait');
     },
     notice: function(message) {
       log(3, colour.verbose('Notice: ') + message.trim());
@@ -257,38 +277,6 @@ var message = (function(){
     warning: function(message){
       log(2, colour.warning('Warning: ') + message.trim());
     },
-  };
-})();
-
-var tasks = (function(){
-  var pipeline = {
-    before:[],
-    middle:[],
-    after:[]
-  };
-
-  var addToPipeline = function(subTaskPipeline) {
-    pipeline.before = pipeline.before.concat(subTaskPipeline.before);
-    pipeline.middle = pipeline.middle.concat(subTaskPipeline.middle);
-    pipeline.after = pipeline.after.concat(subTaskPipeline.after.reverse());
-  };
-
-  return {
-    init: function(){
-      var buildPipeline = [];
-      addToPipeline(task.timer.get());
-      addToPipeline(task.shell.get());
-      addToPipeline(task.css.get());
-      addToPipeline(task.js.get());
-      addToPipeline(task.vendors.get());
-      addToPipeline(task.html.get());
-      pipeline.after.reverse();
-      buildPipeline = pipeline.before.concat(pipeline.middle.concat(pipeline.after));
-      // console.log(buildPipeline);
-      wrapper.default.set(buildPipeline);  // build
-      // wrapper.watch.set(buildPipeline); // watch build
-      // wrapper.http.set(buildPipeline);  // watch build http
-    }
   };
 })();
 
@@ -324,6 +312,112 @@ task.core = (function(){
     },
     has: function(task, property) {
       return property in task ? true : false;
+    }
+  };
+})();
+
+var tasks = (function(){
+
+  var browserSync = require('browser-sync').create();
+
+  var paths;
+  var pipeline = {
+    before:[],
+    middle:[],
+    after:[]
+  };
+
+  var tasksConfig = {};
+  var watchFolders = [];
+
+  var getWatchFolder = function(property) {
+    if (config.if(property)) {
+      var configProperty = config.get(property);
+      if (task.core.has(configProperty, 'watch')) {
+        return [configProperty.watch];
+      }
+    }
+    return [];
+  };
+
+  var init = function() {
+    paths = config.if('paths') ? config.get('paths') : false;
+    tasksConfig = config.if('config') ? config.get('config') : false;
+
+    watchFolders = watchFolders.concat(getWatchFolder('css'));
+    watchFolders = watchFolders.concat(getWatchFolder('js'));
+    watchFolders = watchFolders.concat(getWatchFolder('twig'));
+  };
+
+  var addToPipeline = function(subTaskPipeline) {
+    pipeline.before = pipeline.before.concat(subTaskPipeline.before);
+    pipeline.middle = pipeline.middle.concat(subTaskPipeline.middle);
+    pipeline.after = pipeline.after.concat(subTaskPipeline.after.reverse());
+  };
+
+  var watcher = function(tasks, useBrowserSync) {
+    var callback = useBrowserSync ? browserSync.reload : function(){};
+    return gulp.watch(watchFolders, gulp.series(tasks, callback))
+      .on('change', function(path) {
+        message.event('change', path);
+      })
+      .on('unlink', function(path) {
+        message.event('unlink', path);
+      })
+      .on('add', function(path) {
+        message.event('add', path);
+      });
+  };
+
+  var http = function(tasks) {
+    gulp.task('watch:http', function(done) {
+      browserSync.stream();
+      done();
+    });
+
+    gulp.task('watch:message', function(done) {
+      message.wait();
+      done();
+    });
+
+    gulp.task('http', gulp.series(['watch:http'].concat(tasks).concat('watch:message'), function() {
+      browserSync.init({
+        server: {
+            baseDir: paths.server
+        },
+        logLevel: 'info',
+        notify: true
+      });
+      return watcher(tasks, true);
+    }));
+  };
+
+  var watch = function(tasks) {
+    gulp.task('watch', gulp.series(tasks, function() {
+      return watcher(tasks, false);
+    }));
+  };
+
+  var build = function(tasks){
+    gulp.task('default', gulp.series(tasks, function(done){
+      done();
+    }));
+  };
+
+  return {
+    init: function(){
+      init();
+      addToPipeline(task.timer.get());
+      addToPipeline(task.shell.get());
+      addToPipeline(task.css.get());
+      addToPipeline(task.js.get());
+      addToPipeline(task.vendors.get());
+      addToPipeline(task.html.get());
+      pipeline.after.reverse();
+      var pipelineList = pipeline.before.concat(pipeline.middle.concat(pipeline.after));
+      build(pipelineList);
+      watch(pipelineList);
+      http(pipelineList);
     }
   };
 })();
@@ -522,9 +616,7 @@ task.shell = (function(){
     var taskName = task.core.action(name, 'before-' + index);
     pipeline.before.push(taskName);
     gulp.task(taskName, function(done){
-      console.log('before shell task', taskConfig.before[index]);
       exec(taskConfig.before[index], function (err) {
-        console.log('before shell task DONE');
         done(err);
       });
     });
@@ -880,7 +972,6 @@ task.css = (function(){
 
         themes = themes.concat(getVendorsToMerge());
         themes = themes.concat(getThemesToMerge());
-        console.log(themes);
 
         if (themes.length > 0) {
           message.verbose('All CSS files merged to', paths.css + themeTasks.file);
@@ -986,19 +1077,6 @@ task.js = (function(){
       init();
       pipeline.middle = pipeline.middle.concat(build(task.core.action(name, 'build')));
       return pipeline;
-    }
-  };
-})();
-
-var wrapper = wrapper || {};
-
-wrapper.default = (function(){
-  var taskName = 'default';
-  return {
-    set: function(pipeline){
-      gulp.task(taskName, gulp.series(pipeline, function(done){
-        done();
-      }));
     }
   };
 })();
