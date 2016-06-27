@@ -58,7 +58,8 @@ js:
     - test/examples/vendor/angular-dynamic-locale/dist/tmhDynamicLocale.js
     - test/examples/vendor/angular-flash/angular-flash.js
     - test/examples/vendor/angular-route/angular-route.js
-    - test/examples/js/*
+    - test/examples/js/test.js
+    - test/examples/js/test-02.js
   watch: test/examples/js/**/*.js
 
 paths:

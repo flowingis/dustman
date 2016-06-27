@@ -318,7 +318,7 @@ task.core = (function(){
 
 var tasks = (function(){
 
-  var browserSync = require('browser-sync').create();
+  var browserSync = require('browser-sync');
 
   var paths;
   var pipeline = {
@@ -355,32 +355,10 @@ var tasks = (function(){
     pipeline.after = pipeline.after.concat(subTaskPipeline.after.reverse());
   };
 
-  var watcher = function(tasks, useBrowserSync) {
-    var callback = useBrowserSync ? browserSync.reload : function(){};
-    return gulp.watch(watchFolders, gulp.series(tasks, callback))
-      .on('change', function(path) {
-        message.event('change', path);
-      })
-      .on('unlink', function(path) {
-        message.event('unlink', path);
-      })
-      .on('add', function(path) {
-        message.event('add', path);
-      });
-  };
-
   var http = function(tasks) {
-    gulp.task('watch:http', function(done) {
+
+    gulp.task('http', gulp.series(tasks, function() {
       browserSync.stream();
-      done();
-    });
-
-    gulp.task('watch:message', function(done) {
-      message.wait();
-      done();
-    });
-
-    gulp.task('http', gulp.series(['watch:http'].concat(tasks).concat('watch:message'), function() {
       browserSync.init({
         server: {
             baseDir: paths.server
@@ -388,13 +366,42 @@ var tasks = (function(){
         logLevel: 'info',
         notify: true
       });
-      return watcher(tasks, true);
+
+      message.wait();
+
+      return gulp.watch(watchFolders, gulp.series(tasks, function(done){
+          browserSync.reload();
+          message.wait();
+          done();
+        }))
+        .on('change', function(path) {
+          message.event('change', path);
+        })
+        .on('unlink', function(path) {
+          message.event('unlink', path);
+        })
+        .on('add', function(path) {
+          message.event('add', path);
+        });
     }));
   };
 
   var watch = function(tasks) {
     gulp.task('watch', gulp.series(tasks, function() {
-      return watcher(tasks, false);
+      message.wait();
+      return gulp.watch(watchFolders, gulp.series(tasks, function(done){
+          message.wait();
+          done();
+        }))
+        .on('change', function(path) {
+          message.event('change', path);
+        })
+        .on('unlink', function(path) {
+          message.event('unlink', path);
+        })
+        .on('add', function(path) {
+          message.event('add', path);
+        });
     }));
   };
 
