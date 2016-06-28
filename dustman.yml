@@ -22,8 +22,8 @@ css:
       compile: test/examples/sass/theme-one/import.scss
       csslint: false
       file: frontsize.theme-one.css
-      fonts: test/examples/sass/themes/default/img/**/*.*
-      images: test/examples/sass/themes/default/img/**/*.*
+      fonts: test/examples/sass/theme-one/fonts/**/*.*
+      images: test/examples/sass/theme-one/images/**/*.*
       merge: false
       name: theme-one
       path: test/results/css/custom/

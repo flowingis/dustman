@@ -13,9 +13,24 @@ d u s t m a n
 
 Dustman is basically a set of Gulp tasks ready to be used as a build system which helps you to:
 
-- **Build SASS** with multiple themes, CSS vendors and assets already optimized for production environments, you can perform dynamic tasks with **selective configuration** based on *CSSlint tests*, *StyleStats reports* and *Autoprefixer* tasks for a better automated browser support.
-- **Build JavaScript** apps with dependencies in sequence you need, everything minimized in one file.
-- **Build Twig templates** to HTML pages with *browser sync* ready to be tested.
+
+### Build CSS
+- **Build SASS or LESS** with multiple themes
+- Dynamic tasks with **selective YAML configuration** for every theme
+- **CSSlint** tests
+- **StyleStats** reports
+- **Autoprefixer** for automated multiple browser support
+- CSS vendors and assets already optimized for production environments
+- Everything **minimized** in one file and with **map** support.
+
+### Build JavaScript
+- Apps with dependencies in sequence you need
+- Everything **minimized** in one file and with **map** support.
+
+
+### Build HTML
+- **Build Twig templates** to HTML pages
+- **browserSync** ready to be tested on multiple devices.
 - **Watch files** automation tasks listeners to update your build automatically.
 
 ---
