@@ -7,6 +7,14 @@ d u s t m a n
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
 [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
 
+---
+
+##### Release details
+
+- Big refactoring to make everything easier to maintain
+
+---
+
 **Gulp + YAML config** based front-end automation boilerplate
 
 ---
@@ -46,12 +54,6 @@ At the moment Dustman is based on **[Gulp 4][gulp] which is in alpha release sta
 
 - Because it has a **superior task concatenation** system compared to the previous major release.
 - Because the watcher and the build system are **faster**.
-
----
-
-##### Release details
-
-- Add shell command series which can be added before and after the build tasks
 
 ---
 
