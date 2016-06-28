@@ -113,9 +113,9 @@ In the `dustman.yml` config, you can use one or all of these tasks `css`, `js` o
 
 ```yaml
 tasks:
-  - css:build
-  - js:build
-  - html:build
+  - css
+  - js
+  - html
 ```
 
 # Shell commands
