@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  0.7.34
+  1.0.0
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto

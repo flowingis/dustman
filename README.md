@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-0.7.34-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.0.0-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 4.2.2](http://img.shields.io/:nodejs-4.1.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -13,36 +13,39 @@ d u s t m a n
 
 Dustman is basically a set of Gulp tasks ready to be used as a build system which helps you to:
 
-
 ### Build CSS
-- **Build SASS or LESS** with multiple themes
-- Dynamic tasks with **selective YAML configuration** for every theme
-- **CSSlint** tests
-- **StyleStats** reports
-- **Autoprefixer** for automated multiple browser support
-- CSS vendors and assets already optimized for production environments
+- **Build [SASS][sass] or [LESS][less]** autodetected with multiple themes.
+- Dynamic tasks with **selective [YAML][yaml] configuration** for every theme.
+- **[CSSlint][csslint]** tests.
+- **[StyleStats][stylestats]** reports.
+- **[Autoprefixer][autoprefixer]** for automated multiple browser support.
+- CSS vendors and assets already optimized for production environments.
 - Everything **minimized** in one file and with **map** support.
 
 ### Build JavaScript
-- Apps with dependencies in sequence you need
+- Apps with dependencies in sequence you need.
 - Everything **minimized** in one file and with **map** support.
 
 
 ### Build HTML
-- **Build Twig templates** to HTML pages
-- **browserSync** ready to be tested on multiple devices.
+- **Build [Twig][twig] templates** to HTML pages.
+- **[BrowserSync][browsersync]** ready to be tested on multiple devices.
+- **[Faker][faker]** ready to be used to add fake contents easily.
+
+### Watch and Serve with HTTP server
 - **Watch files** automation tasks listeners to update your build automatically.
+- **BrowserSync** support to check CSS, JavaScript and HTML coded.
 
 ---
 
 ##### Gulp 4 alpha
 
-At the moment Dustman is based on **Gulp 4 which is in alpha release status** so use it on your own risk! I didn't noticed any problems, but I didn't tested it in many environments.
+At the moment Dustman is based on **[Gulp 4][gulp] which is in alpha release status** so use it on your own risk! I didn't noticed any problems, but I didn't tested it in many environments.
 
 ##### Why Gulp 4?
 
 - Because it has a **superior task concatenation** system compared to the previous major release.
-- Because the watcher and the build system are **dramatically faster**.
+- Because the watcher and the build system are **faster**.
 
 ---
 
@@ -78,7 +81,7 @@ All tasks can run locally with `./node_modules/.bin/gulp taskname` in the tasks 
 $ ./node_modules/.bin/gulp --config another-config.yml --silent
 ```
 
-Note: Tasks with `--silent` or `-S` flag will avoid Gulp task logs.
+Note: Tasks with `--silent` or `-S` flag will stop firing Gulp task logs, but **you can miss errors not checked by dustman**.
 
 ---
 
@@ -104,7 +107,7 @@ $ gulp http
 
 # Sub tasks
 
-In the `dustman.yml` config, you can use one or all of these tasks `css:build`, `js:build` or `html:build` to make the build as you need.
+In the `dustman.yml` config, you can use one or all of these tasks `css`, `js` or `html` to make the build as you need.
 
 ```yaml
 tasks:
@@ -133,22 +136,22 @@ shell:
 ```bash
 ──┬ default
   └─┬─┬ shell:before
-    ├─┬ css:build
-    ├── js:build
-    ├─┬ html:build
+    ├─┬ css
+    ├── js
+    ├─┬ html
     └─┬ shell:after
 ──┬ http
   └─┬─┬ shell:before
-    ├─┬ css:build
-    ├── js:build
-    ├─┬ html:build
+    ├─┬ css
+    ├── js
+    ├─┬ html
     ├─┬ shell:after
     └── watch:http
 ──┬ watch
   └─┬─┬ shell:before
-    ├─┬ css:build
-    ├── js:build
-    ├─┬ html:build
+    ├─┬ css
+    ├── js
+    ├─┬ html
     └─┬ shell:after
 ```
 
@@ -160,9 +163,9 @@ shell:
 ---
 
 tasks:
-  - css:build
-  - js:build
-  - html:build
+  - css
+  - js
+  - html
 
 config:
   autoprefixer:
@@ -177,11 +180,11 @@ config:
     locale: it
   twig:
     cache: false
+  verbose: 3
 
 css:
   file: themes-with-vendors.min.css
   watch: my/sass/files/**/*.scss
-  verbose: 3
   themes:
     -
       name: theme-one
@@ -315,6 +318,8 @@ Config parameters with links comes from related plug-in configurations
 
 #### Shell
 
+Shell node module doesn't seems to support every command
+
 | Parameter      | Example value       | Type     | Description              |
 | -------------- | ------------------- | -------- | -----------------------  |
 | `shell`        | *mixed*             | *Object* | It contains shell tasks options |
@@ -323,11 +328,11 @@ Config parameters with links comes from related plug-in configurations
 
 #### Tasks
 
-| Parameter            | Example value        | Type      | Description                     |
-| -------------------- | -------------------- | --------- | ------------------------------- |
-| `tasks` | *-css:build* | *Array*  | It contains the sub tasks pipeline build sequence |
+| Parameter            | Example value | Type      | Description                     |
+| -------------------- | ------------- | --------- | ------------------------------- |
+| `tasks` | *-css*        | *Array*  | It contains the sub tasks pipeline build sequence |
 
-You can add `css:build`, `js:build` and `html:build`
+You can add `css`, `js` and `html`
 
 #### Twig
 
@@ -357,3 +362,13 @@ Dustman is coded with love by [vitto][vitto] @ [ideato][ideato]
 [node]: https://www.npmjs.com/package/dustman
 [vitto]: https://github.com/vitto
 [ideato]: http://www.ideato.it
+[sass]: http://sass-lang.com/
+[less]: http://lesscss.org/
+[yaml]: http://yaml.org/
+[csslint]: https://github.com/CSSLint/csslint
+[stylestats]: https://github.com/t32k/stylestats
+[autoprefixer]: https://github.com/postcss/autoprefixer
+[twig]: http://twig.sensiolabs.org/
+[browsersync]: https://www.browsersync.io/
+[faker]: https://github.com/marak/Faker.js/
+[gulp]: http://gulpjs.com/
