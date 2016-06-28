@@ -593,6 +593,7 @@ task.shell = (function(){
     var taskName = task.core.action(name, 'after-' + index);
     pipeline.after.push(taskName);
     gulp.task(taskName, function(done){
+      message.verbose('Shell', taskConfig.after[index]);
       exec(taskConfig.after[index], function (err) {
         done(err);
       });
@@ -623,6 +624,7 @@ task.shell = (function(){
     var taskName = task.core.action(name, 'before-' + index);
     pipeline.before.push(taskName);
     gulp.task(taskName, function(done){
+      message.verbose('Shell', taskConfig.before[index]);
       exec(taskConfig.before[index], function (err) {
         done(err);
       });
@@ -748,11 +750,15 @@ task.css = (function(){
 
   var fonts = function(theme) {
     if (theme.fonts) {
+      if (!task.core.fileExists(theme.fonts)) {
+        message.verbose('Checking ' + theme.name + ' fonts', theme.fonts);
+        task.core.fileCheck(theme.fonts);
+      }
       var taskName = task.core.action(name, theme.name + '-fonts');
       var target = paths.fonts + theme.name;
       gulp.task(taskName, function () {
         message.verbose('Copy theme fonts to', target);
-        return gulp.src(paths.fonts)
+        return gulp.src(theme.fonts)
           .pipe(gulp.dest(target));
       });
       return [taskName];
@@ -762,11 +768,15 @@ task.css = (function(){
 
   var images = function(theme) {
     if (theme.images) {
+      if (!task.core.fileExists(theme.images)) {
+        message.verbose('Checking ' + theme.name + ' images', theme.images);
+        task.core.fileCheck(theme.images);
+      }
       var taskName = task.core.action(name, theme.name + '-images');
       var target = paths.images + theme.name;
       gulp.task(taskName, function () {
         message.verbose('Copy theme images to', target);
-        return gulp.src(paths.images)
+        return gulp.src(theme.images)
           .pipe(gulp.dest(target));
       });
       return [taskName];

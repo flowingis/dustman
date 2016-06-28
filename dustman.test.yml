@@ -22,8 +22,8 @@ css:
       compile: test/examples/sass/theme-one/import.scss
       csslint: false
       file: frontsize.theme-one.css
-      fonts: test/examples/sass/themes/default/img/**/*.*
-      images: test/examples/sass/themes/default/img/**/*.*
+      fonts: test/examples/sass/theme-one/fonts/**/*.*
+      images: test/examples/sass/theme-one/images/**/*.*
       merge: true
       name: theme-one
       path: test/results/css/custom/
@@ -70,9 +70,9 @@ paths:
   server: test/results/
 
 tasks:
-  - css:build
-  - js:build
-  - html:build
+  - css
+  - js
+  - html
 
 twig:
   files:
@@ -81,10 +81,9 @@ twig:
 
 shell:
   before:
-    - pwd
-    - echo "before build task command 02"
+    - rm test/results/test-file || true
   after:
-    - echo "after build task command"
+    - touch test/results/test-file
 
 vendors:
   css:
