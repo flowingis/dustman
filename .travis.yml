@@ -9,7 +9,7 @@ before_install:
 
 before_script:
   - npm install
-  - cd test/examples && bower install && cd ../
+  - cd test/examples && bower install
 
 script:
   - gulp
