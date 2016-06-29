@@ -77,12 +77,12 @@ twig:
     - test/examples/twig/index.twig
   watch: test/examples/twig/**/*.twig
 
-shell:
-  before:
-    - echo "before build task command 01"
-    - echo "before build task command 02"
-  after:
-    - echo "after build task command"
+# shell:
+#   before:
+#     - echo "before build task command 01"
+#     - echo "before build task command 02"
+#   after:
+#     - echo "after build task command"
 
 vendors:
   css:

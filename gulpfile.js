@@ -554,6 +554,9 @@ task.vendors = (function(){
 
   return {
     get: function(){
+      if (!config.hasTask(name)) {
+        return pipeline;
+      }
       init();
       pipeline.middle = pipeline.middle.concat(fonts());
       pipeline.middle = pipeline.middle.concat(images());
@@ -642,10 +645,13 @@ task.shell = (function(){
 
   return {
     get: function(){
+      if (!config.hasTask(name)) {
+        return pipeline;
+      }
       init();
       before();
       after();
-      return pipeline.before.length > 1 || pipeline.after.length > 1 ? pipeline : false;
+      return pipeline;
     }
   };
 })();
