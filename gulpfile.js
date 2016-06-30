@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.0.1
+  1.0.2
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -194,16 +194,19 @@ var message = (function(){
       'Hey, something\'s happened to %file%, this is a work for DUSTMAN...',
       'Dear %file%, do you really though I wouldn\'t noticed you? Hahaha!',
       'Aha! %file%! You are under build!',
+      'We change every day, just as you, %file%'
     ],
     unlink: [
       'We have lost %file%, this is a work for DUSTMAN...',
       'Oh my god... %file%... Nooooo!',
       'Another good %file% gone... I will avange you...',
+      'Good bye %file%. I will clean your past without pain.'
     ],
     wait: [
       'Waiting silently if something changes, is unlinked or added',
       'Dustman is watching them',
-      'The dust is never clear totally, waiting for changes'
+      'The dust is never clear totally, waiting for changes',
+      'I will seek and clean. Again, and again'
     ]
   };
 
@@ -804,7 +807,10 @@ task.css = (function(){
         .pipe(sourcemaps.init())
         .pipe(
           theme.compile.indexOf('.scss') !== -1 ?
-            sass({ outputStyle: 'expanded' }).on('error', sass.logError)
+            sass({ outputStyle: 'expanded' }).on('error', function(err){
+              console.log(err);
+              message.error('Checkout SASS error before this message');
+            })
           :
             less()
           )
@@ -1103,6 +1109,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.0.1');
+message.verbose('Version', '1.0.2');
 message.verbose('Config loaded', config.file());
 tasks.init();
