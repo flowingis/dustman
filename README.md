@@ -12,6 +12,7 @@ d u s t m a n
 ##### Release details
 
 - Add SASS compile error with exit process
+- Check wrong file path from config for JS and Twig
 
 ---
 

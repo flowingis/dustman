@@ -697,6 +697,7 @@ task.html = (function(){
         };
         for (var i = 0; i < twigPages.files.length; i += 1) {
           message.verbose('Twig view', twigPages.files[i]);
+          task.core.fileCheck(twigPages.files[i]);
         }
         message.verbose('All Twig files converted in', paths.server);
         return gulp.src(twigPages.files)
@@ -808,7 +809,7 @@ task.css = (function(){
         .pipe(
           theme.compile.indexOf('.scss') !== -1 ?
             sass({ outputStyle: 'expanded' }).on('error', function(err){
-              console.log(err);
+              console.log(err.formatted);
               message.error('Checkout SASS error before this message');
             })
           :
@@ -1065,21 +1066,11 @@ task.js = (function(){
 
   var build = function(){
     if (config.if(name)) {
-      gulp.task(name, function (done) {
+      gulp.task(name, function () {
         message.task('Merging JavaScript files');
-        var notFoundLength = 0;
         for (var i = 0; i < js.files.length; i += 1) {
-          if (task.core.fileExists(js.files[i])) {
-            message.verbose('JavaScript file', js.files[i]);
-          } else {
-            notFoundLength += 1;
-            message.warning('JavaScript file ' + js.files[i] + ' NOT found');
-          }
-        }
-        if (notFoundLength === js.files.length) {
-          message.error('None of the JavaScript files where found, check your "js.files" propery in your configuration file');
-          done();
-          return;
+          message.verbose('JavaScript file', js.files[i]);
+          task.core.fileCheck(js.files[i]);
         }
         message.verbose('JavaScript files merged to', paths.js + js.file);
         return gulp.src(js.files)
