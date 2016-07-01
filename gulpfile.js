@@ -210,8 +210,7 @@ var config = (function(){
       fs.accessSync(configFile, fs.F_OK);
       return true;
     } catch (e) {
-      console.log(colour.red('Error: config file ') + colour.yellow(configFile) + colour.red(' NOT found'));
-      process.exit();
+      message.error('config file configFile NOT found');
     }
   };
 
@@ -231,7 +230,7 @@ var config = (function(){
     var loadedConfig = false;
     for (var i = 0; i < process.argv.length; i += 1) {
       if (process.argv[i] === '--silent') {
-        message.warning('You\'ve set ' + colour.white('--silent') + ' or ' + colour.white('--S') + ' flag to che gulp process, this could hide some errors not handled by Dustman');
+        message.warning('You\'ve set --silent or --S flag to che gulp process, this could hide some errors not handled by Dustman');
       }
       if (process.argv[i] === '--config' && process.argv[i + 1] !== undefined) {
         configFile = process.argv[i + 1];
