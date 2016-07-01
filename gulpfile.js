@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.0.5
+  1.0.6
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -914,10 +914,10 @@ task.css = (function(){
 
     theme = themeTasks.themes[index];
 
-    themePipeline = themePipeline.concat(fonts(theme));
-    themePipeline = themePipeline.concat(images(theme));
     themePipeline = themePipeline.concat(css(theme, index, totalThemes));
     themePipeline = themePipeline.concat(getAutoprefixer(theme));
+    themePipeline = themePipeline.concat(fonts(theme));
+    themePipeline = themePipeline.concat(images(theme));
     themePipeline = themePipeline.concat(getStylestats(theme));
     themeBuilds = themeBuilds.concat(themeBuild(theme, themePipeline));
   };
@@ -1100,6 +1100,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.0.5');
+message.verbose('Version', '1.0.6');
 message.verbose('Config loaded', config.file());
 tasks.init();
