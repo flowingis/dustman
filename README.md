@@ -115,13 +115,13 @@ $ gulp http
 
 # Sub tasks
 
-In the `dustman.yml` config, you can use one or all of these tasks `css`, `js` or `html` to make the build as you need.
+In the `dustman.yml` config, you can select the tasks (`css`, `js` or `html`) to be used to choose what will be built.
 
 ```yaml
 tasks:
   - css
   - js
-  - html
+#  - html # skip HTML tasks
 ```
 
 # Shell commands
