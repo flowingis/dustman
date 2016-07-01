@@ -1,6 +1,6 @@
 {
   "name": "dustman",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A Gulp based front-end automation boilerplate that helps you to keep your builds clean",
   "authors": [
     {
@@ -52,7 +52,7 @@
     "gulp-symlink": "^2.1.2",
     "gulp-twig": "^0.5.0",
     "gulp-uglify": "^1.5.3",
-    "gulp-uglifycss": "^1.0.6",
+    "gulp-uglifycss": "^1.0.7",
     "js-yaml": "^3.6.0",
     "merge": "^1.2.0",
     "mkpath": "^0.1.0",

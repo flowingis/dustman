@@ -5,8 +5,8 @@ var pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
 buildify()
   .concat([
-    'lib/config.js',
     'lib/message.js',
+    'lib/config.js',
     'lib/task-core.js',
     'lib/tasks.js',
     'lib/task/timer.js',
