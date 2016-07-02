@@ -168,88 +168,97 @@ shell:
 ---
 
 tasks:
-  - css
-  - js
-  - html
+  - css  # optional [skipped]
+  - js   # optional [skipped]
+  - html # optional [skipped]
 
 config:
-  autoprefixer:
+  autoprefixer: # optional [defaults]
     browsers:
       - last 3 versions
-  csslint: csslintrc.json
-  stylestats: .stylestatsrc
-  prettify:
+  csslint: csslintrc.json # optional [defaults]
+  stylestats: .stylestatsrc # optional [defaults]
+  prettify: # optional [defaults]
     indent_char: ' '
     indent_size: 2
-  faker:
+  faker: # optional [defaults]
     locale: it
-  twig:
+  twig: # optional [defaults]
     cache: false
-  verbose: 3
+  verbose: 3 # optional [3]
 
-css:
+css: # optional [required by sub task css if used]
   file: themes-with-vendors.min.css
   watch: my/sass/files/**/*.scss
   themes:
     -
-      name: theme-one
+      name: theme-one # optional [theme-0]
       file: theme-one.css
       compile: my/sass/files/theme-one/import.scss
-      images: my/sass/files/themes/default/img/**/*.*
-      fonts: my/sass/files/themes/default/img/**/*.*
-      csslint: true
-      stylestats: true
-      autoprefixer: true
+      images: my/sass/files/themes/default/img/**/*.* # optional [skipped]
+      fonts: my/sass/files/themes/default/img/**/*.* # optional [skipped]
+      csslint: true # optional [false]
+      path: my/sass/path/ # optional [inherit path.css]
+      stylestats: true # optional [false]
+      autoprefixer: true # optional [false]
     -
-      name: theme-two
+      name: theme-two # optional [theme-1]
       file: theme-two.css
       compile: my/sass/files/theme-two/import.scss
-      csslint: false
-      stylestats: false
-      autoprefixer: false
-
-js:
-  file: app-with-vendors.min.js
-  watch: my/js/files/**/*.js
-  files:
-    - vendor/angular/angular.js
-    - vendor/angular-animate/angular-animate.js
-    - vendor/angular-bootstrap/ui-bootstrap-tpls.js
-    - vendor/angular-bootstrap/ui-bootstrap.js
-    - vendor/Chart.js/Chart.js
-    - vendor/angular-chart.js/dist/angular-chart.js
-    - vendor/angular-cookies/angular-cookies.js
-    - vendor/angular-dynamic-locale/dist/tmhDynamicLocale.js
-    - vendor/angular-flash/angular-flash.js
-    - vendor/angular-route/angular-route.js
-    - my/js/files/*
-
-shell:
-  before:
-    - echo before build task command 01
-    - echo before build task command 02
-  after:
-    - echo after build task command
-
-vendors:
-  css:
+      csslint: false # optional [false]
+      stylestats: false # optional [false]
+      autoprefixer: false # optional [false]
+  vendors:
     file: vendors.min.css
+    merge: true  # optional [true]
+    path: custom/path/ # optional [inherit path.css]
     files:
       - vendor/angular/angular-csp.css
       - vendor/angular-bootstrap/ui-bootstrap-csp.css
       - vendor/font-awesome/css/font-awesome.css
       - vendor/angular-chart.js/dist/angular-chart.css
-  fonts:
+
+js: # optional [required by sub task js if used]
+  file: app-with-vendors.min.js
+  watch: my/js/files/**/*.js
+  merge: true # optional [true]
+  files:
+    - my/js/files/*
+  vendors: # optional
+    file: vendors.min.js
+    path: custom/path/ # optional [inherit path.js]
+    merge: true # optional [true]
+    files:
+      - vendor/angular/angular.js
+      - vendor/angular-animate/angular-animate.js
+      - vendor/angular-bootstrap/ui-bootstrap-tpls.js
+      - vendor/angular-bootstrap/ui-bootstrap.js
+      - vendor/Chart.js/Chart.js
+      - vendor/angular-chart.js/dist/angular-chart.js
+      - vendor/angular-cookies/angular-cookies.js
+      - vendor/angular-dynamic-locale/dist/tmhDynamicLocale.js
+      - vendor/angular-flash/angular-flash.js
+      - vendor/angular-route/angular-route.js
+
+shell: # optional [skipped]
+  before: # optional [skipped]
+    - echo before build task command 01
+    - echo before build task command 02
+  after: # optional [skipped]
+    - echo after build task command
+
+vendors: # optional [skipped]
+  fonts: # optional [skipped]
     - vendor/font-awesome/fonts/fontawesome-webfont.eot
     - vendor/font-awesome/fonts/fontawesome-webfont.svg
     - vendor/font-awesome/fonts/fontawesome-webfont.ttf
     - vendor/font-awesome/fonts/fontawesome-webfont.woff
     - vendor/font-awesome/fonts/fontawesome-webfont.woff2
     - vendor/font-awesome/fonts/FontAwesome.otf
-  images:
+  images: # optional [skipped]
     - vendor/font-awesome/fonts/fontawesome-webfont.svg
 
-twig:
+twig: # optional [required by sub task html if used]
   watch: test/examples/twig/**/*.twig
   files:
     - test/examples/twig/index.twig
@@ -299,6 +308,11 @@ Config parameters with links comes from related plug-in configurations
 | `css.themes[].name`  | *theme-name*  | *String* | The name will be listed in the build logs, based on `config.verbose` |
 | `css.themes[].path` | *path/to/css/* | *String* | If this theme should be built in a specific folder |
 | `css.themes[].stylestats` | *true* | *Boolean* | If this theme is passed to stylestats report |
+| `css.vendors`        | *mixed*              | *Object*  | It contains CSS vendors options |
+| `css.vendors.file`   | *vendors.min.css*    | *String*  | The name of the merged and minified vendors CSS |
+| `css.vendors.merge`  | *true*               | *Boolean* | If vendors will be merged into the final CSS file |
+| `css.vendors.files`  | *-vendors/file.css*  | *Array*   | Files listed for the merged CSS vendors build |
+
 | `css.watch` | *path/\*\*/\*.js*    | *String*  | Files watched from the main task watcher |
 
 #### JavaScript
@@ -309,6 +323,10 @@ Config parameters with links comes from related plug-in configurations
 | `js.file`            | *dustman.min.js*     | *String*  | The name of the merged and minified JavaScript |
 | `js.watch`           | *path/\*\*/\*.js*    | *String*  | Files watched from the main task watcher |
 | `js.files`           | *-path/file.js*      | *Array*   | Files listed for the JavaScript build, it can also be a conatiner path like ´-path/app/*´ |
+| `js.vendors`        | *mixed*              | *Object*  | It contains CSS vendors options |
+| `js.vendors.file`   | *vendors.min.js*     | *String*  | The name of the merged and minified vendors JS |
+| `js.vendors.merge`  | *true*               | *Boolean* | If vendors will be merged into the final JS file |
+| `js.vendors.files`  | *-vendors/file.css*  | *Array*   | Files listed for the merged JS vendors build |
 
 #### Paths
 
@@ -352,10 +370,6 @@ You can add `css`, `js` and `html`
 | Parameter            | Example value        | Type      | Description                     |
 | -------------------- | -------------------- | --------- | ------------------------------- |
 | `vendors`            | *mixed*              | *Object*  | It contains vendors options     |
-| `vendors.css`        | *mixed*              | *Object*  | It contains CSS vendors options |
-| `vendors.css.file`   | *vendors.min.css*    | *String*  | The name of the merged and minified vendors CSS |
-| `vendors.css.merge`  | *true*               | *Boolean* | If vendors will be merged into the final CSS file |
-| `vendors.css.files`  | *-vendors/file.css*  | *Array*   | Files listed for the merged CSS vendors build |
 | `vendors.fonts`      | *-vendors/font.ttf*  | *Array*   | Files listed to be moved on fonts production folder |
 | `vendors.images`     | *-vendors/image.svg* | *Array*   | Files listed to be moved on images production folder |
 
