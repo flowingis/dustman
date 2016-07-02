@@ -12,7 +12,7 @@ config:
   stylestats: .stylestatsrc
   twig:
     cache: false
-  verbose: 2
+  verbose: 1
 
 css:
   file: dustman.frontsize.min.css

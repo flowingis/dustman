@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.1.8
+  1.1.10
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -130,7 +130,7 @@ var message = (function(){
       log(2, colour.speak(message));
     },
     success: function(message) {
-      log(2, colour.success(message.trim()));
+      log(1, colour.success(message.trim()));
     },
     task: function(message) {
       log(3, '');
@@ -1182,6 +1182,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.1.8');
+message.verbose('Version', '1.1.10');
 message.verbose('Config loaded', config.file());
 tasks.init();
