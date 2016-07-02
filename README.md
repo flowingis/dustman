@@ -188,12 +188,12 @@ config:
   verbose: 3 # optional [3]
 
 css: # optional [required by sub task css if used]
-  file: themes-with-vendors.min.css
-  watch: my/sass/files/**/*.scss
+  file: themes-with-vendors.min.css # optional [dustman.min.css]
+  watch: my/sass/files/**/*.scss # optional [./**/*.scss]
   themes:
     -
       name: theme-one # optional [theme-0]
-      file: theme-one.css
+      file: theme-one.css # optional [theme-0.css]
       compile: my/sass/files/theme-one/import.scss
       images: my/sass/files/themes/default/img/**/*.* # optional [skipped]
       fonts: my/sass/files/themes/default/img/**/*.* # optional [skipped]
@@ -203,7 +203,7 @@ css: # optional [required by sub task css if used]
       autoprefixer: true # optional [false]
     -
       name: theme-two # optional [theme-1]
-      file: theme-two.css
+      file: theme-two.css # optional [theme-1.css]
       compile: my/sass/files/theme-two/import.scss
       csslint: false # optional [false]
       stylestats: false # optional [false]
@@ -219,8 +219,8 @@ css: # optional [required by sub task css if used]
       - vendor/angular-chart.js/dist/angular-chart.css
 
 js: # optional [required by sub task js if used]
-  file: app-with-vendors.min.js
-  watch: my/js/files/**/*.js
+  file: app-with-vendors.min.js # optional [dustman.min.js]
+  watch: my/js/files/**/*.js # optional [./**/*.js]
   merge: true # optional [true]
   files:
     - my/js/files/*
