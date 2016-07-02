@@ -33,13 +33,13 @@ var gulp = require('gulp');
 var message = (function(){
   var colour = require('colour');
   colour.setTheme({
-    tip: 'white',
     error: 'red bold',
     event: 'magenta',
     intro: 'rainbow',
     speak: 'white',
     success: 'green',
     task: 'white',
+    tip: 'yellow',
     verbose: 'blue',
     warning: 'yellow bold'
   });
@@ -102,7 +102,7 @@ var message = (function(){
 
   return {
     tip: function(message) {
-      log(3, colour.tip('Tip: ') + message.trim());
+      log(2, colour.tip('Notice: ') + message.trim());
     },
     intro: function() {
       console.log('');
@@ -945,7 +945,7 @@ task.css = (function(){
       var taskName = task.core.action(name, 'vendors');
       gulp.task(taskName, function (done) {
         if (vendorsBuilt) {
-          message.tip('Vendors CSS already built, if you need to update them, re-run the task');
+          message.tip('Skipping vendors CSS build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
           vendorsBuilt = true;
@@ -1006,7 +1006,7 @@ task.css = (function(){
       var taskName = task.core.action(name, 'merge');
       gulp.task(taskName, function(done){
         var themes = [];
-        message.task('Checking CSS files to merge');
+        message.task('Merging CSS vendors with your CSS files');
 
         themes = themes.concat(getVendorsToMerge());
         themes = themes.concat(getThemesToMerge());
@@ -1087,7 +1087,7 @@ task.js = (function(){
       var taskName = task.core.action(name, 'vendors');
       gulp.task(taskName, function (done) {
         if (vendorsBuilt) {
-          message.tip('JavaScript vendors already built, if you need to update them, re-run the task');
+          message.tip('Skipping vendors JavaScript build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
           vendorsBuilt = true;
@@ -1113,7 +1113,7 @@ task.js = (function(){
       var taskName = task.core.action(name, 'merge');
       gulp.task(taskName, function(done){
         var files = [];
-        message.task('Merging JavaScript vendors with your files');
+        message.task('Merging JavaScript vendors with your JavaScript files');
 
         files.push(vendorsConfig.path + vendorsConfig.file);
         files.push(paths.js + jsConfig.file.replace('.min.js', '.no-vendors.min.js'));
