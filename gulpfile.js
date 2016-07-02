@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.0.7
+  1.1.8
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -33,7 +33,7 @@ var gulp = require('gulp');
 var message = (function(){
   var colour = require('colour');
   colour.setTheme({
-    annoy: 'grey',
+    tip: 'white',
     error: 'red bold',
     event: 'magenta',
     intro: 'rainbow',
@@ -101,8 +101,8 @@ var message = (function(){
   };
 
   return {
-    annoy: function(message) {
-      log(4, colour.annoy(message.trim()));
+    tip: function(message) {
+      log(3, colour.tip('Tip: ') + message.trim());
     },
     intro: function() {
       console.log('');
@@ -743,6 +743,7 @@ task.css = (function(){
 
   var name = 'css';
   var paths = {};
+  var cssConfig = {};
   var tasksConfig = {};
   var themeTasks = [];
   var themeBuilds = [];
@@ -754,12 +755,18 @@ task.css = (function(){
     after: []
   };
 
+  var checkConfig = function(config, prop, defaults) {
+    return task.core.has(config, prop) ? config[prop] : defaults;
+  };
+
   var init = function() {
     pipeline.middle.push(name);
     paths = config.get('paths');
-    themeTasks = config.if('css') ? config.get('css') : [];
+    cssConfig = config.if('css') ? config.get('css') : {};
+    themeTasks = checkConfig(cssConfig, 'themes', []);
     tasksConfig = config.if('config') ? config.get('config') : {};
-    vendorsConfig = config.if('vendors') ? config.get('vendors') : {};
+    vendorsConfig = checkConfig(cssConfig, 'vendors', {});
+    vendorsConfig = merge.recursive(true, { path: paths.css, merge: true }, vendorsConfig);
   };
 
   var fonts = function(theme) {
@@ -904,19 +911,19 @@ task.css = (function(){
       stylestats: false
     };
 
-    themeTasks.themes[index] = merge.recursive(true, defaults, theme);
+    themeTasks[index] = merge.recursive(true, defaults, theme);
 
-    if (!themeTasks.themes[index].path) {
-      themeTasks.themes[index].path = paths.css;
+    if (!themeTasks[index].path) {
+      themeTasks[index].path = paths.css;
     }
 
-    themeTasks.themes[index].path = config.pathClean(themeTasks.themes[index].path);
+    themeTasks[index].path = config.pathClean(themeTasks[index].path);
 
-    if (themeTasks.themes[index].compile === null) {
-      message.error(themeTasks.themes[index].name + ' "compile" attribute must be specified');
+    if (themeTasks[index].compile === null) {
+      message.error(themeTasks[index].name + ' "compile" attribute must be specified');
     }
 
-    theme = themeTasks.themes[index];
+    theme = themeTasks[index];
 
     themePipeline = themePipeline.concat(css(theme, index, totalThemes));
     themePipeline = themePipeline.concat(getAutoprefixer(theme));
@@ -927,31 +934,31 @@ task.css = (function(){
   };
 
   var themes = function() {
-    for (var i = 0; i < themeTasks.themes.length; i += 1) {
-      add(themeTasks.themes[i], i, themeTasks.themes.length);
+    for (var i = 0; i < themeTasks.length; i += 1) {
+      add(themeTasks[i], i, themeTasks.length);
     }
     return themeBuilds;
   };
 
   var vendors = function() {
-    if (task.core.has(vendorsConfig, 'css') && task.core.has(vendorsConfig.css, 'files')) {
+    if (task.core.has(vendorsConfig, 'files')) {
       var taskName = task.core.action(name, 'vendors');
       gulp.task(taskName, function (done) {
         if (vendorsBuilt) {
-          message.annoy('Vendors CSS already built, if you need to update them, re-run the task');
+          message.tip('Vendors CSS already built, if you need to update them, re-run the task');
           done();
         } else {
           vendorsBuilt = true;
           message.task('Merging CSS vendors');
-          for (var i = 0; i < vendorsConfig.css.files.length; i += 1) {
-            message.verbose('CSS vendor', vendorsConfig.css.files[i]);
-            task.core.fileCheck(vendorsConfig.css.files[i]);
+          for (var i = 0; i < vendorsConfig.files.length; i += 1) {
+            message.verbose('CSS vendor', vendorsConfig.files[i]);
+            task.core.fileCheck(vendorsConfig.files[i]);
           }
-          message.verbose('Vendor CSS files merged to', paths.css + vendorsConfig.css.file);
-          return gulp.src(vendorsConfig.css.files)
+          message.verbose('CSS vendor files merged to', vendorsConfig.path + vendorsConfig.file);
+          return gulp.src(vendorsConfig.files)
           .pipe(uglifyCss())
-          .pipe(concat(vendorsConfig.css.file))
-          .pipe(gulp.dest(paths.css));
+          .pipe(concat(vendorsConfig.file))
+          .pipe(gulp.dest(vendorsConfig.path));
         }
       });
       return [taskName];
@@ -961,8 +968,8 @@ task.css = (function(){
 
   var needsMerge = function() {
     var theme;
-    for (var i = 0; i < themeTasks.themes.length; i += 1) {
-      theme = merge.recursive(true, themeTasks.themes[i], { merge: true });
+    for (var i = 0; i < themeTasks.length; i += 1) {
+      theme = merge.recursive(true, themeTasks[i], { merge: true });
       if (theme.merge === true) {
         return true;
       }
@@ -971,18 +978,18 @@ task.css = (function(){
   };
 
   var getVendorsToMerge = function() {
-    if (vendorsConfig.css.merge) {
-      message.verbose('CSS vendors to merge', paths.css + vendorsConfig.css.file);
-      return [paths.css + vendorsConfig.css.file];
+    if (vendorsConfig.merge) {
+      message.verbose('CSS vendors to merge', vendorsConfig.path + vendorsConfig.file);
+      return [vendorsConfig.path + vendorsConfig.file];
     }
-    message.verbose('CSS vendors skipped from merge', paths.css + vendorsConfig.css.file);
+    message.verbose('CSS vendors skipped from merge', vendorsConfig.path + vendorsConfig.file);
     return [];
   };
 
   var getThemesToMerge = function() {
     var fileName, theme, themes = [];
-    for (var i = 0; i < themeTasks.themes.length; i += 1) {
-      theme = themeTasks.themes[i];
+    for (var i = 0; i < themeTasks.length; i += 1) {
+      theme = themeTasks[i];
       fileName = theme.autoprefixer ? autoprefixerRename(theme.file) : theme.file;
       if (theme.merge) {
         message.verbose('CSS theme to merge', theme.path + fileName);
@@ -1005,10 +1012,10 @@ task.css = (function(){
         themes = themes.concat(getThemesToMerge());
 
         if (themes.length > 0) {
-          message.verbose('All CSS files merged to', paths.css + themeTasks.file);
+          message.verbose('All CSS files merged to', paths.css + cssConfig.file);
           return gulp.src(themes)
             .pipe(uglifyCss())
-            .pipe(concat(themeTasks.file))
+            .pipe(concat(cssConfig.file))
             .pipe(gulp.dest(paths.css));
         } else {
           message.warning('No vendors or themes will be merged');
@@ -1048,13 +1055,15 @@ var task = task || {};
 task.js = (function(){
 
   var concat = require('gulp-concat');
+  var merge = require('merge');
   var sourcemaps = require('gulp-sourcemaps');
   var uglify = require('gulp-uglify');
 
   var name = 'js';
-  var js = {};
+  var jsConfig = {};
   var paths = {};
   var vendorsConfig = {};
+  var vendorsBuilt = false;
 
   var pipeline = {
     before:[],
@@ -1062,27 +1071,94 @@ task.js = (function(){
     after:[]
   };
 
+  var checkConfig = function(config, prop, defaults) {
+    return task.core.has(config, prop) ? config[prop] : defaults;
+  };
+
   var init = function() {
-    js = config.if(name) ? config.get(name) : [];
+    jsConfig = config.if(name) ? config.get(name) : [];
     paths = config.get('paths');
-    vendorsConfig = config.if('vendors') ? config.get('vendors') : {};
+    vendorsConfig = checkConfig(jsConfig, 'vendors', {});
+    vendorsConfig = merge.recursive(true, { path: paths.css, merge: true }, vendorsConfig);
+  };
+
+  var vendors = function() {
+    if (task.core.has(vendorsConfig, 'files')) {
+      var taskName = task.core.action(name, 'vendors');
+      gulp.task(taskName, function (done) {
+        if (vendorsBuilt) {
+          message.tip('JavaScript vendors already built, if you need to update them, re-run the task');
+          done();
+        } else {
+          vendorsBuilt = true;
+          message.task('Merging JavaScript vendors');
+          for (var i = 0; i < vendorsConfig.files.length; i += 1) {
+            message.verbose('JavaScript vendor', vendorsConfig.files[i]);
+            task.core.fileCheck(vendorsConfig.files[i]);
+          }
+          message.verbose('Vendors JavaScript files merged to', vendorsConfig.path + vendorsConfig.file);
+          return gulp.src(vendorsConfig.files)
+          .pipe(uglify())
+          .pipe(concat(vendorsConfig.file))
+          .pipe(gulp.dest(vendorsConfig.path));
+        }
+      });
+      return [taskName];
+    }
+    return [];
+  };
+
+  var mergeJs = function() {
+    if (vendorsConfig.merge) {
+      var taskName = task.core.action(name, 'merge');
+      gulp.task(taskName, function(done){
+        var files = [];
+        message.task('Merging JavaScript vendors with your files');
+
+        files.push(vendorsConfig.path + vendorsConfig.file);
+        files.push(paths.js + jsConfig.file.replace('.min.js', '.no-vendors.min.js'));
+
+        for (var i = 0; i < files.length; i += 1) {
+          message.verbose('JavaScript file', files[i]);
+          task.core.fileCheck(files[i]);
+        }
+
+        if (files.length > 0) {
+          message.verbose('All JavaScript files merged to', paths.js + jsConfig.file);
+          return gulp.src(files)
+            // .pipe(uglify())
+            .pipe(concat(jsConfig.file))
+            .pipe(gulp.dest(paths.js));
+        } else {
+          message.warning('No vendors or files will be merged');
+          done();
+        }
+      });
+      return [taskName];
+    }
+    return [];
   };
 
   var build = function(){
     if (config.if(name)) {
       gulp.task(name, function () {
         message.task('Merging JavaScript files');
-        for (var i = 0; i < js.files.length; i += 1) {
-          message.verbose('JavaScript file', js.files[i]);
-          task.core.fileCheck(js.files[i]);
+        for (var i = 0; i < jsConfig.files.length; i += 1) {
+          message.verbose('JavaScript file', jsConfig.files[i]);
+          task.core.fileCheck(jsConfig.files[i]);
         }
-        message.verbose('JavaScript files merged to', paths.js + js.file);
-        return gulp.src(js.files)
-          .pipe(sourcemaps.init())
-          .pipe(uglify())
-          .pipe(concat(js.file))
-          .pipe(sourcemaps.write('./'))
-          .pipe(gulp.dest(paths.js));
+        var file = jsConfig.file;
+        if (vendorsConfig.merge) {
+          file = file.replace('.min.js', '.no-vendors.min.js');
+        }
+        message.verbose('JavaScript files merged to', paths.js + file);
+
+        return gulp.src(jsConfig.files)
+        .pipe(sourcemaps.init())
+        // .pipe(uglify())
+        .pipe(concat(file))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(paths.js));
       });
       return [name];
     }
@@ -1095,7 +1171,9 @@ task.js = (function(){
         return pipeline;
       }
       init();
+      pipeline.middle = pipeline.middle.concat(vendors());
       pipeline.middle = pipeline.middle.concat(build());
+      pipeline.middle = pipeline.middle.concat(mergeJs());
       return pipeline;
     }
   };
@@ -1104,6 +1182,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.0.7');
+message.verbose('Version', '1.1.8');
 message.verbose('Config loaded', config.file());
 tasks.init();

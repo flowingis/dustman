@@ -16,6 +16,15 @@ config:
 
 css:
   file: dustman.frontsize.min.css
+  vendors:
+    file: vendors.min.css
+    path: test/results/css/vendors/
+    files:
+      - test/examples/vendor/angular/angular-csp.css
+      - test/examples/vendor/angular-bootstrap/ui-bootstrap-csp.css
+      - test/examples/vendor/font-awesome/css/font-awesome.css
+      - test/examples/vendor/angular-chart.js/dist/angular-chart.css
+    merge: true
   themes:
     -
       autoprefixer: true
@@ -47,21 +56,26 @@ css:
 js:
   file: dustman.min.js
   files:
-    - test/examples/vendor/angular/angular.js
-    - test/examples/vendor/angular-animate/angular-animate.js
-    - test/examples/vendor/angular-bootstrap/ui-bootstrap-tpls.js
-    - test/examples/vendor/angular-bootstrap/ui-bootstrap.js
-    - test/examples/vendor/Chart.js/Chart.js
-    - test/examples/vendor/angular-chart.js/dist/angular-chart.js
-    - test/examples/vendor/angular-cookies/angular-cookies.js
-    - test/examples/vendor/angular-dynamic-locale/dist/tmhDynamicLocale.js
-    - test/examples/vendor/angular-flash/angular-flash.js
-    - test/examples/vendor/angular-route/angular-route.js
     - test/examples/js/*
+  vendors:
+    file: vendors.min.js
+    files:
+      - test/examples/vendor/angular/angular.js
+      - test/examples/vendor/angular-animate/angular-animate.js
+      - test/examples/vendor/angular-bootstrap/ui-bootstrap-tpls.js
+      - test/examples/vendor/angular-bootstrap/ui-bootstrap.js
+      - test/examples/vendor/Chart.js/Chart.js
+      - test/examples/vendor/angular-chart.js/dist/angular-chart.js
+      - test/examples/vendor/angular-cookies/angular-cookies.js
+      - test/examples/vendor/angular-dynamic-locale/dist/tmhDynamicLocale.js
+      - test/examples/vendor/angular-flash/angular-flash.js
+      - test/examples/vendor/angular-route/angular-route.js
+    merge: true
+    path: test/results/js/custom/
   watch: test/examples/js/**/*.js
 
 paths:
-  css: test/results/csss
+  css: test/results/css
   fonts: test/results/fonts/
   images: test/results/img/
   js: test/results/js/
@@ -85,14 +99,6 @@ twig:
 #     - echo "after build task command"
 
 vendors:
-  css:
-    file: vendors.min.css
-    files:
-      - test/examples/vendor/angular/angular-csp.css
-      - test/examples/vendor/angular-bootstrap/ui-bootstrap-csp.css
-      - test/examples/vendor/font-awesome/css/font-awesome.css
-      - test/examples/vendor/angular-chart.js/dist/angular-chart.css
-    merge: true
   fonts:
     - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.eot
     - test/examples/vendor/font-awesome/fonts/fontawesome-webfont.svg
