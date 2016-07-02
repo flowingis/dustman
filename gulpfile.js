@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.1.12
+  1.1.13
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -36,10 +36,10 @@ var message = (function(){
     error: 'red bold',
     event: 'magenta',
     intro: 'rainbow',
+    notice: 'yellow',
     speak: 'white',
     success: 'green',
     task: 'white',
-    tip: 'yellow',
     verbose: 'blue',
     warning: 'yellow bold'
   });
@@ -101,9 +101,6 @@ var message = (function(){
   };
 
   return {
-    tip: function(message) {
-      log(2, colour.tip('Notice: ') + message.trim());
-    },
     intro: function() {
       console.log('');
       console.log(colour.intro('   D U S T M A N   '));
@@ -121,7 +118,7 @@ var message = (function(){
       event('wait');
     },
     notice: function(message) {
-      log(3, colour.verbose('Notice: ') + message.trim());
+      log(2, colour.notice('Notice: ') + message.trim());
     },
     setVerbosity: function(verbosity) {
       verbose = verbosity;
@@ -502,11 +499,11 @@ task.vendors = (function(){
   };
 
   var images = function() {
-    if (config.if('vendors') && task.core.has(vendorsConfig, 'images')) {
+    if (task.core.has(vendorsConfig, 'images')) {
       var taskName = task.core.action(name, 'images');
       gulp.task(taskName, function (done) {
         if (vendorsImagesBuilt) {
-          message.notice('Vendors Images already built, if you need to update them, re-run the watcher');
+          message.notice('Skipping vendors images build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
           vendorsImagesBuilt = true;
@@ -528,11 +525,11 @@ task.vendors = (function(){
   };
 
   var fonts = function(){
-    if (config.if('vendors') && task.core.has(vendorsConfig, 'fonts')) {
+    if (task.core.has(vendorsConfig, 'fonts')) {
       var taskName = task.core.action(name, 'fonts');
       gulp.task(taskName, function (done) {
         if (vendorsFontsBuilt) {
-          message.notice('Vendors Fonts already built, if you need to update them, re-run the watcher');
+          message.notice('Skipping vendors images build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
           vendorsFontsBuilt = true;
@@ -556,7 +553,7 @@ task.vendors = (function(){
 
   return {
     get: function(){
-      if (!config.hasTask(name)) {
+      if (!config.if('vendors')) {
         return pipeline;
       }
       init();
@@ -940,7 +937,7 @@ task.css = (function(){
       var taskName = task.core.action(name, 'vendors');
       gulp.task(taskName, function (done) {
         if (vendorsBuilt) {
-          message.tip('Skipping vendors CSS build to improve speed, if you need to update them just re-run the task');
+          message.notice('Skipping vendors CSS build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
           vendorsBuilt = true;
@@ -1082,7 +1079,7 @@ task.js = (function(){
       var taskName = task.core.action(name, 'vendors');
       gulp.task(taskName, function (done) {
         if (vendorsBuilt) {
-          message.tip('Skipping vendors JavaScript build to improve speed, if you need to update them just re-run the task');
+          message.notice('Skipping vendors JavaScript build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
           vendorsBuilt = true;
@@ -1177,6 +1174,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.1.12');
+message.verbose('Version', '1.1.13');
 message.verbose('Config loaded', config.file());
 tasks.init();
