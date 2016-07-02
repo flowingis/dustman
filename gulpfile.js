@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.1.10
+  1.1.12
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -197,12 +197,7 @@ var config = (function(){
       'css',
       'js',
       'html'
-    ],
-    vendors: {
-      css: {
-        merge: true
-      }
-    }
+    ]
   };
 
   var configFileExists = function(configFile) {
@@ -1079,7 +1074,7 @@ task.js = (function(){
     jsConfig = config.if(name) ? config.get(name) : [];
     paths = config.get('paths');
     vendorsConfig = checkConfig(jsConfig, 'vendors', {});
-    vendorsConfig = merge.recursive(true, { path: paths.css, merge: true }, vendorsConfig);
+    vendorsConfig = merge.recursive(true, { path: paths.js, merge: true }, vendorsConfig);
   };
 
   var vendors = function() {
@@ -1126,7 +1121,7 @@ task.js = (function(){
         if (files.length > 0) {
           message.verbose('All JavaScript files merged to', paths.js + jsConfig.file);
           return gulp.src(files)
-            // .pipe(uglify())
+            .pipe(uglify())
             .pipe(concat(jsConfig.file))
             .pipe(gulp.dest(paths.js));
         } else {
@@ -1155,7 +1150,7 @@ task.js = (function(){
 
         return gulp.src(jsConfig.files)
         .pipe(sourcemaps.init())
-        // .pipe(uglify())
+        .pipe(uglify())
         .pipe(concat(file))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(paths.js));
@@ -1182,6 +1177,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.1.10');
+message.verbose('Version', '1.1.12');
 message.verbose('Config loaded', config.file());
 tasks.init();
