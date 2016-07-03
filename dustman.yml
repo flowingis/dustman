@@ -13,6 +13,7 @@ config:
   twig:
     cache: false
   verbose: 3
+  verify: true
 
 css:
   file: dustman.frontsize.min.css
@@ -91,12 +92,11 @@ twig:
     - test/examples/twig/index.twig
   watch: test/examples/twig/**/*.twig
 
-# shell:
-#   before:
-#     - echo "before build task command 01"
-#     - echo "before build task command 02"
-#   after:
-#     - echo "after build task command"
+shell:
+  before:
+    - echo this is a shell message before build start
+  after:
+    - echo this is a shell message to the end of the build
 
 vendors:
   fonts:

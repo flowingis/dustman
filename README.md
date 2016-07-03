@@ -13,6 +13,8 @@ d u s t m a n
 
 | Type         | Description  |
 |--------------|--------------|
+| feature      | Now it's possible to verify files built to ensure everything work as expected |
+| fix          | Fix shell tasks not started properly |
 | optimization | If JS or CSS vendor files are removed they will be built again |
 | fix          | Fix wrong name notice log for fonts vendors |
 | fix          | Fix vendors assets always skipping from build |
