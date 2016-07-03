@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.1.14-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.1.15-e07c4b.svg)][node]
 [![TravisCI](https://api.travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -11,17 +11,20 @@ d u s t m a n
 
 ##### Release details
 
-- Change how CSS and JavaScript vendors are built
-- Critical build speed improvement, with vendors cached after first build
-- Task logs are more consistent
-- Fix missing minimized JavaScript files
-- Fix wrong default JavaScript path for vendors
-- Fix vendors assets always skipping from build
-- Fix wrong name notice log for fonts vendors
+| Version    | Type         | Description  |
+|-----------:|--------------|--------------|
+| `1.1.15`   | optimization | If JS or CSS vendor files are removed they will be built again |
+| `1.1.14`   | fix          | Fix wrong name notice log for fonts vendors |
+| `1.1.13`   | fix          | Fix vendors assets always skipping from build |
+| `1.1.12`   | fix          | Fix wrong default JavaScript path for vendors |
+| `1.1.12`   | fix          | Decommented missing minimized JavaScript files |
+| `1.1.10`   | optimization | Task logs are more consistent |
+| `1.1.7`    | optimization | Critical build speed improvement, with vendors cached after first build |
+| `1.1.7`    | change       | Change how CSS and JavaScript vendors are built |
 
 ---
 
-**Gulp + YAML config** based front-end automation boilerplate
+**Gulp + YAML config** based front-end **automation boilerplate**
 
 ---
 

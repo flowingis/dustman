@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.1.14
+  1.1.15
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -936,7 +936,7 @@ task.css = (function(){
     if (task.core.has(vendorsConfig, 'files')) {
       var taskName = task.core.action(name, 'vendors');
       gulp.task(taskName, function (done) {
-        if (vendorsBuilt) {
+        if (task.core.fileExists(vendorsConfig.path + vendorsConfig.file) && vendorsBuilt) {
           message.notice('Skipping vendors CSS build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
@@ -1078,7 +1078,7 @@ task.js = (function(){
     if (task.core.has(vendorsConfig, 'files')) {
       var taskName = task.core.action(name, 'vendors');
       gulp.task(taskName, function (done) {
-        if (vendorsBuilt) {
+        if (task.core.fileExists(vendorsConfig.path + vendorsConfig.file) && vendorsBuilt) {
           message.notice('Skipping vendors JavaScript build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
@@ -1174,6 +1174,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.1.14');
+message.verbose('Version', '1.1.15');
 message.verbose('Config loaded', config.file());
 tasks.init();
