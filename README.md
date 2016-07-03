@@ -382,6 +382,8 @@ You can add `css`, `js` and `html`
 
 ##### Release 1.1.X details
 
+| Type         | Description  |
+|--------------|--------------|
 | optimization | If JS or CSS vendor files are removed they will be built again |
 | fix          | Fix wrong name notice log for fonts vendors |
 | fix          | Fix vendors assets always skipping from build |
