@@ -9,20 +9,12 @@ d u s t m a n
 
 ---
 
-##### Release 1.1.X details
+##### Release 1.2.X details
 
 | Type         | Description  |
 |--------------|--------------|
 | feature      | Now it's possible to verify files built to ensure everything work as expected |
 | fix          | Fix shell tasks not started properly |
-| optimization | If JS or CSS vendor files are removed they will be built again |
-| fix          | Fix wrong name notice log for fonts vendors |
-| fix          | Fix vendors assets always skipping from build |
-| fix          | Fix wrong default JavaScript path for vendors |
-| fix          | Decommented missing minimized JavaScript files |
-| optimization | Task logs are more consistent |
-| optimization | Critical build speed improvement, with vendors cached after first build |
-| change       | Change how CSS and JavaScript vendors are built |
 
 ---
 
@@ -382,6 +374,20 @@ You can add `css`, `js` and `html`
 | `vendors.fonts`      | *-vendors/font.ttf*  | *Array*   | Files listed to be moved on fonts production folder |
 | `vendors.images`     | *-vendors/image.svg* | *Array*   | Files listed to be moved on images production folder |
 
+---
+
+# Previous release details
+
+##### Release 1.1.X details
+
+| optimization | If JS or CSS vendor files are removed they will be built again |
+| fix          | Fix wrong name notice log for fonts vendors |
+| fix          | Fix vendors assets always skipping from build |
+| fix          | Fix wrong default JavaScript path for vendors |
+| fix          | Decommented missing minimized JavaScript files |
+| optimization | Task logs are more consistent |
+| optimization | Critical build speed improvement, with vendors cached after first build |
+| change       | Change how CSS and JavaScript vendors are built |
 
 ---
 
