@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.1.13
+  1.1.14
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -529,7 +529,7 @@ task.vendors = (function(){
       var taskName = task.core.action(name, 'fonts');
       gulp.task(taskName, function (done) {
         if (vendorsFontsBuilt) {
-          message.notice('Skipping vendors images build to improve speed, if you need to update them just re-run the task');
+          message.notice('Skipping vendors fonts build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
           vendorsFontsBuilt = true;
@@ -1174,6 +1174,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.1.13');
+message.verbose('Version', '1.1.14');
 message.verbose('Config loaded', config.file());
 tasks.init();
