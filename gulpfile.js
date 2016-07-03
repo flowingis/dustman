@@ -10,25 +10,6 @@
 
 var gulp = require('gulp');
 
-    // autoprefixer = require('gulp-autoprefixer'),
-    // concat       = require('gulp-concat'),
-    // csslint      = require('gulp-csslint'),
-    // sass         = require('gulp-sass'),
-    // less         = require('gulp-less'),
-    // rename       = require('gulp-rename'),
-    // sourcemaps   = require('gulp-sourcemaps'),
-    // stylestats   = require('gulp-stylestats'),
-    // uglify       = require('gulp-uglify'),
-    // twig         = require('gulp-twig'),
-    // uglifyCss    = require('gulp-uglifycss'),
-    // prettify     = require('gulp-html-prettify'),
-    // moment       = require('moment'),
-    // sequence     = require('run-sequence'),
-    // exec         = require('child_process').exec,
-    // fs           = require('fs'),
-    // faker        = require('faker'),
-    // browserSync  = require('browser-sync');
-
 
 var message = (function(){
   var colour = require('colour');
@@ -407,64 +388,6 @@ var tasks = (function(){
     }));
   };
 
-  var getFilesToVerifyCSSVendors = function() {
-    var files = [];
-    if (task.core.has(cssConfig, 'vendors')) {
-      files.push(cssConfig.vendors.path + cssConfig.vendors.file);
-    }
-    return files;
-  };
-
-  var getFilesToVerifyCSS = function() {
-    var files, theme;
-    files = [];
-
-    if (task.core.has(cssConfig, 'themes')) {
-      for (var i = 0; i < cssConfig.themes.length; i += 1) {
-        theme = cssConfig.themes[i];
-        files.push(theme.path + theme.file);
-        if (theme.autoprefixer) {
-          files.push(theme.path + theme.file.replace('.css', '.autoprefixer.css'));
-        }
-      }
-    }
-
-    files.concat(getFilesToVerifyCSSVendors());
-    files.push(paths.css + cssConfig.file);
-
-    return files;
-  };
-
-  var getFilesToVerifyJSVendors = function(jsConfig) {
-    if (task.core.has(jsConfig, 'vendors')) {
-      return [jsConfig.vendors.path + jsConfig.vendors.file];
-    }
-    return [];
-  };
-
-  var getFilesToVerifyJS = function() {
-    var jsConfig, files;
-    files = [];
-    if (config.if('js')) {
-      jsConfig = config.get('js');
-      files = getFilesToVerifyJSVendors(jsConfig);
-      files.push(paths.js + jsConfig.file);
-    }
-    return files;
-  };
-
-  var getFilesToVerifyHTML = function() {
-    var htmlConfig, files;
-    files = [];
-    if (config.if('twig')) {
-      htmlConfig = config.get('twig');
-      for (var i = 0; i < htmlConfig.files.length; i += 1) {
-        files.push(paths.server + path.parse(htmlConfig.files[i]).name  + '.html');
-      }
-    }
-    return files;
-  };
-
   var verify = function() {
     var pipeline = {
       before: [],
@@ -474,9 +397,9 @@ var tasks = (function(){
     if (tasksConfig.verify) {
       var taskName = 'verify';
       gulp.task(taskName, function(done){
-        var files = getFilesToVerifyCSS();
-        files = files.concat(getFilesToVerifyJS());
-        files = files.concat(getFilesToVerifyHTML());
+        var files = task.css.verify();
+        files = files.concat(task.js.verify());
+        files = files.concat(task.html.verify());
         message.task('Verifying if all files were successfully created');
         for (var i = 0; i < files.length; i += 1) {
           message.verbose('File to check', files[i]);
@@ -746,6 +669,7 @@ var task = task || {};
 task.html = (function(){
 
   var faker = require('faker');
+  var path = require('path');
   var prettify = require('gulp-html-prettify');
   var twig = require('gulp-twig');
 
@@ -794,6 +718,18 @@ task.html = (function(){
     return [];
   };
 
+  var getFilesToVerifyHTML = function() {
+    var htmlConfig, files;
+    files = [];
+    if (config.if('twig')) {
+      htmlConfig = config.get('twig');
+      for (var i = 0; i < htmlConfig.files.length; i += 1) {
+        files.push(paths.server + path.parse(htmlConfig.files[i]).name  + '.html');
+      }
+    }
+    return files;
+  };
+
   return {
     get: function(){
       if (!config.hasTask(name)) {
@@ -802,6 +738,9 @@ task.html = (function(){
       init();
       pipeline.middle = pipeline.middle.concat(build());
       return pipeline;
+    },
+    verify: function() {
+      return getFilesToVerifyHTML();
     }
   };
 })();
@@ -845,6 +784,9 @@ task.css = (function(){
     tasksConfig = config.if('config') ? config.get('config') : {};
     vendorsConfig = checkConfig(cssConfig, 'vendors', {});
     vendorsConfig = merge.recursive(true, { path: paths.css, merge: true }, vendorsConfig);
+    if (!task.core.has(vendorsConfig, 'path')) {
+      vendorsConfig.path = paths.css;
+    }
   };
 
   var fonts = function(theme) {
@@ -1112,6 +1054,34 @@ task.css = (function(){
     return [name];
   };
 
+  var getFilesToVerifyCSSVendors = function() {
+    var files = [];
+    if (task.core.has(cssConfig, 'vendors')) {
+      files.push(cssConfig.vendors.path + cssConfig.vendors.file);
+    }
+    return files;
+  };
+
+  var getFilesToVerifyCSS = function() {
+    var files, theme;
+    files = [];
+
+    if (task.core.has(cssConfig, 'themes')) {
+      for (var i = 0; i < cssConfig.themes.length; i += 1) {
+        theme = cssConfig.themes[i];
+        files.push(theme.path + theme.file);
+        if (theme.autoprefixer) {
+          files.push(theme.path + theme.file.replace('.css', '.autoprefixer.css'));
+        }
+      }
+    }
+
+    files.concat(getFilesToVerifyCSSVendors());
+    files.push(paths.css + cssConfig.file);
+
+    return files;
+  };
+
   return {
     get: function(){
       if (!config.hasTask(name)) {
@@ -1124,6 +1094,9 @@ task.css = (function(){
       subTaskPipeline = subTaskPipeline.concat(mergeCss());
       pipeline.middle.concat(build(subTaskPipeline));
       return pipeline;
+    },
+    verify: function() {
+      return getFilesToVerifyCSS();
     }
   };
 })();
@@ -1158,6 +1131,9 @@ task.js = (function(){
     paths = config.get('paths');
     vendorsConfig = checkConfig(jsConfig, 'vendors', {});
     vendorsConfig = merge.recursive(true, { path: paths.js, merge: true }, vendorsConfig);
+    if (!task.core.has(vendorsConfig, 'path')) {
+      vendorsConfig.path = paths.js;
+    }
   };
 
   var vendors = function() {
@@ -1243,6 +1219,21 @@ task.js = (function(){
     return [];
   };
 
+  var getFilesToVerifyJSVendors = function() {
+    if (task.core.has(vendorsConfig, 'vendors')) {
+      return [vendorsConfig.vendors.path + vendorsConfig.vendors.file];
+    }
+    return [];
+  };
+
+  var getFilesToVerifyJS = function() {
+    var files = [];
+    files = getFilesToVerifyJSVendors();
+    files.push(paths.js + jsConfig.file);
+
+    return files;
+  };
+
   return {
     get: function(){
       if (!config.hasTask(name)) {
@@ -1253,6 +1244,9 @@ task.js = (function(){
       pipeline.middle = pipeline.middle.concat(build());
       pipeline.middle = pipeline.middle.concat(mergeJs());
       return pipeline;
+    },
+    verify: function() {
+      return getFilesToVerifyJS();
     }
   };
 })();
