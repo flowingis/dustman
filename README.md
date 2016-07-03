@@ -15,8 +15,8 @@ d u s t m a n
 |-----------------|--------------|
 | fix             | Optimized files verification to be of their relative task modules |
 | coding standard | Remove unused comments |
-| feature         | Now it's possible to verify files built to ensure everything work as expected |
 | fix             | Fix shell tasks not started properly |
+| feature         | Now it's possible to verify files built to ensure everything work as expected |
 
 ---
 
