@@ -9,18 +9,18 @@ d u s t m a n
 
 ---
 
-##### Release details
+##### Release 1.1.X details
 
-| Version    | Type         | Description  |
-|-----------:|--------------|--------------|
-| `1.1.15`   | optimization | If JS or CSS vendor files are removed they will be built again |
-| `1.1.14`   | fix          | Fix wrong name notice log for fonts vendors |
-| `1.1.13`   | fix          | Fix vendors assets always skipping from build |
-| `1.1.12`   | fix          | Fix wrong default JavaScript path for vendors |
-| `1.1.12`   | fix          | Decommented missing minimized JavaScript files |
-| `1.1.10`   | optimization | Task logs are more consistent |
-| `1.1.7`    | optimization | Critical build speed improvement, with vendors cached after first build |
-| `1.1.7`    | change       | Change how CSS and JavaScript vendors are built |
+| Type         | Description  |
+|--------------|--------------|
+| optimization | If JS or CSS vendor files are removed they will be built again |
+| fix          | Fix wrong name notice log for fonts vendors |
+| fix          | Fix vendors assets always skipping from build |
+| fix          | Fix wrong default JavaScript path for vendors |
+| fix          | Decommented missing minimized JavaScript files |
+| optimization | Task logs are more consistent |
+| optimization | Critical build speed improvement, with vendors cached after first build |
+| change       | Change how CSS and JavaScript vendors are built |
 
 ---
 
