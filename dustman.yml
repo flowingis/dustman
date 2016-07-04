@@ -12,7 +12,7 @@ config:
   stylestats: .stylestatsrc
   twig:
     cache: false
-  polling: 500
+  polling: false
   verbose: 3
   verify: true
 

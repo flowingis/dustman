@@ -154,6 +154,7 @@ var config = (function(){
       twig: {
         cache: false
       },
+      polling: false,
       verbose: 3,
       verify: false
     },
@@ -338,6 +339,19 @@ var tasks = (function(){
     pipeline.after = pipeline.after.concat(subTaskPipeline.after.reverse());
   };
 
+  var pollingOptions = function() {
+    if (tasksConfig.polling !== false) {
+      return {
+        usePolling: true,
+        interval: parseInt(tasksConfig.polling)
+      };
+    }
+    return {
+      usePolling: false,
+      interval: 1000
+    };
+  };
+
   var http = function(tasks) {
 
     gulp.task('http', gulp.series(tasks, function() {
@@ -352,7 +366,7 @@ var tasks = (function(){
 
       message.wait();
 
-      return gulp.watch(watchFolders, gulp.series(tasks, function(done){
+      return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
           browserSync.reload();
           message.wait();
           done();
@@ -370,9 +384,11 @@ var tasks = (function(){
   };
 
   var watch = function(tasks) {
+    console.log(pollingOptions());
+    process.exit();
     gulp.task('watch', gulp.series(tasks, function() {
       message.wait();
-      return gulp.watch(watchFolders, gulp.series(tasks, function(done){
+      return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
           message.wait();
           done();
         }))
