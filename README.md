@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.2.18-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.3.18-e07c4b.svg)][node]
 [![TravisCI](https://api.travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -9,14 +9,11 @@ d u s t m a n
 
 ---
 
-##### Release 1.2.X details
+##### Release 1.3.X details
 
-| Type            | Description  |
-|-----------------|--------------|
-| fix             | Optimized files verification to be of their relative task modules |
-| coding standard | Remove unused comments |
-| fix             | Fix shell tasks not started properly |
-| feature         | Now it's possible to verify files built to ensure everything work as expected |
+| Type    | Description  |
+|---------|--------------|
+| feature | Added polling option to Gulp watcher to prevent missing Vagrant NFS filesync with local system and VM |
 
 ---
 
@@ -188,6 +185,8 @@ config:
     locale: it
   twig: # optional [defaults]
     cache: false
+  polling: 500 # optional [false]
+  verify: true # optional [false]
   verbose: 3 # optional [3]
 
 css: # optional [required by sub task css if used]
@@ -291,7 +290,9 @@ Config parameters with links comes from related plug-in configurations
 | `config.prettify` | *mixed* | *Object* | https://www.npmjs.com/package/gulp-html-prettify |
 | `config.stylestats` | *path/.stylestatsrc* | *String* | It contains Stylestats options path |
 | `config.twig` | *mixed* | *Object* | https://www.npmjs.com/package/gulp-twig |
+| `config.polling` | *500* | *mixed* | Set millisecs of polling to the Gulp watcher to prevent missing Vagrant NFS filesync with local system and VM, it's `false` by default |
 | `config.verbose` | *3* | *Integer* | The verbose value, 0: no messages, 3: all message logs |
+| `config.verify` | *true* | *Boolean* | Checks if all dustman generated files are created on the machine |
 
 #### CSS
 
@@ -379,6 +380,15 @@ You can add `css`, `js` and `html`
 ---
 
 # Previous release details
+
+##### Release 1.2.X details
+
+| Type            | Description  |
+|-----------------|--------------|
+| fix             | Optimized files verification to be of their relative task modules |
+| coding standard | Remove unused comments |
+| fix             | Fix shell tasks not started properly |
+| feature         | Now it's possible to verify files built to ensure everything work as expected |
 
 ##### Release 1.1.X details
 
