@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.3.18
+  1.3.19
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -384,8 +384,6 @@ var tasks = (function(){
   };
 
   var watch = function(tasks) {
-    console.log(pollingOptions());
-    process.exit();
     gulp.task('watch', gulp.series(tasks, function() {
       message.wait();
       return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
@@ -1270,6 +1268,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.3.18');
+message.verbose('Version', '1.3.19');
 message.verbose('Config loaded', config.file());
 tasks.init();
