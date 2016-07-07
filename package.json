@@ -5,11 +5,15 @@
   "authors": [
     {
       "name": "Vittorio Vittori",
-      "email": "me@vittoriovittori.com"
+      "email": "vv@ideato.it"
+    },
+    {
+      "name": "Carla Soloperto",
+      "email": "cs@ideato.it"
     }
   ],
   "license": "MIT",
-  "homepage": "https://github.com/vitto/dustman",
+  "homepage": "https://github.com/ideatosrl/dustman",
   "keywords": [
     "automation",
     "css",
@@ -22,7 +26,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/vitto/dustman.git"
+    "url": "https://github.com/ideatosrl/dustman.git"
   },
   "main": "gulpfile.js",
   "dependencies": {
@@ -66,7 +70,7 @@
     "node": ">=0.8.0"
   },
   "bugs": {
-    "url": "https://github.com/vitto/dustman/issues"
+    "url": "https://github.com/ideatosrl/dustman/issues"
   },
   "scripts": {
     "build-all": "node build.js && ./node_modules/.bin/gulp && ./node_modules/.bin/gulp css && ./node_modules/.bin/gulp js && ./node_modules/.bin/gulp html",
