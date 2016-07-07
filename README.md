@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.4.19-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.4.20-e07c4b.svg)][node]
 [![TravisCI](https://api.travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -13,7 +13,9 @@ d u s t m a n
 
 | Type    | Description  |
 |---------|--------------|
-| feature | Added engine selection for HTML build |
+| optimization | Added missing vendors warning if it's thrown a file not found error |
+| test         | Added travis tests |
+| feature      | Added engine selection for HTML build |
 
 ---
 
@@ -274,7 +276,8 @@ vendors: # optional [skipped]
   images: # optional [skipped]
     - vendor/font-awesome/fonts/fontawesome-webfont.svg
 
-twig: # optional [required by sub task html if used]
+html: # optional [required by sub task html if used]
+  engine: twig # optional [html]
   watch: test/examples/twig/**/*.twig
   files:
     - test/examples/twig/index.twig
@@ -375,13 +378,14 @@ Shell node module doesn't seems to support every command
 
 You can add `css`, `js` and `html`
 
-#### Twig
+#### HTML
 
 | Parameter      | Example value       | Type     | Description              |
 | -------------- | ------------------- | -------- | -----------------------  |
-| `twig`         | *mixed*            | *Object* | It contains twig options |
-| `twig.watch`   | *path/\*\*/\*.twig* | *String* | Files watched from the main task watcher |
-| `twig.files`   | *-path/file.twig*  | *Array*  | Files listed for the HTML build |
+| `html`         | *mixed*             | *Object* | It contains twig options |
+| `html.engine`  | *twig*              | *String* | The engine used, [Twig][twig] or HTML for now (html by default) |
+| `html.watch`   | *path/\*\*/\*.twig* | *String* | Files watched from the main task watcher |
+| `html.files`   | *-path/file.twig*   | *Array*  | Files listed for the HTML build |
 
 #### Vendors
 

@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.4.19
+  1.4.20
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -87,9 +87,12 @@ var message = (function(){
       console.log(colour.intro('   D U S T M A N   '));
       console.log('');
     },
-    error: function(message) {
+    error: function(message, doNotExit) {
+      var exit = typeof doNotExit !== 'undefined' ? doNotExit : true;
       log(0, colour.error('Error: ') + message.trim());
-      process.exit();
+      if(exit) {
+        process.exit();
+      }
     },
     event: function(eventType, file) {
       event(eventType, file);
@@ -281,8 +284,10 @@ task.core = (function(){
         fs.accessSync(path, fs.F_OK);
         return true;
       } catch (e) {
-        message.error(path + ' NOT found');
-        console.log(e);
+        message.error(path + ' NOT found', false);
+        if (path.toLowerCase().indexOf('vendor') > -1) {
+          message.warning('Have you installed vendors after npm install?');
+        }
         process.exit();
       }
     },
@@ -1276,6 +1281,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.4.19');
+message.verbose('Version', '1.4.20');
 message.verbose('Config loaded', config.file());
 tasks.init();

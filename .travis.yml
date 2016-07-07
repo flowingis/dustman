@@ -16,3 +16,4 @@ script:
   - gulp js
   - gulp css
   - gulp html
+  - gulp --config test/examples/dustman.twig.yml
