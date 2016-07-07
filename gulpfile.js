@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.3.19
+  1.4.19
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -165,6 +165,9 @@ var config = (function(){
     js: {
       file: 'dustman.min.js',
       watch: './**/*.js'
+    },
+    html: {
+      engine: 'html'
     },
     paths: {
       css: 'dustman/css/',
@@ -690,7 +693,7 @@ task.html = (function(){
   var name = 'html';
   var paths = {};
   var twigConfig = {};
-  var twigPages;
+  var templateConfig;
 
   var pipeline = {
     before:[],
@@ -700,27 +703,32 @@ task.html = (function(){
 
   var init = function() {
     paths = config.get('paths');
-    twigPages = config.if('twig') ? config.get('twig') : {};
+    templateConfig = config.if('html') ? config.get('html') : {};
     twigConfig = config.if('config') ? config.get('config') : {};
     faker.locale = 'en';
   };
 
   var build = function() {
-    if (config.if('twig') && task.core.has(twigPages, 'files')) {
+    if (config.if('html') && task.core.has(templateConfig, 'files')) {
       gulp.task(name, function () {
-        message.task('Twig to HTML');
+        message.task('Build HTML');
         if (!task.core.has(twigConfig, 'twig')) {
           twigConfig.twig = {};
         }
         twigConfig.twig.data = {
           faker: faker
         };
-        for (var i = 0; i < twigPages.files.length; i += 1) {
-          message.verbose('Twig view', twigPages.files[i]);
-          task.core.fileCheck(twigPages.files[i]);
+        for (var i = 0; i < templateConfig.files.length; i += 1) {
+          message.verbose('Template view', templateConfig.files[i]);
+          task.core.fileCheck(templateConfig.files[i]);
         }
-        message.verbose('All Twig files converted in', paths.server);
-        return gulp.src(twigPages.files)
+        message.verbose('All Template files converted in', paths.server);
+        if (templateConfig.engine === 'html') {
+          return gulp.src(templateConfig.files)
+            .pipe(prettify(twigConfig.prettify || {}))
+            .pipe(gulp.dest(paths.server));
+        }
+        return gulp.src(templateConfig.files)
           .pipe(twig(twigConfig.twig))
           .pipe(prettify(twigConfig.prettify || {}))
           .pipe(gulp.dest(paths.server));
@@ -1268,6 +1276,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.3.19');
+message.verbose('Version', '1.4.19');
 message.verbose('Config loaded', config.file());
 tasks.init();

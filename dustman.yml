@@ -88,10 +88,11 @@ tasks:
   - js
   - html
 
-twig:
+html:
+  engine: html
   files:
-    - test/examples/twig/index.twig
-  watch: test/examples/twig/**/*.twig
+    - test/examples/html/index.html
+  watch: test/examples/html/**/*.html
 
 shell:
   before:

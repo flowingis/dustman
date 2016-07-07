@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.3.19-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.4.19-e07c4b.svg)][node]
 [![TravisCI](https://api.travis-ci.org/vitto/dustman.svg?branch=master)](https://travis-ci.org/vitto/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -9,11 +9,11 @@ d u s t m a n
 
 ---
 
-##### Release 1.3.X details
+##### Release 1.4.X details
 
 | Type    | Description  |
 |---------|--------------|
-| feature | Added polling option to Gulp watcher to prevent missing Vagrant NFS filesync with local system and VM |
+| feature | Added engine selection for HTML build |
 
 ---
 
@@ -394,6 +394,13 @@ You can add `css`, `js` and `html`
 ---
 
 # Previous release details
+
+##### Release 1.3.X details
+
+| Type    | Description  |
+|---------|--------------|
+| feature | Added polling option to Gulp watcher to prevent missing Vagrant NFS filesync with local system and VM |
+
 
 ##### Release 1.2.X details
 
