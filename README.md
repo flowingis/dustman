@@ -60,6 +60,20 @@ At the moment Dustman is based on **[Gulp 4][gulp] which is in alpha release sta
 
 ---
 
+# Installation
+
+The installation command will install `dustman` module in your package file and copy the dustman files to your project directory:
+
+```
+npm install --save dustman
+cp -i ./node_modules/dustman/dustman.yml dustman.yml
+cp -i ./node_modules/dustman/gulpfile.js gulpfile.js
+```
+
+The flag `-i` will prompt if you want to overwrite an existing file in the target directory.
+
+---
+
 # Build suite
 
 Dustman has a set of **main tasks** which uses a set of **sub tasks** in sequence.
