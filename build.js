@@ -16,5 +16,8 @@ buildify()
     'lib/task/css.js',
     'lib/task/js.js'
   ])
-  .wrap('lib/template.js', { version: pkg.version })
+  .wrap('lib/template.js', {
+    version: pkg.version,
+    nodeVersion: pkg.engines.node
+  })
   .save('gulpfile.js');

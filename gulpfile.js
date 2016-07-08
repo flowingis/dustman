@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.4.22
+  1.4.24
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -13,6 +13,8 @@ var gulp = require('gulp');
 
 var message = (function(){
   var colour = require('colour');
+  var sleep = require('sleep').sleep;
+
   colour.setTheme({
     error: 'red bold',
     event: 'magenta',
@@ -58,9 +60,12 @@ var message = (function(){
     return verbose >= verbosity;
   };
 
-  var log = function(level, message) {
+  var log = function(level, message, delay) {
     if (isVerboseEnough(level)) {
       console.log(message);
+      if (typeof delay !== 'undefined') {
+        sleep(delay);
+      }
     }
   };
 
@@ -101,31 +106,31 @@ var message = (function(){
       log(3, '');
       event('wait');
     },
-    notice: function(message) {
-      log(2, colour.notice('Notice: ') + message.trim());
+    notice: function(message, delay) {
+      log(2, colour.notice('Notice: ') + message.trim(), delay);
     },
     setVerbosity: function(verbosity) {
       verbose = verbosity;
     },
-    speak: function(message) {
-      log(2, colour.speak(message));
+    speak: function(message, delay) {
+      log(2, colour.speak(message), delay);
     },
-    success: function(message) {
-      log(1, colour.success(message.trim()));
+    success: function(message, delay) {
+      log(1, colour.success(message.trim()), delay);
     },
-    task: function(message) {
+    task: function(message, delay) {
       log(3, '');
-      log(2, colour.task(message));
+      log(2, colour.task(message), delay);
     },
-    verbose: function(title, message) {
+    verbose: function(title, message, delay) {
       if (typeof message !== 'undefined') {
-        log(3, colour.verbose(title.trim() + ': ') + message.trim());
+        log(3, colour.verbose(title.trim() + ': ') + message.trim(), delay);
       } else {
-        log(3, colour.verbose(title.trim()));
+        log(3, colour.verbose(title.trim()), delay);
       }
     },
-    warning: function(message){
-      log(2, colour.warning('Warning: ') + message.trim());
+    warning: function(message, delay){
+      log(2, colour.warning('Warning: ') + message.trim(), delay);
     },
   };
 })();
@@ -138,7 +143,9 @@ var config = (function(){
   var merge = require('merge');
   var path = require('path');
 
+
   var configFile = 'dustman.yml';
+  var nodeMinVersion = 'v5.4.1';
 
   var data = {
     config: {
@@ -191,7 +198,7 @@ var config = (function(){
       fs.accessSync(configFile, fs.F_OK);
       return true;
     } catch (e) {
-      message.error('config file configFile NOT found');
+      message.error('config file ' + configFile + ' NOT found');
     }
   };
 
@@ -231,6 +238,17 @@ var config = (function(){
     message.setVerbosity(data.config.verbose);
   };
 
+  var checkVersion = function(version) {
+    var nodeSystemVersion = Number(('v4.5.13').match(/(\d+\.\d+)/)[0]); // Number(process.version.match(/(\d+\.\d+)/)[0]);
+    nodeMinVersion = Number(version.match(/(\d+\.\d+)/)[0]);
+    if (nodeMinVersion > nodeSystemVersion) {
+      message.verbose('Node system version', process.version.toString());
+      message.verbose('Node required version', version.toString());
+      message.warning('The system node version ' + nodeSystemVersion + '.x is older then the required minimum version ' + nodeMinVersion + '.x', 2);
+      message.warning('Please update node version to ' + nodeMinVersion + '.x to avoid malfunctions', 3);
+    }
+  };
+
   var ifProp = function(propName) {
     return typeof data[propName] !== 'undefined' ? true : false;
   };
@@ -259,7 +277,8 @@ var config = (function(){
     if: function(propName){
       return ifProp(propName);
     },
-    load: function(){
+    load: function(version){
+      checkVersion(version);
       checkArguments();
     },
     pathClean : function(configPath) {
@@ -338,7 +357,7 @@ var tasks = (function(){
 
     watchFolders = watchFolders.concat(getWatchFolder('css'));
     watchFolders = watchFolders.concat(getWatchFolder('js'));
-    watchFolders = watchFolders.concat(getWatchFolder('twig'));
+    watchFolders = watchFolders.concat(getWatchFolder('html'));
   };
 
   var addToPipeline = function(subTaskPipeline) {
@@ -1280,7 +1299,7 @@ task.js = (function(){
 
 
 message.intro();
-config.load();
-message.verbose('Version', '1.4.22');
+config.load('>=5.4.1');
+message.verbose('Version', '1.4.24');
 message.verbose('Config loaded', config.file());
 tasks.init();

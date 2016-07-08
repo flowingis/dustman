@@ -1,6 +1,6 @@
 {
   "name": "dustman",
-  "version": "1.4.22",
+  "version": "1.4.24",
   "description": "A Gulp based front-end automation boilerplate that helps you to keep your builds clean",
   "authors": [
     {
@@ -80,11 +80,12 @@
     "moment": "^2.13.0",
     "run-sequence": "^1.1.2",
     "sass": ">=0.5.0",
+    "sleep": "^3.0.1",
     "stylestats": "^6.3.0",
     "twig": "^0.9.5"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=5.4.1"
   },
   "bugs": {
     "url": "https://github.com/ideatosrl/dustman/issues"
