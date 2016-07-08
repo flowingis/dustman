@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.4.20
+  1.4.22
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -1281,6 +1281,6 @@ task.js = (function(){
 
 message.intro();
 config.load();
-message.verbose('Version', '1.4.20');
+message.verbose('Version', '1.4.22');
 message.verbose('Config loaded', config.file());
 tasks.init();
