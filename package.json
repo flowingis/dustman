@@ -85,7 +85,7 @@
     "twig": "^0.9.5"
   },
   "engines": {
-    "node": ">=5.4.1"
+    "node": ">=0.8.0"
   },
   "bugs": {
     "url": "https://github.com/ideatosrl/dustman/issues"
