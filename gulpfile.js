@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.4.24
+  1.4.25
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -771,8 +771,8 @@ task.html = (function(){
   var getFilesToVerifyHTML = function() {
     var htmlConfig, files;
     files = [];
-    if (config.if('twig')) {
-      htmlConfig = config.get('twig');
+    if (config.if('html')) {
+      htmlConfig = config.get('html');
       for (var i = 0; i < htmlConfig.files.length; i += 1) {
         files.push(paths.server + path.parse(htmlConfig.files[i]).name  + '.html');
       }
@@ -1304,6 +1304,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.4.24');
+message.verbose('Version', '1.4.25');
 message.verbose('Config loaded', config.file());
 tasks.init();
