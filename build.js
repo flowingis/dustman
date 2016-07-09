@@ -18,6 +18,6 @@ buildify()
   ])
   .wrap('lib/template.js', {
     version: pkg.version,
-    nodeVersion: 'v5.4.1'
+    nodeVersion: pkg.engines.node
   })
   .save('gulpfile.js');

@@ -13,7 +13,7 @@ var gulp = require('gulp');
 
 var message = (function(){
   var colour = require('colour');
-  var sleep = require('sleep').sleep;
+  // var sleep = require('sleep').sleep;
 
   colour.setTheme({
     error: 'red bold',
@@ -64,7 +64,9 @@ var message = (function(){
     if (isVerboseEnough(level)) {
       console.log(message);
       if (typeof delay !== 'undefined') {
-        sleep(delay);
+        var waitTill = new Date(new Date().getTime() + delay * 1000);
+        while(waitTill > new Date()) { }
+        // sleep(delay);
       }
     }
   };
@@ -143,9 +145,8 @@ var config = (function(){
   var merge = require('merge');
   var path = require('path');
 
-
   var configFile = 'dustman.yml';
-  var nodeMinVersion = 'v5.4.1';
+  var nodeMinVersion = false;
 
   var data = {
     config: {
@@ -239,7 +240,10 @@ var config = (function(){
   };
 
   var checkVersion = function(version) {
-    var nodeSystemVersion = Number(('v4.5.13').match(/(\d+\.\d+)/)[0]); // Number(process.version.match(/(\d+\.\d+)/)[0]);
+    if (typeof version === 'undefined') {
+      message.error('Minimum node version not specified');
+    }
+    var nodeSystemVersion = Number(process.version.match(/(\d+\.\d+)/)[0]);
     nodeMinVersion = Number(version.match(/(\d+\.\d+)/)[0]);
     if (nodeMinVersion > nodeSystemVersion) {
       message.verbose('Node system version', process.version.toString());
