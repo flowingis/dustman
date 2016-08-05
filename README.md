@@ -13,6 +13,7 @@ d u s t m a n
 
 | Type    | Description  |
 |---------|--------------|
+| fix          | Check between system node version and required version correctly |
 | fix          | Removed old task name twig for html to verify files correctly |
 | optimization | Add system node version check to notify if it's too old |
 | optimization | Add timed to important messages to be more easy to read |

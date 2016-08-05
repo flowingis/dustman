@@ -239,17 +239,25 @@ var config = (function(){
     message.setVerbosity(data.config.verbose);
   };
 
+
+  var warn = function(systemVersion, requiredVersion) {
+    message.verbose('Node system version', systemVersion);
+    message.verbose('Node required version', requiredVersion);
+    message.warning('The system node version is older then the required minimum version', 2);
+    message.warning('Please update node version to to avoid malfunctions', 3);
+  };
+
   var checkVersion = function(version) {
     if (typeof version === 'undefined') {
       message.error('Minimum node version not specified');
     }
-    var nodeSystemVersion = Number(process.version.match(/(\d+\.\d+)/)[0]);
-    nodeMinVersion = Number(version.match(/(\d+\.\d+)/)[0]);
-    if (nodeMinVersion > nodeSystemVersion) {
-      message.verbose('Node system version', process.version.toString());
-      message.verbose('Node required version', version.toString());
-      message.warning('The system node version ' + nodeSystemVersion + '.x is older then the required minimum version ' + nodeMinVersion + '.x', 2);
-      message.warning('Please update node version to ' + nodeMinVersion + '.x to avoid malfunctions', 3);
+    var nodeSystemVersion = process.version.match(/(\d+\.\d+)/)[0].split('.');
+    nodeMinVersion = version.match(/(\d+\.\d+)/)[0].split('.');
+
+    if (parseInt(nodeSystemVersion[0]) < parseInt(nodeMinVersion[0])) {
+      warn(process.version.toString(), version.toString());
+    } else if (parseInt(nodeSystemVersion[0]) === parseInt(nodeMinVersion[0]) && parseInt(nodeSystemVersion[1]) < parseInt(nodeMinVersion[1])) {
+      warn(process.version.toString(), version.toString());
     }
   };
 
@@ -513,6 +521,7 @@ task.timer = (function(){
       var timeSpent = (stopBuildDate - startBuildDate)/1000 + ' secs';
       message.success('The dust was cleaned successfully in ' + timeSpent);
       message.success('Build [ ' + buildIndex + ' ] done at ' + moment().format('HH:mm') + ' and ' + moment().format('ss') + ' seconds.');
+      console.log('');
       buildIndex += 1;
       done();
     });
