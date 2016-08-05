@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.4.26-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.5.26-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -9,19 +9,11 @@ d u s t m a n
 
 ---
 
-##### Release 1.4.X details
+##### Release 1.5.X details
 
 | Type    | Description  |
 |---------|--------------|
-| fix          | Check between system node version and required version correctly |
-| fix          | Removed old task name twig for html to verify files correctly |
-| optimization | Add system node version check to notify if it's too old |
-| optimization | Add timed to important messages to be more easy to read |
-| fix          | Fix wrong task error for watched dustman folders |
-| fix          | Fix missing config file message |
-| optimization | Added missing vendors warning if it's thrown a file not found error |
-| test         | Added travis tests |
-| feature      | Added engine selection for HTML build |
+| feature | Adds additional path properties to css and js tasks |
 
 ---
 
@@ -214,6 +206,7 @@ config:
 css: # optional [required by sub task css if used]
   file: themes-with-vendors.min.css # optional [dustman.min.css]
   watch: my/sass/files/**/*.scss # optional [./**/*.scss]
+  path: my/sass/path/ # optional [inherit path.css]
   themes:
     -
       name: theme-one # optional [theme-0]
@@ -246,6 +239,7 @@ js: # optional [required by sub task js if used]
   file: app-with-vendors.min.js # optional [dustman.min.js]
   watch: my/js/files/**/*.js # optional [./**/*.js]
   merge: true # optional [true]
+  path: my/sass/path/ # optional [inherit path.js]
   files:
     - my/js/files/*
   vendors: # optional
@@ -323,6 +317,7 @@ Config parameters with links comes from related plug-in configurations
 | -------------------- | -------------------- | --------- | ------------------------------- |
 | `css`                | *mixed*              | *Object*  | It contains CSS options         |
 | `css.file` | *dustman.min.css* | *String* | The name of the merged and minified CSS with vendors and SASS or LESS themes |
+| `css.path` | *path/to/css/* | *String* | If this theme should be built in a specific folder |
 | `css.themes` | *mixed* | *Array*   | It contains theme with it's config |
 | `css.themes` | *mixed* | *Array*   | It contains theme object with it's config |
 | `css.themes[].autoprefixer` | *true*  | *Boolean* | If the build will add prefixes to the CSS theme |
@@ -348,6 +343,7 @@ Config parameters with links comes from related plug-in configurations
 | -------------------- | -------------------- | --------- | ------------------------------- |
 | `js`                 | *mixed*              | *Object*  | It contains JavaScript options  |
 | `js.file`            | *dustman.min.js*     | *String*  | The name of the merged and minified JavaScript |
+| `js.path` | *path/to/js/* | *String* | If this theme should be built in a specific folder |
 | `js.watch`           | *path/\*\*/\*.js*    | *String*  | Files watched from the main task watcher |
 | `js.files`           | *-path/file.js*      | *Array*   | Files listed for the JavaScript build, it can also be a conatiner path like ´-path/app/*´ |
 | `js.vendors`        | *mixed*              | *Object*  | It contains CSS vendors options |
@@ -405,12 +401,25 @@ You can add `css`, `js` and `html`
 
 # Previous release details
 
+##### Release 1.4.X details
+
+| Type    | Description  |
+|---------|--------------|
+| fix          | Check between system node version and required version correctly |
+| fix          | Removed old task name twig for html to verify files correctly |
+| optimization | Add system node version check to notify if it's too old |
+| optimization | Add timed to important messages to be more easy to read |
+| fix          | Fix wrong task error for watched dustman folders |
+| fix          | Fix missing config file message |
+| optimization | Added missing vendors warning if it's thrown a file not found error |
+| test         | Added travis tests |
+| feature      | Added engine selection for HTML build |
+
 ##### Release 1.3.X details
 
 | Type    | Description  |
 |---------|--------------|
 | feature | Added polling option to Gulp watcher to prevent missing Vagrant NFS filesync with local system and VM |
-
 
 ##### Release 1.2.X details
 

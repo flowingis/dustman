@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.4.26
+  1.5.26
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -846,6 +846,9 @@ task.css = (function(){
     if (!task.core.has(vendorsConfig, 'path')) {
       vendorsConfig.path = paths.css;
     }
+    if (!task.core.has(cssConfig, 'path')) {
+      cssConfig.path = paths.css;
+    }
   };
 
   var fonts = function(theme) {
@@ -1091,11 +1094,11 @@ task.css = (function(){
         themes = themes.concat(getThemesToMerge());
 
         if (themes.length > 0) {
-          message.verbose('All CSS files merged to', paths.css + cssConfig.file);
+          message.verbose('All CSS files merged to', cssConfig.path + cssConfig.file);
           return gulp.src(themes)
             .pipe(uglifyCss())
             .pipe(concat(cssConfig.file))
-            .pipe(gulp.dest(paths.css));
+            .pipe(gulp.dest(cssConfig.path));
         } else {
           message.warning('No vendors or themes will be merged');
           done();
@@ -1193,6 +1196,9 @@ task.js = (function(){
     if (!task.core.has(vendorsConfig, 'path')) {
       vendorsConfig.path = paths.js;
     }
+    if (!task.core.has(jsConfig, 'path')) {
+      jsConfig.path = paths.js;
+    }
   };
 
   var vendors = function() {
@@ -1229,7 +1235,7 @@ task.js = (function(){
         message.task('Merging JavaScript vendors with your JavaScript files');
 
         files.push(vendorsConfig.path + vendorsConfig.file);
-        files.push(paths.js + jsConfig.file.replace('.min.js', '.no-vendors.min.js'));
+        files.push(jsConfig.path + jsConfig.file.replace('.min.js', '.no-vendors.min.js'));
 
         for (var i = 0; i < files.length; i += 1) {
           message.verbose('JavaScript file', files[i]);
@@ -1237,11 +1243,11 @@ task.js = (function(){
         }
 
         if (files.length > 0) {
-          message.verbose('All JavaScript files merged to', paths.js + jsConfig.file);
+          message.verbose('All JavaScript files merged to', jsConfig.path + jsConfig.file);
           return gulp.src(files)
             .pipe(uglify())
             .pipe(concat(jsConfig.file))
-            .pipe(gulp.dest(paths.js));
+            .pipe(gulp.dest(jsConfig.path));
         } else {
           message.warning('No vendors or files will be merged');
           done();
@@ -1313,6 +1319,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.4.26');
+message.verbose('Version', '1.5.26');
 message.verbose('Config loaded', config.file());
 tasks.init();
