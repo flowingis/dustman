@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.5.30-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.5.36-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -13,6 +13,11 @@ d u s t m a n
 
 | Type         | Description  |
 |--------------|--------------|
+| fix          | Ensure CSS and JS tasks can be empty also on files verify task |
+| fix          | Ensure HTML task can be empty also on files verify task |
+| optimization | Files list concatentation is more easy to read |
+| optimization | Adds toString to message logs |
+| optimization | Adds toString to path errors |
 | optimization | Now vendors are disabled by default to ensure CSS and JS vendors to be optional |
 | fix          | CSS and JS vendors now are optional |
 | fix          | Fix wrong file path on JS vendors save |
