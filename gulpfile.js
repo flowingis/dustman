@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.5.26
+  1.5.30
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -171,11 +171,17 @@ var config = (function(){
     },
     css: {
       file: 'dustman.min.css',
-      watch: './**/*.css'
+      watch: './**/*.css',
+      vendors: {
+        files: false
+      }
     },
     js: {
       file: 'dustman.min.js',
-      watch: './**/*.js'
+      watch: './**/*.js',
+      vendors: {
+        files: false
+      }
     },
     html: {
       engine: 'html'
@@ -1023,7 +1029,7 @@ task.css = (function(){
   };
 
   var vendors = function() {
-    if (task.core.has(vendorsConfig, 'files')) {
+    if (vendorsConfig.files !== false) {
       var taskName = task.core.action(name, 'vendors');
       gulp.task(taskName, function (done) {
         if (task.core.fileExists(vendorsConfig.path + vendorsConfig.file) && vendorsBuilt) {
@@ -1088,9 +1094,13 @@ task.css = (function(){
       var taskName = task.core.action(name, 'merge');
       gulp.task(taskName, function(done){
         var themes = [];
-        message.task('Merging CSS vendors with your CSS files');
 
-        themes = themes.concat(getVendorsToMerge());
+        if (vendorsConfig.files) {
+          message.task('Merging CSS vendors with your CSS themes');
+          themes = themes.concat(getVendorsToMerge());
+        } else {
+          message.task('Merging CSS themes');
+        }
         themes = themes.concat(getThemesToMerge());
 
         if (themes.length > 0) {
@@ -1202,7 +1212,7 @@ task.js = (function(){
   };
 
   var vendors = function() {
-    if (task.core.has(vendorsConfig, 'files')) {
+    if (vendorsConfig.files !== false) {
       var taskName = task.core.action(name, 'vendors');
       gulp.task(taskName, function (done) {
         if (task.core.fileExists(vendorsConfig.path + vendorsConfig.file) && vendorsBuilt) {
@@ -1228,7 +1238,7 @@ task.js = (function(){
   };
 
   var mergeJs = function() {
-    if (vendorsConfig.merge) {
+    if (vendorsConfig.files && vendorsConfig.merge) {
       var taskName = task.core.action(name, 'merge');
       gulp.task(taskName, function(done){
         var files = [];
@@ -1267,17 +1277,19 @@ task.js = (function(){
           task.core.fileCheck(jsConfig.files[i]);
         }
         var file = jsConfig.file;
-        if (vendorsConfig.merge) {
-          file = file.replace('.min.js', '.no-vendors.min.js');
+        if (vendorsConfig.files !== false) {
+          if (vendorsConfig.merge) {
+            file = file.replace('.min.js', '.no-vendors.min.js');
+          }
         }
-        message.verbose('JavaScript files merged to', paths.js + file);
+        message.verbose('JavaScript files merged to', jsConfig.path + file);
 
         return gulp.src(jsConfig.files)
         .pipe(sourcemaps.init())
         .pipe(uglify())
         .pipe(concat(file))
         .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest(paths.js));
+        .pipe(gulp.dest(jsConfig.path));
       });
       return [name];
     }
@@ -1294,7 +1306,7 @@ task.js = (function(){
   var getFilesToVerifyJS = function() {
     var files = [];
     files = getFilesToVerifyJSVendors();
-    files.push(paths.js + jsConfig.file);
+    files.push(jsConfig.path + jsConfig.file);
 
     return files;
   };
@@ -1319,6 +1331,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.5.26');
+message.verbose('Version', '1.5.30');
 message.verbose('Config loaded', config.file());
 tasks.init();

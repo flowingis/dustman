@@ -59,6 +59,7 @@ js:
   file: dustman.min.js
   files:
     - test/examples/js/*
+  path: test/results/js/custom/
   vendors:
     file: vendors.min.js
     files:

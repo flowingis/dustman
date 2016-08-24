@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.5.26-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.5.30-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -11,9 +11,12 @@ d u s t m a n
 
 ##### Release 1.5.X details
 
-| Type    | Description  |
-|---------|--------------|
-| feature | Adds additional path properties to css and js tasks |
+| Type         | Description  |
+|--------------|--------------|
+| optimization | Now vendors are disabled by default to ensure CSS and JS vendors to be optional |
+| fix          | CSS and JS vendors now are optional |
+| fix          | Fix wrong file path on JS vendors save |
+| feature      | Adds additional path properties to css and js tasks |
 
 ---
 
@@ -150,28 +153,51 @@ shell:
 
 ---
 
-### Tasks dependency trees
+### JavaScript task file generator
 
-```bash
-──┬ default
-  └─┬─┬ shell:before
-    ├─┬ css
-    ├── js
-    ├─┬ html
-    └─┬ shell:after
-──┬ http
-  └─┬─┬ shell:before
-    ├─┬ css
-    ├── js
-    ├─┬ html
-    ├─┬ shell:after
-    └── watch:http
-──┬ watch
-  └─┬─┬ shell:before
-    ├─┬ css
-    ├── js
-    ├─┬ html
-    └─┬ shell:after
+If you use this YAML config:
+
+```yaml
+js:
+  file: dustman.min.js
+  files:
+    - my/js/development/file.js
+  vendors:
+    file: vendors.min.js
+    merge: true
+    files:
+      - vendor/angular/angular.js
+```
+
+Dustman will generate these files:
+
+```
+dustman.min.js # [ dev files + vendors ]
+dustman.no-vendors.min.js # [ dev files only ]
+vendors.min.js # [ vendors only, used for caching vendors and skip its build time ]
+```
+
+---
+
+If you use this YAML config:
+
+```yaml
+js:
+  file: dustman.min.js
+  files:
+    - my/js/development/file.js
+  vendors:
+    file: vendors.min.js
+    merge: false
+    files:
+      - vendor/angular/angular.js
+```
+
+Dustman will generate these files:
+
+```
+dustman.min.js # [ dev files only ]
+vendors.min.js # [ vendors only, will be generated only the first time ]
 ```
 
 ---
@@ -225,7 +251,7 @@ css: # optional [required by sub task css if used]
       csslint: false # optional [false]
       stylestats: false # optional [false]
       autoprefixer: false # optional [false]
-  vendors:
+  vendors: # optional
     file: vendors.min.css
     merge: true  # optional [true]
     path: custom/path/ # optional [inherit path.css]
