@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.5.36
+  1.5.37
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -1132,7 +1132,7 @@ task.css = (function(){
 
   var getFilesToVerifyCSSVendors = function() {
     var files = [];
-    if (task.core.has(cssConfig, 'vendors')) {
+    if (cssConfig.vendors.files) {
       files.push(cssConfig.vendors.path + cssConfig.vendors.file);
     }
     return files;
@@ -1152,7 +1152,7 @@ task.css = (function(){
       }
     }
     files.concat(getFilesToVerifyCSSVendors());
-    if (cssConfig.files) {
+    if (cssConfig.themes) {
       files.push(cssConfig.path + cssConfig.file);
     }
     return files;
@@ -1337,6 +1337,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.5.36');
+message.verbose('Version', '1.5.37');
 message.verbose('Config loaded', config.file());
 tasks.init();
