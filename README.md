@@ -366,7 +366,6 @@ Config parameters with links comes from related plug-in configurations
 | `css.vendors.file`   | *vendors.min.css*    | *String*  | The name of the merged and minified vendors CSS |
 | `css.vendors.merge`  | *true*               | *Boolean* | If vendors will be merged into the final CSS file |
 | `css.vendors.files`  | *-vendors/file.css*  | *Array*   | Files listed for the merged CSS vendors build |
-
 | `css.watch` | *path/\*\*/\*.js*    | *String*  | Files watched from the main task watcher |
 
 #### JavaScript
@@ -393,6 +392,7 @@ Config parameters with links comes from related plug-in configurations
 | `paths.images` | *path/to/html/images/* | *String* | Where **images files** will be moved from source targets to the production folders |
 | `paths.fonts` | *path/to/html/fonts/* | *String* | Where **fonts files** will be moved from source targets to the production folders |
 | `paths.js` | *path/to/html/js/* | *String* | Where **js files** will be moved from source targets to the production folders |
+
 
 #### Shell
 
