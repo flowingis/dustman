@@ -400,60 +400,54 @@ var tasks = (function(){
 
   var http = function(tasks) {
 
-    var httpSeries = function(){
-      return gulp.series(tasks, function() {
-        browserSync.stream();
-        browserSync.init({
-          server: {
-              baseDir: paths.server
-          },
-          logLevel: 'info',
-          notify: true
-        });
+    gulp.task('http', gulp.series(tasks, function() {
+      browserSync.stream();
+      browserSync.init({
+        server: {
+            baseDir: paths.server
+        },
+        logLevel: 'info',
+        notify: true
+      });
 
-        message.wait();
+      message.wait();
 
-        return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
-            browserSync.reload();
-            message.wait();
-            done();
-          }))
-          .on('change', function(path) {
-            message.event('change', path);
-          })
-          .on('unlink', function(path) {
-            message.event('unlink', path);
-          })
-          .on('add', function(path) {
-            message.event('add', path);
-          });
+      return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
+          browserSync.reload();
+          message.wait();
+          done();
+        }))
+        .on('change', function(path) {
+          message.event('change', path);
+        })
+        .on('unlink', function(path) {
+          message.event('unlink', path);
+        })
+        .on('add', function(path) {
+          message.event('add', path);
         });
-    };
-    gulp.task('http', httpSeries);
-    gulp.task('h', httpSeries);
+    }));
+    gulp.task('h', gulp.parallel('http'));
   };
 
   var watch = function(tasks) {
-    var watchSeries = function(){
-      return gulp.series(tasks, function() {
-        message.wait();
-        return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
-            message.wait();
-            done();
-          }))
-          .on('change', function(path) {
-            message.event('change', path);
-          })
-          .on('unlink', function(path) {
-            message.event('unlink', path);
-          })
-          .on('add', function(path) {
-            message.event('add', path);
-          });
-      });
-    };
-    gulp.task('watch', watchSeries);
-    gulp.task('w', watchSeries);
+    gulp.task('watch', gulp.series(tasks, function() {
+      message.wait();
+      return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
+          message.wait();
+          done();
+        }))
+        .on('change', function(path) {
+          message.event('change', path);
+        })
+        .on('unlink', function(path) {
+          message.event('unlink', path);
+        })
+        .on('add', function(path) {
+          message.event('add', path);
+        });
+    }));
+    gulp.task('w', gulp.parallel('watch'));
   };
 
   var verify = function() {
