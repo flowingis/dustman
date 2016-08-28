@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.5.37
+  1.5.40
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -225,7 +225,7 @@ var config = (function(){
   var checkArguments = function(){
     var loadedConfig = false;
     for (var i = 0; i < process.argv.length; i += 1) {
-      if (process.argv[i] === '--silent') {
+      if (process.argv[i] === '--silent' || process.argv[i] === '--S') {
         message.warning('You\'ve set --silent or --S flag to che gulp process, this could hide some errors not handled by Dustman');
       }
       if (process.argv[i] === '--config' && process.argv[i + 1] !== undefined) {
@@ -400,52 +400,60 @@ var tasks = (function(){
 
   var http = function(tasks) {
 
-    gulp.task('http', gulp.series(tasks, function() {
-      browserSync.stream();
-      browserSync.init({
-        server: {
-            baseDir: paths.server
-        },
-        logLevel: 'info',
-        notify: true
-      });
-
-      message.wait();
-
-      return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
-          browserSync.reload();
-          message.wait();
-          done();
-        }))
-        .on('change', function(path) {
-          message.event('change', path);
-        })
-        .on('unlink', function(path) {
-          message.event('unlink', path);
-        })
-        .on('add', function(path) {
-          message.event('add', path);
+    var httpSeries = function(){
+      return gulp.series(tasks, function() {
+        browserSync.stream();
+        browserSync.init({
+          server: {
+              baseDir: paths.server
+          },
+          logLevel: 'info',
+          notify: true
         });
-    }));
+
+        message.wait();
+
+        return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
+            browserSync.reload();
+            message.wait();
+            done();
+          }))
+          .on('change', function(path) {
+            message.event('change', path);
+          })
+          .on('unlink', function(path) {
+            message.event('unlink', path);
+          })
+          .on('add', function(path) {
+            message.event('add', path);
+          });
+        });
+    };
+    gulp.task('http', httpSeries);
+    gulp.task('h', httpSeries);
   };
 
   var watch = function(tasks) {
-    gulp.task('watch', gulp.series(tasks, function() {
-      message.wait();
-      return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
-          message.wait();
-          done();
-        }))
-        .on('change', function(path) {
-          message.event('change', path);
-        })
-        .on('unlink', function(path) {
-          message.event('unlink', path);
-        })
-        .on('add', function(path) {
-          message.event('add', path);
-        });
-    }));
+    var watchSeries = function(){
+      return gulp.series(tasks, function() {
+        message.wait();
+        return gulp.watch(watchFolders, pollingOptions(), gulp.series(tasks, function(done){
+            message.wait();
+            done();
+          }))
+          .on('change', function(path) {
+            message.event('change', path);
+          })
+          .on('unlink', function(path) {
+            message.event('unlink', path);
+          })
+          .on('add', function(path) {
+            message.event('add', path);
+          });
+      });
+    };
+    gulp.task('watch', watchSeries);
+    gulp.task('w', watchSeries);
   };
 
   var verify = function() {
@@ -1337,6 +1345,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.5.37');
+message.verbose('Version', '1.5.40');
 message.verbose('Config loaded', config.file());
 tasks.init();

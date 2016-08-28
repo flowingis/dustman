@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.5.37-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.5.40-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -13,6 +13,9 @@ d u s t m a n
 
 | Type         | Description  |
 |--------------|--------------|
+| fix          | Adds a missing warning if `-S` flag is passed to Gulp task |
+| optimization | Adds abbreviation command for Gulp's `http` task, now can be called just with `h` |
+| optimization | Adds abbreviation command for Gulp's `watch` task, now can be called just with `w` |
 | fix          | Corrects a wrong file check on CSS task for verify task |
 | fix          | Ensure CSS and JS tasks can be empty also on files verify task |
 | fix          | Ensure HTML task can be empty also on files verify task |
@@ -121,6 +124,12 @@ If `js.watch`, `css.watch` and `html.watch` watched folder's files changes, the 
 $ gulp watch
 ```
 
+The abbreviation command for `watch` is `w`
+
+```bash
+$ gulp w
+```
+
 ---
 
 #### Server + watcher
@@ -131,6 +140,12 @@ A server based on browser sync node module will serve the HTML templates.
 
 ```bash
 $ gulp http
+```
+
+The abbreviation command for `http` is `h`
+
+```bash
+$ gulp h
 ```
 
 # Sub tasks
