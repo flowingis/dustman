@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.5.40
+  1.5.41
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -1275,7 +1275,7 @@ task.js = (function(){
   };
 
   var build = function(){
-    if (config.if(name)) {
+    if (config.if(name) && jsConfig.files) {
       gulp.task(name, function () {
         message.task('Merging JavaScript files');
         for (var i = 0; i < jsConfig.files.length; i += 1) {
@@ -1339,6 +1339,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.5.40');
+message.verbose('Version', '1.5.41');
 message.verbose('Config loaded', config.file());
 tasks.init();
