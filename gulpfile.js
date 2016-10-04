@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.5.42
+  1.5.43
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -392,10 +392,7 @@ var tasks = (function(){
         interval: parseInt(tasksConfig.polling)
       };
     }
-    return {
-      usePolling: false,
-      interval: 1000
-    };
+    return {};
   };
 
   var http = function(tasks) {
@@ -1339,6 +1336,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.5.42');
+message.verbose('Version', '1.5.43');
 message.verbose('Config loaded', config.file());
 tasks.init();
