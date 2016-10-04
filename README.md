@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.5.41-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.5.42-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -13,6 +13,7 @@ d u s t m a n
 
 | Type         | Description  |
 |--------------|--------------|
+| fix          | Wrong polling settings if disabled |
 | fix          | Now JS task can be with vendors only |
 | fix          | Adds a missing warning if `-S` flag is passed to Gulp task |
 | optimization | Adds abbreviation command for Gulp's `http` task, now can be called just with `h` |
