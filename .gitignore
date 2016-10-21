@@ -57,4 +57,7 @@ test/*.diff
 test/examples/vendor/
 test/results/
 
+temp/
+cache/
+
 gulpfile.test.js

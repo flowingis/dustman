@@ -1,7 +1,7 @@
 d u s t m a n
 ---
 
-[![Version](http://img.shields.io/:version-1.5.43-e07c4b.svg)][node]
+[![Version](http://img.shields.io/:version-1.6.43-e07c4b.svg)][node]
 [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds)
 [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/)
 [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node]
@@ -9,25 +9,11 @@ d u s t m a n
 
 ---
 
-##### Release 1.5.X details
+##### Release 1.6.X details
 
 | Type         | Description  |
 |--------------|--------------|
-| fix          | Wrong polling settings if disabled |
-| fix          | Now JS task can be with vendors only |
-| fix          | Adds a missing warning if `-S` flag is passed to Gulp task |
-| optimization | Adds abbreviation command for Gulp's `http` task, now can be called just with `h` |
-| optimization | Adds abbreviation command for Gulp's `watch` task, now can be called just with `w` |
-| fix          | Corrects a wrong file check on CSS task for verify task |
-| fix          | Ensure CSS and JS tasks can be empty also on files verify task |
-| fix          | Ensure HTML task can be empty also on files verify task |
-| optimization | Files list concatentation is more easy to read |
-| optimization | Adds toString to message logs |
-| optimization | Adds toString to path errors |
-| optimization | Now vendors are disabled by default to ensure CSS and JS vendors to be optional |
-| fix          | CSS and JS vendors now are optional |
-| fix          | Fix wrong file path on JS vendors save |
-| feature      | Adds additional path properties to css and js tasks |
+| change       | Moves to node_modules temp folders *no-vendors.js file when built |
 
 ---
 
@@ -449,6 +435,26 @@ You can add `css`, `js` and `html`
 ---
 
 # Previous release details
+
+##### Release 1.5.X details
+
+| Type         | Description  |
+|--------------|--------------|
+| fix          | Wrong polling settings if disabled |
+| fix          | Now JS task can be with vendors only |
+| fix          | Adds a missing warning if `-S` flag is passed to Gulp task |
+| optimization | Adds abbreviation command for Gulp's `http` task, now can be called just with `h` |
+| optimization | Adds abbreviation command for Gulp's `watch` task, now can be called just with `w` |
+| fix          | Corrects a wrong file check on CSS task for verify task |
+| fix          | Ensure CSS and JS tasks can be empty also on files verify task |
+| fix          | Ensure HTML task can be empty also on files verify task |
+| optimization | Files list concatentation is more easy to read |
+| optimization | Adds toString to message logs |
+| optimization | Adds toString to path errors |
+| optimization | Now vendors are disabled by default to ensure CSS and JS vendors to be optional |
+| fix          | CSS and JS vendors now are optional |
+| fix          | Fix wrong file path on JS vendors save |
+| feature      | Adds additional path properties to css and js tasks |
 
 ##### Release 1.4.X details
 

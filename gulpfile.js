@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.5.43
+  1.6.43
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -308,6 +308,28 @@ var config = (function(){
 
 var task = task || {};
 
+task.cache = (function(){
+
+  var fs = require('fs');
+  var mkdirp = require('mkdirp');
+  var folder = {
+    temp: __dirname + '/node_modules/dustman/temp/'
+  };
+
+  return {
+    init: function() {
+      if (!fs.existsSync(folder.temp)){
+        mkdirp.sync(folder.temp);
+      }
+    },
+    folder: function(name) {
+      return folder[name];
+    }
+  };
+})();
+
+var task = task || {};
+
 task.core = (function(){
 
   var fs = require('fs');
@@ -347,7 +369,6 @@ task.core = (function(){
 var tasks = (function(){
 
   var browserSync = require('browser-sync');
-  var path = require('path');
 
   var paths;
   var pipeline = {
@@ -373,6 +394,8 @@ var tasks = (function(){
     paths = config.if('paths') ? config.get('paths') : false;
     tasksConfig = config.if('config') ? config.get('config') : false;
     cssConfig = config.if('css') ? config.get('css') : false;
+
+    task.cache.init();
 
     watchFolders = watchFolders.concat(getWatchFolder('css'));
     watchFolders = watchFolders.concat(getWatchFolder('js'));
@@ -1185,6 +1208,8 @@ task.js = (function(){
   var sourcemaps = require('gulp-sourcemaps');
   var uglify = require('gulp-uglify');
 
+  var tempFolder = task.cache.folder('temp');
+
   var name = 'js';
   var jsConfig = {};
   var paths = {};
@@ -1248,7 +1273,7 @@ task.js = (function(){
         message.task('Merging JavaScript vendors with your JavaScript files');
 
         files.push(vendorsConfig.path + vendorsConfig.file);
-        files.push(jsConfig.path + jsConfig.file.replace('.min.js', '.no-vendors.min.js'));
+        files.push(tempFolder + jsConfig.file.replace('.min.js', '.no-vendors.min.js'));
 
         for (var i = 0; i < files.length; i += 1) {
           message.verbose('JavaScript file', files[i]);
@@ -1292,7 +1317,7 @@ task.js = (function(){
         .pipe(uglify())
         .pipe(concat(file))
         .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest(jsConfig.path));
+        .pipe(gulp.dest(tempFolder));
       });
       return [name];
     }
@@ -1336,6 +1361,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.5.43');
+message.verbose('Version', '1.6.43');
 message.verbose('Config loaded', config.file());
 tasks.init();

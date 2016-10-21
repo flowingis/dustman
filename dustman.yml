@@ -57,6 +57,7 @@ css:
 
 js:
   file: dustman.min.js
+  clean: true
   files:
     - test/examples/js/*
   path: test/results/js/custom/

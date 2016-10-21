@@ -7,6 +7,7 @@ buildify()
   .concat([
     'lib/message.js',
     'lib/config.js',
+    'lib/cache.js',
     'lib/task-core.js',
     'lib/tasks.js',
     'lib/task/timer.js',
