@@ -40,6 +40,7 @@ Dustman is basically a set of Gulp tasks ready to be used as a build system whic
 - **Build [Twig] templates** to HTML pages.
 - **[BrowserSync]** ready to be tested on multiple devices.
 - **[Faker]** ready to be used to add fake contents easily.
+- **[Moment]** ready to be used with faker to format dates easily.
 - **[HTML prettified][htmlprettify]** to have consistently coded HTML templates.
 
 ## Watch and Serve with HTTP server
