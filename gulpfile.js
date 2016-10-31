@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.6.43
+  1.7.44
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -753,14 +753,15 @@ var task = task || {};
 task.html = (function(){
 
   var faker = require('faker');
+  var moment = require('moment');
   var path = require('path');
   var prettify = require('gulp-html-prettify');
   var twig = require('gulp-twig');
 
   var name = 'html';
   var paths = {};
-  var twigConfig = {};
   var templateConfig;
+  var twigConfig = {};
 
   var pipeline = {
     before:[],
@@ -783,7 +784,8 @@ task.html = (function(){
           twigConfig.twig = {};
         }
         twigConfig.twig.data = {
-          faker: faker
+          faker: faker,
+          moment: moment
         };
         for (var i = 0; i < templateConfig.files.length; i += 1) {
           message.verbose('Template view', templateConfig.files[i]);
@@ -1154,7 +1156,7 @@ task.css = (function(){
 
   var getFilesToVerifyCSSVendors = function() {
     var files = [];
-    if (cssConfig.vendors.files) {
+    if (cssConfig.vendors && cssConfig.vendors.files) {
       files.push(cssConfig.vendors.path + cssConfig.vendors.file);
     }
     return files;
@@ -1163,7 +1165,6 @@ task.css = (function(){
   var getFilesToVerifyCSS = function() {
     var files, theme;
     files = [];
-
     if (task.core.has(cssConfig, 'themes')) {
       for (var i = 0; i < cssConfig.themes.length; i += 1) {
         theme = cssConfig.themes[i];
@@ -1361,6 +1362,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.6.43');
+message.verbose('Version', '1.7.44');
 message.verbose('Config loaded', config.file());
 tasks.init();
