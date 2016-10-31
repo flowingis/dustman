@@ -1,5 +1,5 @@
 {# index.twig #}
-{% extends "fragments/layout.twig" %}
+{% extends 'fragments/layout.twig' %}
 
 {% block page %}
   <header>
@@ -13,4 +13,7 @@
         <li>{{ faker.name.firstName }} {{ faker.name.lastName }}</li>
     {% endfor %}
   </ul>
+  <div>
+    {{ moment(faker.date.past).format('MMM Do YY') }}
+  </div>
 {% endblock %}

@@ -84,8 +84,8 @@ paths:
   server: test/results/
 
 tasks:
-  - css
-  - js
+  # - css
+  # - js
   - html
 
 html:
