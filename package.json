@@ -1,6 +1,6 @@
 {
   "name": "dustman",
-  "version": "1.6.43",
+  "version": "1.7.44",
   "description": "A Gulp based front-end automation boilerplate that helps you to keep your builds clean",
   "authors": [
     {
@@ -48,7 +48,7 @@
   "main": "gulpfile.js",
   "dependencies": {
     "analyze-css": "^0.12.3",
-    "browser-sync": "^2.17.0",
+    "browser-sync": "^2.17.5",
     "colour": "^0.7.1",
     "csslint": "~0.10.0",
     "execSync": "^1.0.2",
@@ -63,12 +63,12 @@
     "gulp-csslint": "^0.2.2",
     "gulp-html-prettify": "0.0.1",
     "gulp-less": "^3.1.0",
-    "gulp-load-plugins": "^1.2.2",
+    "gulp-load-plugins": "^1.4.0",
     "gulp-prompt": "^0.1.2",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.0.4",
     "gulp-sass-lint": "^1.1.1",
-    "gulp-sourcemaps": "^1.5.2",
+    "gulp-sourcemaps": "^1.9.0",
     "gulp-stylestats": "^0.8.3",
     "gulp-symlink": "^2.1.2",
     "gulp-twig": "^0.5.0",
@@ -77,7 +77,7 @@
     "js-yaml": "^3.6.0",
     "merge": "^1.2.0",
     "mkdirp": "^0.5.1",
-    "moment": "^2.15.1",
+    "moment": "^2.15.2",
     "run-sequence": "^1.1.2",
     "sass": ">=0.5.0",
     "stylestats": "^6.3.0",
