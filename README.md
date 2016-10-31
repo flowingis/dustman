@@ -1,16 +1,14 @@
 # d u s t m a n
 
-[![Version](http://img.shields.io/:version-1.7.45-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
+[![Version](http://img.shields.io/:version-1.8.45-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
 
 --------------------------------------------------------------------------------
 
-## Release 1.7.X details
+## Release 1.8.X details
 
-Type         | Description
------------- | --------------------------
-optimization | Updates node packages
-fix          | Fix css task when not used
-feature      | Adds moment to twig
+Type    | Description
+------- | ------------------------------
+feature | Config can load another config
 
 --------------------------------------------------------------------------------
 
@@ -328,6 +326,28 @@ paths:
 
 --------------------------------------------------------------------------------
 
+# Load a sub config file
+
+Now it's possible to load config portions based on task type
+
+```yaml
+---
+
+tasks:
+  - html # optional [skipped]
+
+html: path/relative/to/this/config.yml
+
+paths:
+  server: my/build/
+  css: my/build/css/
+  images: my/build/img/
+  fonts: my/build/fonts/
+  js: my/build/js/
+```
+
+--------------------------------------------------------------------------------
+
 # Config parameters
 
 ## Config
@@ -435,6 +455,20 @@ Parameter        | Example value        | Type     | Description
 --------------------------------------------------------------------------------
 
 # Previous release details
+
+## Release 1.7.X details
+
+Type         | Description
+------------ | --------------------------
+optimization | Updates node packages
+fix          | Fix css task when not used
+feature      | Adds moment to twig
+
+### Release 1.6.X details
+
+Type   | Description
+------ | ----------------------------------------------------------------
+change | Moves to node_modules temp folders no-vendors.js file when built
 
 ## Release 1.5.X details
 

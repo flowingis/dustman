@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.7.44
+  1.8.45
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -222,6 +222,17 @@ var config = (function(){
     return path.normalize(configPath).replace(/\/$/, '') + '/';
   };
 
+  var checkSubConfig = function(config, prop) {
+    if (typeof config === 'string') {
+      var filePath = path.parse(configFile).dir + '/' + config;
+      if (configFileExists(filePath)) {
+        return yaml.safeLoad(fs.readFileSync(filePath, 'utf-8'))[prop];
+      }
+    } else {
+      return config;
+    }
+  };
+
   var checkArguments = function(){
     var loadedConfig = false;
     for (var i = 0; i < process.argv.length; i += 1) {
@@ -235,6 +246,11 @@ var config = (function(){
       }
     }
     loadedConfig = checkDefaultConfig(loadedConfig, configFile);
+
+    loadedConfig.js = checkSubConfig(loadedConfig.js, 'js');
+    loadedConfig.css = checkSubConfig(loadedConfig.css, 'css');
+    loadedConfig.html = checkSubConfig(loadedConfig.html, 'html');
+
     data = merge.recursive(true, data, loadedConfig);
 
     data.paths.css = pathClean(data.paths.css);
@@ -1362,6 +1378,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.7.44');
+message.verbose('Version', '1.8.45');
 message.verbose('Config loaded', config.file());
 tasks.init();
