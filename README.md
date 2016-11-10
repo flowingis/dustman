@@ -4,11 +4,11 @@
 
 --------------------------------------------------------------------------------
 
-## Release 1.8.X details
+## Release 1.9.X details
 
 Type    | Description
-------- | ------------------------------
-feature | Config can load another config
+------- | ---------------------------
+feature | TWIG can load json fixtures
 
 --------------------------------------------------------------------------------
 
@@ -312,6 +312,9 @@ vendors: # optional [skipped]
 
 html: # optional [required by sub task html if used]
   engine: twig # optional [html]
+  fixtures: # optional [false]
+    images: images.json
+    foo: foo.json
   watch: test/examples/twig/**/*.twig
   files:
     - test/examples/twig/index.twig
@@ -400,7 +403,7 @@ Parameter          | Example value       | Type      | Description
 `js.file`          | _dustman.min.js_    | _String_  | The name of the merged and minified JavaScript
 `js.path`          | _path/to/js/_       | _String_  | If this theme should be built in a specific folder
 `js.watch`         | _path/__/_.js*      | _String_  | Files watched from the main task watcher
-`js.files`         | _-path/file.js_     | _Array_   | Files listed for the JavaScript build, it can also be a conatiner path like ´-path/app/*´
+`js.files`         | _-path/file.js_     | _Array_   | Files listed for the JavaScript build, it can also be a conatiner path like `-path/app/*`
 `js.vendors`       | _mixed_             | _Object_  | It contains CSS vendors options
 `js.vendors.file`  | _vendors.min.js_    | _String_  | The name of the merged and minified vendors JS
 `js.vendors.merge` | _true_              | _Boolean_ | If vendors will be merged into the final JS file
@@ -437,12 +440,13 @@ You can add `css`, `js` and `html`
 
 ## HTML
 
-Parameter     | Example value     | Type     | Description
-------------- | ----------------- | -------- | ---------------------------------------------------------
-`html`        | _mixed_           | _Object_ | It contains twig options
-`html.engine` | _twig_            | _String_ | The engine used, [Twig] or HTML for now (html by default)
-`html.watch`  | _path/__/_.twig*  | _String_ | Files watched from the main task watcher
-`html.files`  | _-path/file.twig_ | _Array_  | Files listed for the HTML build
+Parameter       | Example value     | Type     | Description
+--------------- | ----------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+`html`          | _mixed_           | _Object_ | It contains twig options
+`html.engine`   | _twig_            | _String_ | The engine used, [Twig] or HTML for now (html by default)
+`html.watch`    | _path/__/_.twig*  | _String_ | Files watched from the main task watcher
+`html.files`    | _-path/file.twig_ | _Array_  | Files listed for the HTML build
+`html.fixtures` | _mixed_           | _Object_ | A list of property which points to json files that will be loaded with the same property name, if you set `fixtures.images` to `images.json` in the twig you'll get json contents `{{ fixtures.images[0].title }}`
 
 ## Vendors
 
@@ -455,6 +459,12 @@ Parameter        | Example value        | Type     | Description
 --------------------------------------------------------------------------------
 
 # Previous release details
+
+## Release 1.8.X details
+
+Type    | Description
+------- | ------------------------------
+feature | Config can load another config
 
 ## Release 1.7.X details
 

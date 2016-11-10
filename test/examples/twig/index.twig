@@ -14,6 +14,9 @@
     {% endfor %}
   </ul>
   <div>
+    {{ fixtures.image[0] }}
+  </div>
+  <div>
     {{ moment(faker.date.past).format('MMM Do YY') }}
   </div>
 {% endblock %}

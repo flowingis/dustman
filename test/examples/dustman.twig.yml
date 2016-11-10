@@ -71,6 +71,8 @@ tasks:
 
 html:
   engine: twig
+  fixtures:
+    image: test/examples/twig/data/example.json
   files:
     - test/examples/twig/index.twig
   watch: test/examples/twig/**/*.twig

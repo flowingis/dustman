@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.8.45
+  1.9.45
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -185,7 +185,8 @@ var config = (function(){
     },
     html: {
       engine: 'html',
-      files: false
+      files: false,
+      fixtures: false
     },
     paths: {
       css: 'dustman/css/',
@@ -773,6 +774,7 @@ task.html = (function(){
   var path = require('path');
   var prettify = require('gulp-html-prettify');
   var twig = require('gulp-twig');
+  var fs = require('fs');
 
   var name = 'html';
   var paths = {};
@@ -792,6 +794,23 @@ task.html = (function(){
     faker.locale = 'en';
   };
 
+  var loadFixtures = function() {
+    var file, fixtures;
+    if (templateConfig.fixtures) {
+      fixtures = {};
+      for (var fixture in templateConfig.fixtures) {
+        if (templateConfig.fixtures.hasOwnProperty(fixture)) {
+          console.log(fixture, templateConfig.fixtures[fixture]);
+          file = templateConfig.fixtures[fixture];
+          task.core.fileCheck(file);
+          fixtures[fixture] = JSON.parse(fs.readFileSync(file, 'utf8'));
+        }
+      }
+      return fixtures;
+    }
+    return {};
+  };
+
   var build = function() {
     if (config.if('html') && task.core.has(templateConfig, 'files')) {
       gulp.task(name, function () {
@@ -801,8 +820,10 @@ task.html = (function(){
         }
         twigConfig.twig.data = {
           faker: faker,
-          moment: moment
+          moment: moment,
+          fixtures: loadFixtures()
         };
+
         for (var i = 0; i < templateConfig.files.length; i += 1) {
           message.verbose('Template view', templateConfig.files[i]);
           task.core.fileCheck(templateConfig.files[i]);
@@ -1378,6 +1399,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.8.45');
+message.verbose('Version', '1.9.45');
 message.verbose('Config loaded', config.file());
 tasks.init();
