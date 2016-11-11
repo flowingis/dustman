@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.9.46
+  1.9.47
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -225,7 +225,11 @@ var config = (function(){
 
   var checkSubConfig = function(config, prop) {
     if (typeof config === 'string') {
-      var filePath = path.parse(configFile).dir + '/' + config;
+      var dir = path.parse(configFile).dir;
+      if (dir === '') {
+        dir = '.';
+      }
+      var filePath = dir + '/' + config;
       if (configFileExists(filePath)) {
         return yaml.safeLoad(fs.readFileSync(filePath, 'utf-8'))[prop];
       }
@@ -805,7 +809,7 @@ task.html = (function(){
       fixtures = {};
       for (var fixture in templateConfig.fixtures) {
         if (templateConfig.fixtures.hasOwnProperty(fixture)) {
-          console.log(fixture, templateConfig.fixtures[fixture]);
+          message.verbose('Loading fixtures', templateConfig.fixtures[fixture]);
           file = templateConfig.fixtures[fixture];
           task.core.fileCheck(file);
           fixtures[fixture] = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -1404,6 +1408,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.9.46');
+message.verbose('Version', '1.9.47');
 message.verbose('Config loaded', config.file());
 tasks.init();
