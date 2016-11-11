@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.9.45
+  1.9.46
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -1404,6 +1404,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.9.45');
+message.verbose('Version', '1.9.46');
 message.verbose('Config loaded', config.file());
 tasks.init();
