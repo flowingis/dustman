@@ -1,16 +1,14 @@
 # d u s t m a n
 
-[![Version](http://img.shields.io/:version-1.9.47-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
+[![Version](http://img.shields.io/:version-1.10.47-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
 
 --------------------------------------------------------------------------------
 
-## Release 1.9.X details
+## Release 1.10.X details
 
-Type         | Description
------------- | ---------------------------------------------------------------------------------------------
-fix          | Fixes fixtures path
-optimization | Now you can load configs for `config`, `paths`, `tasks`, `shell` and `vendors` properties too
-feature      | TWIG can load json fixtures
+Type    | Description
+------- | -----------------------------------------------------------------------------------
+feature | Build folders are automatically emptied, can be skipped with `confing.emptyFolders`
 
 --------------------------------------------------------------------------------
 
@@ -235,6 +233,7 @@ config:
     locale: it
   twig: # optional [defaults]
     cache: false
+  emptyFolders: false # optional [true]
   polling: 500 # optional [false]
   verify: true # optional [false]
   verbose: 3 # optional [3]
@@ -365,6 +364,7 @@ Parameter             | Example value         | Type      | Description
 `config`              | _mixed_               | _Object_  | It contains CSS options
 `config.autoprefixer` | _mixed_               | _Object_  | <https://www.npmjs.com/package/gulp-autoprefixer>
 `config.csslint`      | _path/csslintrc.json_ | _String_  | It contains CSSlint options path
+`config.emptyFolders` | _true_                | _Boolean_ | Deletes file contents inside `paths.server` to keep the build clean
 `config.faker`        | _mixed_               | _Object_  | [https://github.com/marak/Faker.js/][faker]
 `config.prettify`     | _mixed_               | _Object_  | [https://www.npmjs.com/package/gulp-html-prettify][htmlprettify]
 `config.stylestats`   | _path/.stylestatsrc_  | _String_  | It contains Stylestats options path
@@ -462,6 +462,14 @@ Parameter        | Example value        | Type     | Description
 --------------------------------------------------------------------------------
 
 # Previous release details
+
+## Release 1.9.X details
+
+Type         | Description
+------------ | ---------------------------------------------------------------------------------------------
+fix          | Fixes fixtures path
+optimization | Now you can load configs for `config`, `paths`, `tasks`, `shell` and `vendors` properties too
+feature      | TWIG can load json fixtures
 
 ## Release 1.8.X details
 

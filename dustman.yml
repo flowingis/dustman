@@ -12,6 +12,7 @@ config:
   stylestats: .stylestatsrc
   twig:
     cache: false
+  emptyFolders: true
   polling: false
   verbose: 3
   verify: true

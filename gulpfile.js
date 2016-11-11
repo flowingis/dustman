@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.9.47
+  1.10.47
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -165,6 +165,7 @@ var config = (function(){
       twig: {
         cache: false
       },
+      emptyFolders: true,
       polling: false,
       verbose: 3,
       verify: false
@@ -395,6 +396,7 @@ task.core = (function(){
 var tasks = (function(){
 
   var browserSync = require('browser-sync');
+  var fs = require('fs-extra');
 
   var paths;
   var pipeline = {
@@ -445,7 +447,6 @@ var tasks = (function(){
   };
 
   var http = function(tasks) {
-
     gulp.task('http', gulp.series(tasks, function() {
       browserSync.stream();
       browserSync.init({
@@ -521,6 +522,27 @@ var tasks = (function(){
     return pipeline;
   };
 
+  var empty = function() {
+    var pipeline = {
+      before: [],
+      middle: [],
+      after: []
+    };
+    if (tasksConfig.emptyFolders) {
+      var taskName = 'empty';
+      gulp.task(taskName, function(done){
+        message.task('Deleting assets to prepare the build process');
+        message.verbose('Folder to empy', paths.server);
+        task.core.fileCheck(paths.server);
+        fs.emptyDir(paths.server, function(){
+          done();
+        });
+      });
+      pipeline.before.push(taskName);
+    }
+    return pipeline;
+  };
+
   var build = function(tasks){
     gulp.task('default', gulp.series(tasks, function(done){
       done();
@@ -532,6 +554,7 @@ var tasks = (function(){
       init();
       addToPipeline(task.timer.get());
       addToPipeline(task.shell.get());
+      addToPipeline(empty());
       addToPipeline(task.css.get());
       addToPipeline(task.js.get());
       addToPipeline(task.vendors.get());
@@ -1408,6 +1431,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.9.47');
+message.verbose('Version', '1.10.47');
 message.verbose('Config loaded', config.file());
 tasks.init();
