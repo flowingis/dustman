@@ -1,14 +1,15 @@
 # d u s t m a n
 
-[![Version](http://img.shields.io/:version-1.8.45-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
+[![Version](http://img.shields.io/:version-1.9.46-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
 
 --------------------------------------------------------------------------------
 
 ## Release 1.9.X details
 
-Type    | Description
-------- | ---------------------------
-feature | TWIG can load json fixtures
+Type         | Description
+------------ | ---------------------------------------------------------------------------------------------
+optimization | Now you can load configs for `config`, `paths`, `tasks`, `shell` and `vendors` properties too
+feature      | TWIG can load json fixtures
 
 --------------------------------------------------------------------------------
 
@@ -337,16 +338,17 @@ Now it's possible to load config portions based on task type
 ---
 
 tasks:
-  - html # optional [skipped]
+  - css
+  - html
+  - js
 
+config: path/relative/to/this/config.yml
+css: path/relative/to/this/config.yml
 html: path/relative/to/this/config.yml
-
-paths:
-  server: my/build/
-  css: my/build/css/
-  images: my/build/img/
-  fonts: my/build/fonts/
-  js: my/build/js/
+js: path/relative/to/this/config.yml
+paths: path/relative/to/this/config.yml
+vendors: path/relative/to/this/config.yml
+shell: path/relative/to/this/config.yml
 ```
 
 --------------------------------------------------------------------------------
