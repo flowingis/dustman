@@ -1,6 +1,6 @@
 {
   "name": "dustman",
-  "version": "1.10.48",
+  "version": "1.10.49",
   "description": "A Gulp based front-end automation boilerplate that helps you to keep your builds clean",
   "authors": [
     {
@@ -90,7 +90,7 @@
     "url": "https://github.com/ideatosrl/dustman/issues"
   },
   "scripts": {
-    "build-all": "node build.js && ./node_modules/.bin/gulp && ./node_modules/.bin/gulp css && ./node_modules/.bin/gulp js && ./node_modules/.bin/gulp html && ./node_modules/.bin/gulp --config test/examples/dustman.twig.yml",
+    "build-all": "rm -rf temp || false && rm -rf test/results || false && node build.js && ./node_modules/.bin/gulp && ./node_modules/.bin/gulp css && ./node_modules/.bin/gulp js && ./node_modules/.bin/gulp html && ./node_modules/.bin/gulp --config test/examples/dustman.twig.yml",
     "build": "node build.js && ./node_modules/.bin/gulp",
     "build-watch": "node build.js && ./node_modules/.bin/gulp watch",
     "build-http": "node build.js && ./node_modules/.bin/gulp http",

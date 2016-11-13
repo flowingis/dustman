@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.10.47
+  1.10.48
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -397,6 +397,7 @@ var tasks = (function(){
 
   var browserSync = require('browser-sync');
   var fs = require('fs-extra');
+  var firstBuildDone = false;
 
   var paths;
   var pipeline = {
@@ -528,15 +529,22 @@ var tasks = (function(){
       middle: [],
       after: []
     };
-    if (tasksConfig.emptyFolders) {
+    if (tasksConfig.emptyFolders && firstBuildDone) {
       var taskName = 'empty';
       gulp.task(taskName, function(done){
         message.task('Deleting assets to prepare the build process');
         message.verbose('Folder to empy', paths.server);
-        task.core.fileCheck(paths.server);
-        fs.emptyDir(paths.server, function(){
+        if (task.core.fileExists(paths.server) && firstBuildDone) {
+          fs.emptyDir(paths.server, function(){
+            done();
+          });
+        } else {
+          if (firstBuildDone) {
+            message.warning('Folder ' + paths.server + ' not found');
+          }
+          firstBuildDone = true;
           done();
-        });
+        }
       });
       pipeline.before.push(taskName);
     }
@@ -1433,6 +1441,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.10.47');
+message.verbose('Version', '1.10.48');
 message.verbose('Config loaded', config.file());
 tasks.init();
