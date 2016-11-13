@@ -625,6 +625,7 @@ task.vendors = (function(){
 
   var name = 'vendors';
   var paths = {};
+  var buildConfig = {};
   var vendorsConfig = {};
   var vendorsFontsBuilt = false;
   var vendorsImagesBuilt = false;
@@ -637,6 +638,7 @@ task.vendors = (function(){
 
   var init = function() {
     paths = config.get('paths');
+    buildConfig = config.get('config');
     vendorsConfig = config.if('vendors') ? config.get('vendors') : {};
   };
 
@@ -644,19 +646,19 @@ task.vendors = (function(){
     if (task.core.has(vendorsConfig, 'images')) {
       var taskName = task.core.action(name, 'images');
       gulp.task(taskName, function (done) {
-        if (vendorsImagesBuilt) {
+        if (vendorsImagesBuilt && !buildConfig.emptyFolders) {
           message.notice('Skipping vendors images build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
           vendorsImagesBuilt = true;
-            message.task('Copying images from vendors');
-            for (var i = 0; i < vendorsConfig.images.length; i += 1) {
-              message.verbose('Image vendor', vendorsConfig.images[i]);
-              task.core.fileCheck(vendorsConfig.images[i]);
-            }
-            message.verbose('Vendor images copied to', paths.images);
-            return gulp.src(vendorsConfig.images)
-            .pipe(gulp.dest(paths.images));
+          message.task('Copying images from vendors');
+          for (var i = 0; i < vendorsConfig.images.length; i += 1) {
+            message.verbose('Image vendor', vendorsConfig.images[i]);
+            task.core.fileCheck(vendorsConfig.images[i]);
+          }
+          message.verbose('Vendor images copied to', paths.images);
+          return gulp.src(vendorsConfig.images)
+          .pipe(gulp.dest(paths.images));
         }
       });
       return [taskName];
@@ -670,7 +672,7 @@ task.vendors = (function(){
     if (task.core.has(vendorsConfig, 'fonts')) {
       var taskName = task.core.action(name, 'fonts');
       gulp.task(taskName, function (done) {
-        if (vendorsFontsBuilt) {
+        if (vendorsFontsBuilt && !buildConfig.emptyFolders) {
           message.notice('Skipping vendors fonts build to improve speed, if you need to update them just re-run the task');
           done();
         } else {

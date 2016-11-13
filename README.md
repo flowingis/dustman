@@ -1,13 +1,14 @@
 # d u s t m a n
 
-[![Version](http://img.shields.io/:version-1.10.47-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
+[![Version](http://img.shields.io/:version-1.10.48-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
 
 --------------------------------------------------------------------------------
 
 ## Release 1.10.X details
 
 Type    | Description
-------- | -----------------------------------------------------------------------------------
+------- | ----------------------------------------------------------------------------------------------
+fix     | Check if `emptyFolders` is set to prevent removed vendors after the first build of the watcher
 feature | Build folders are automatically emptied, can be skipped with `confing.emptyFolders`
 
 --------------------------------------------------------------------------------
