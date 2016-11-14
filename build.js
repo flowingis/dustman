@@ -10,6 +10,7 @@ buildify()
     'lib/cache.js',
     'lib/task-core.js',
     'lib/tasks.js',
+    'lib/notify.js',
     'lib/task/timer.js',
     'lib/task/vendors.js',
     'lib/task/shell.js',

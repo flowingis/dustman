@@ -1,16 +1,14 @@
 # d u s t m a n
 
-[![Version](http://img.shields.io/:version-1.10.51-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
+[![Version](http://img.shields.io/:version-1.11.51-e07c4b.svg)][node] [![TravisCI](https://travis-ci.org/ideatosrl/dustman.svg?branch=master)](https://travis-ci.org/ideatosrl/dustman/builds) [![Built with nodejs 5.4.1](http://img.shields.io/:nodejs-5.4.1-80BD01.svg)](https://nodejs.org/en/) [![NPM](http://img.shields.io/:NPM-package-C12127.svg)][node] [![MIT licence](http://img.shields.io/:license-MIT-00AFFF.svg)](https://github.com/vitto/dustman/blob/master/LICENSE.md)
 
 --------------------------------------------------------------------------------
 
-## Release 1.10.X details
+## Release 1.11.X details
 
 Type    | Description
-------- | ----------------------------------------------------------------------------------------------
-fix     | Skips removing build folder if it's the first build process
-fix     | Check if `emptyFolders` is set to prevent removed vendors after the first build of the watcher
-feature | Build folders are automatically emptied, can be skipped with `confing.emptyFolders`
+------- | ----------------------------------------------------------
+feature | Build process is now integrated with desktop notifications
 
 --------------------------------------------------------------------------------
 
@@ -235,6 +233,7 @@ config:
     locale: it
   twig: # optional [defaults]
     cache: false
+  osNotifications: true # optional [true]
   emptyFolders: false # optional [true]
   polling: 500 # optional [false]
   verify: true # optional [false]
@@ -361,19 +360,20 @@ shell: path/relative/to/this/config.yml
 
 Config parameters with links comes from related plug-in configurations
 
-Parameter             | Example value         | Type      | Description
---------------------- | --------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------
-`config`              | _mixed_               | _Object_  | It contains CSS options
-`config.autoprefixer` | _mixed_               | _Object_  | <https://www.npmjs.com/package/gulp-autoprefixer>
-`config.csslint`      | _path/csslintrc.json_ | _String_  | It contains CSSlint options path
-`config.emptyFolders` | _true_                | _Boolean_ | Deletes file contents inside `paths.server` to keep the build clean
-`config.faker`        | _mixed_               | _Object_  | [https://github.com/marak/Faker.js/][faker]
-`config.prettify`     | _mixed_               | _Object_  | [https://www.npmjs.com/package/gulp-html-prettify][htmlprettify]
-`config.stylestats`   | _path/.stylestatsrc_  | _String_  | It contains Stylestats options path
-`config.twig`         | _mixed_               | _Object_  | <https://www.npmjs.com/package/gulp-twig>
-`config.polling`      | _500_                 | _mixed_   | Set millisecs of polling to the Gulp watcher to prevent missing Vagrant NFS filesync with local system and VM, it's `false` by default
-`config.verbose`      | _3_                   | _Integer_ | The verbose value, 0: no messages, 3: all message logs
-`config.verify`       | _true_                | _Boolean_ | Checks if all dustman generated files are created on the machine
+Parameter                | Example value         | Type      | Description
+------------------------ | --------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------
+`config`                 | _mixed_               | _Object_  | It contains CSS options
+`config.autoprefixer`    | _mixed_               | _Object_  | [gulp-autoprefixer](https://www.npmjs.com/package/gulp-autoprefixer)
+`config.csslint`         | _path/csslintrc.json_ | _String_  | It contains CSSlint options path
+`config.emptyFolders`    | _true_                | _Boolean_ | Deletes file contents inside `paths.server` to keep the build clean
+`config.faker`           | _mixed_               | _Object_  | [https://github.com/marak/Faker.js/][faker]
+`config.prettify`        | _mixed_               | _Object_  | [https://www.npmjs.com/package/gulp-html-prettify][htmlprettify]
+`config.stylestats`      | _path/.stylestatsrc_  | _String_  | It contains Stylestats options path
+`config.twig`            | _mixed_               | _Object_  | [gulp-twig](https://www.npmjs.com/package/gulp-twig)
+`config.osNotifications` | _true_                | _Boolean_ | Enables OS desktop notifications
+`config.polling`         | _500_                 | _mixed_   | Set millisecs of polling to the Gulp watcher to prevent missing Vagrant NFS filesync with local system and VM, it's `false` by default
+`config.verbose`         | _3_                   | _Integer_ | The verbose value, 0: no messages, 3: all message logs
+`config.verify`          | _true_                | _Boolean_ | Checks if all dustman generated files are created on the machine
 
 ## CSS
 
@@ -464,6 +464,14 @@ Parameter        | Example value        | Type     | Description
 --------------------------------------------------------------------------------
 
 # Previous release details
+
+## Release 1.10.X details
+
+Type    | Description
+------- | ----------------------------------------------------------------------------------------------
+fix     | Skips removing build folder if it's the first build process
+fix     | Check if `emptyFolders` is set to prevent removed vendors after the first build of the watcher
+feature | Build folders are automatically emptied, can be skipped with `confing.emptyFolders`
 
 ## Release 1.9.X details
 

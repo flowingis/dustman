@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.10.51
+  1.11.51
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -94,12 +94,8 @@ var message = (function(){
       console.log(colour.intro('   D U S T M A N   '));
       console.log('');
     },
-    error: function(message, doNotExit) {
-      var exit = typeof doNotExit !== 'undefined' ? doNotExit : true;
+    error: function(message) {
       log(0, colour.error('Error: ') + message.toString().trim());
-      if(exit) {
-        process.exit();
-      }
     },
     event: function(eventType, file) {
       event(eventType, file);
@@ -165,6 +161,7 @@ var config = (function(){
       twig: {
         cache: false
       },
+      osNotifications: true,
       emptyFolders: true,
       polling: false,
       verbose: 3,
@@ -209,6 +206,7 @@ var config = (function(){
       return true;
     } catch (e) {
       message.error('config file ' + configFile + ' NOT found');
+      notify.broken('Config not found');
     }
   };
 
@@ -371,7 +369,8 @@ task.core = (function(){
         fs.accessSync(path, fs.F_OK);
         return true;
       } catch (e) {
-        message.error(path.toString() + ' NOT found', false);
+        notify.broken('File not found, have you installed vendors after npm install?');
+        message.error(path.toString() + ' NOT found');
         if (path.toString().toLowerCase().indexOf('vendor') > -1) {
           message.warning('Have you installed vendors after npm install?');
         }
@@ -397,7 +396,11 @@ var tasks = (function(){
 
   var browserSync = require('browser-sync');
   var fs = require('fs-extra');
+
   var firstBuildDone = false;
+  var buildFine = true;
+  var buildAlreadyRecovered = false;
+  var buildIndex = 0;
 
   var paths;
   var pipeline = {
@@ -421,9 +424,10 @@ var tasks = (function(){
 
   var init = function() {
     paths = config.if('paths') ? config.get('paths') : false;
-    tasksConfig = config.if('config') ? config.get('config') : false;
+    tasksConfig = config.get('config');
     cssConfig = config.if('css') ? config.get('css') : false;
 
+    notify.init();
     task.cache.init();
 
     watchFolders = watchFolders.concat(getWatchFolder('css'));
@@ -523,6 +527,56 @@ var tasks = (function(){
     return pipeline;
   };
 
+  var buildStatus = function(isBuildFine) {
+    if (typeof isBuildFine !== 'undefined') {
+      buildFine = isBuildFine;
+      buildAlreadyRecovered = isBuildFine;
+    }
+    return buildFine;
+  };
+
+  var resetStatus = function() {
+    var pipeline = {
+      before: [],
+      middle: [],
+      after: []
+    };
+    var taskName = 'resetStatus';
+    gulp.task(taskName, function(done){
+      buildFine = true;
+      done();
+    });
+    pipeline.before.push(taskName);
+    return pipeline;
+  };
+
+  var id = function(increment) {
+    if (typeof increment !== 'undefined') {
+      buildIndex = buildIndex + 1;
+    }
+    return buildIndex;
+  };
+
+  var checkStatus = function() {
+    var pipeline = {
+      before: [],
+      middle: [],
+      after: []
+    };
+    if (tasksConfig.osNotifications) {
+      var taskName = 'checkStatus';
+      gulp.task(taskName, function(done){
+          if (id() > 0 && buildFine && !buildAlreadyRecovered) {
+            buildAlreadyRecovered = true;
+            notify.recovered();
+          }
+        done();
+      });
+      pipeline.after.push(taskName);
+    }
+    return pipeline;
+  };
+
   var empty = function() {
     var pipeline = {
       before: [],
@@ -557,6 +611,7 @@ var tasks = (function(){
   return {
     init: function(){
       init();
+      addToPipeline(resetStatus());
       addToPipeline(task.timer.get());
       addToPipeline(task.shell.get());
       addToPipeline(empty());
@@ -565,11 +620,64 @@ var tasks = (function(){
       addToPipeline(task.vendors.get());
       addToPipeline(task.html.get());
       addToPipeline(verify());
+      addToPipeline(checkStatus());
       pipeline.after.reverse();
       var pipelineList = pipeline.before.concat(pipeline.middle.concat(pipeline.after));
       build(pipelineList);
       watch(pipelineList);
       http(pipelineList);
+    },
+    buildStatus: function(isBuildFine) {
+      return buildStatus(isBuildFine);
+    },
+    id: function(increment) {
+      return id(increment);
+    }
+  };
+})();
+
+var notify = (function(){
+  var notifier = require('node-notifier');
+  var path = require('path');
+
+  var tasksConfig;
+
+  var init = function() {
+    tasksConfig = config.get('config');
+  };
+
+  return {
+    broken: function(message) {
+      if (tasksConfig.osNotifications) {
+        notifier.notify({
+          title: 'Dustman',
+          icon: path.join(__dirname, 'images/error.png'),
+          message: 'Build broken!\n' + message.toString().trim(),
+          sound: true
+        });
+      }
+    },
+    error: function(message) {
+      if (tasksConfig.osNotifications) {
+        notifier.notify({
+          title: 'Dustman',
+          icon: path.join(__dirname, 'images/warning.png'),
+          message: 'Build error!\n' + message.toString().trim()
+        });
+      }
+      tasks.buildStatus(false);
+    },
+    recovered: function() {
+      if (tasksConfig.osNotifications) {
+        notifier.notify({
+          title: 'Dustman',
+          icon: path.join(__dirname, 'images/success.png'),
+          message: 'Build recovered!\nNow you can continue working'
+        });
+      }
+    },
+    init: function() {
+      init();
     }
   };
 })();
@@ -581,7 +689,6 @@ task.timer = (function(){
 
   var name = 'timer';
   var startBuildDate;
-  var buildIndex = 1;
 
   var pipeline = {
     before:[],
@@ -604,18 +711,15 @@ task.timer = (function(){
       var stopBuildDate = Date.now();
       var timeSpent = (stopBuildDate - startBuildDate)/1000 + ' secs';
       message.success('The dust was cleaned successfully in ' + timeSpent);
-      message.success('Build [ ' + buildIndex + ' ] done at ' + moment().format('HH:mm') + ' and ' + moment().format('ss') + ' seconds.');
+      message.success('Build [ ' + tasks.id() + ' ] done at ' + moment().format('HH:mm') + ' and ' + moment().format('ss') + ' seconds.');
       console.log('');
-      buildIndex += 1;
+      tasks.id(true);
       done();
     });
     pipeline.after.push(taskName);
   };
 
   return {
-    duration: function(){
-
-    },
     get: function(){
       start();
       stop();
@@ -997,7 +1101,7 @@ task.css = (function(){
 
   var css = function(theme, index, totalThemes) {
     var taskName = task.core.action(name, theme.name + '-css');
-    gulp.task(taskName, function () {
+    gulp.task(taskName, function (done) {
       if (totalThemes >= 1) {
         message.task('Build CSS theme ' + (index + 1) + ' of ' + totalThemes);
       } else {
@@ -1011,7 +1115,9 @@ task.css = (function(){
           theme.compile.indexOf('.scss') !== -1 ?
             sass({ outputStyle: 'expanded' }).on('error', function(err){
               console.log(err.formatted);
+              notify.error('Something went wrong in your SASS code');
               message.error('Checkout SASS error before this message');
+              done();
             })
           :
             less()
@@ -1110,6 +1216,7 @@ task.css = (function(){
     themeTasks[index].path = config.pathClean(themeTasks[index].path);
 
     if (themeTasks[index].compile === null) {
+      notify.broken('CSS configuration incomplete');
       message.error(themeTasks[index].name + ' "compile" attribute must be specified');
     }
 
@@ -1436,6 +1543,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.10.51');
+message.verbose('Version', '1.11.51');
 message.verbose('Config loaded', config.file());
 tasks.init();

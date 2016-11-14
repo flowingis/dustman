@@ -4,7 +4,9 @@
     "gulp":true,
     "message": true,
     "module": true,
+    "notify": true,
     "task": true,
+    "tasks": true,
     "wrapper": true
   },
   "maxerr": 50,
