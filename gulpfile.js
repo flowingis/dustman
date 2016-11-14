@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.10.50
+  1.10.51
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -529,20 +529,17 @@ var tasks = (function(){
       middle: [],
       after: []
     };
-    if (tasksConfig.emptyFolders && firstBuildDone) {
+    if (tasksConfig.emptyFolders) {
       var taskName = 'empty';
       gulp.task(taskName, function(done){
-        message.task('Deleting assets to prepare the build process');
+        message.task('Deleting previous build folder and it\'s assets to prepare the build process');
         message.verbose('Folder to empy', paths.server);
-        if (task.core.fileExists(paths.server) && firstBuildDone) {
+        if (task.core.fileExists(paths.server) && !firstBuildDone) {
+          firstBuildDone = true;
           fs.emptyDir(paths.server, function(){
             done();
           });
         } else {
-          if (firstBuildDone) {
-            message.warning('Folder ' + paths.server + ' not found');
-          }
-          firstBuildDone = true;
           done();
         }
       });
@@ -633,7 +630,6 @@ task.vendors = (function(){
 
   var name = 'vendors';
   var paths = {};
-  var buildConfig = {};
   var vendorsConfig = {};
   var vendorsFontsBuilt = false;
   var vendorsImagesBuilt = false;
@@ -646,7 +642,6 @@ task.vendors = (function(){
 
   var init = function() {
     paths = config.get('paths');
-    buildConfig = config.get('config');
     vendorsConfig = config.if('vendors') ? config.get('vendors') : {};
   };
 
@@ -654,7 +649,7 @@ task.vendors = (function(){
     if (task.core.has(vendorsConfig, 'images')) {
       var taskName = task.core.action(name, 'images');
       gulp.task(taskName, function (done) {
-        if (vendorsImagesBuilt && !buildConfig.emptyFolders) {
+        if (vendorsImagesBuilt) {
           message.notice('Skipping vendors images build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
@@ -680,7 +675,7 @@ task.vendors = (function(){
     if (task.core.has(vendorsConfig, 'fonts')) {
       var taskName = task.core.action(name, 'fonts');
       gulp.task(taskName, function (done) {
-        if (vendorsFontsBuilt && !buildConfig.emptyFolders) {
+        if (vendorsFontsBuilt) {
           message.notice('Skipping vendors fonts build to improve speed, if you need to update them just re-run the task');
           done();
         } else {
@@ -1441,6 +1436,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.10.50');
+message.verbose('Version', '1.10.51');
 message.verbose('Config loaded', config.file());
 tasks.init();
