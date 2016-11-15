@@ -1,6 +1,6 @@
 {
   "name": "dustman",
-  "version": "1.11.52",
+  "version": "1.11.53",
   "description": "A Gulp based front-end automation boilerplate that helps you to keep your builds clean",
   "authors": [
     {
@@ -51,9 +51,9 @@
     "browser-sync": "^2.17.6",
     "colour": "^0.7.1",
     "csslint": "~0.10.0",
+    "empty-dir": "^0.2.1",
     "execSync": "^1.0.2",
     "faker": "^3.1.0",
-    "fs-extra": "^0.24.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-bower": "0.0.10",

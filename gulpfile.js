@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.11.51
+  1.11.53
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -395,7 +395,7 @@ task.core = (function(){
 var tasks = (function(){
 
   var browserSync = require('browser-sync');
-  var fs = require('fs-extra');
+  var emptyDir = require('empty-dir');
 
   var firstBuildDone = false;
   var buildFine = true;
@@ -590,7 +590,10 @@ var tasks = (function(){
         message.verbose('Folder to empy', paths.server);
         if (task.core.fileExists(paths.server) && !firstBuildDone) {
           firstBuildDone = true;
-          fs.emptyDir(paths.server, function(){
+          emptyDir(paths.server, function (err) {
+            if (err) {
+              console.error(err);
+            }
             done();
           });
         } else {
@@ -1543,6 +1546,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.11.51');
+message.verbose('Version', '1.11.53');
 message.verbose('Config loaded', config.file());
 tasks.init();
