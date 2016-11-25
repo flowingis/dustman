@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.11.53
+  1.11.54
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -442,7 +442,7 @@ var tasks = (function(){
   };
 
   var pollingOptions = function() {
-    if (tasksConfig.polling !== false) {
+    if (tasksConfig.polling) {
       return {
         usePolling: true,
         interval: parseInt(tasksConfig.polling)
@@ -1318,8 +1318,10 @@ task.css = (function(){
         if (themes.length > 0) {
           message.verbose('All CSS files merged to', cssConfig.path + cssConfig.file);
           return gulp.src(themes)
+            .pipe(sourcemaps.init())
             .pipe(uglifyCss())
             .pipe(concat(cssConfig.file))
+            .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest(cssConfig.path));
         } else {
           message.warning('No vendors or themes will be merged');
@@ -1393,8 +1395,6 @@ task.js = (function(){
   var sourcemaps = require('gulp-sourcemaps');
   var uglify = require('gulp-uglify');
 
-  var tempFolder = task.cache.folder('temp');
-
   var name = 'js';
   var jsConfig = {};
   var paths = {};
@@ -1450,59 +1450,31 @@ task.js = (function(){
     return [];
   };
 
-  var mergeJs = function() {
-    if (vendorsConfig.files && vendorsConfig.merge) {
-      var taskName = task.core.action(name, 'merge');
-      gulp.task(taskName, function(done){
-        var files = [];
-        message.task('Merging JavaScript vendors with your JavaScript files');
+  var build = function(){
+    if (config.if(name) && jsConfig.files) {
+      gulp.task(name, function () {
+        message.task('Merging JavaScript files');
 
-        files.push(vendorsConfig.path + vendorsConfig.file);
-        files.push(tempFolder + jsConfig.file.replace('.min.js', '.no-vendors.min.js'));
+        var files = [];
+        if (vendorsConfig.files && vendorsConfig.merge) {
+          files.push(vendorsConfig.path + vendorsConfig.file);
+        }
+
+        files = files.concat(jsConfig.files);
 
         for (var i = 0; i < files.length; i += 1) {
           message.verbose('JavaScript file', files[i]);
           task.core.fileCheck(files[i]);
         }
 
-        if (files.length > 0) {
-          message.verbose('All JavaScript files merged to', jsConfig.path + jsConfig.file);
-          return gulp.src(files)
-            .pipe(uglify())
-            .pipe(concat(jsConfig.file))
-            .pipe(gulp.dest(jsConfig.path));
-        } else {
-          message.warning('No vendors or files will be merged');
-          done();
-        }
-      });
-      return [taskName];
-    }
-    return [];
-  };
+        message.verbose('JavaScript files merged to', jsConfig.path + jsConfig.file);
 
-  var build = function(){
-    if (config.if(name) && jsConfig.files) {
-      gulp.task(name, function () {
-        message.task('Merging JavaScript files');
-        for (var i = 0; i < jsConfig.files.length; i += 1) {
-          message.verbose('JavaScript file', jsConfig.files[i]);
-          task.core.fileCheck(jsConfig.files[i]);
-        }
-        var file = jsConfig.file;
-        if (vendorsConfig.files !== false) {
-          if (vendorsConfig.merge) {
-            file = file.replace('.min.js', '.no-vendors.min.js');
-          }
-        }
-        message.verbose('JavaScript files merged to', jsConfig.path + file);
-
-        return gulp.src(jsConfig.files)
+        return gulp.src(files)
         .pipe(sourcemaps.init())
         .pipe(uglify())
-        .pipe(concat(file))
+        .pipe(concat(jsConfig.file))
         .pipe(sourcemaps.write('./'))
-        .pipe(gulp.dest(tempFolder));
+        .pipe(gulp.dest(jsConfig.path));
       });
       return [name];
     }
@@ -1534,7 +1506,6 @@ task.js = (function(){
       init();
       pipeline.middle = pipeline.middle.concat(vendors());
       pipeline.middle = pipeline.middle.concat(build());
-      pipeline.middle = pipeline.middle.concat(mergeJs());
       return pipeline;
     },
     verify: function() {
@@ -1546,6 +1517,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.11.53');
+message.verbose('Version', '1.11.54');
 message.verbose('Config loaded', config.file());
 tasks.init();

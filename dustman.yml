@@ -14,7 +14,7 @@ config:
     cache: false
   osNotifications: true
   emptyFolders: true
-  polling: false
+  polling: true
   verbose: 3
   verify: true
 
