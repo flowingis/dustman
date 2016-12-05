@@ -2,7 +2,7 @@
 
 /*
   D U S T M A N
-  1.11.54
+  1.11.55
 
   A Gulp 4 automation boilerplate
   by https://github.com/vitto
@@ -395,7 +395,6 @@ task.core = (function(){
 var tasks = (function(){
 
   var browserSync = require('browser-sync');
-  var emptyDir = require('empty-dir');
   var del = require('del');
 
   var firstBuildDone = false;
@@ -588,8 +587,8 @@ var tasks = (function(){
       var taskName = 'empty';
       gulp.task(taskName, function(done){
         if (task.core.fileExists(paths.server) && !firstBuildDone) {
-          message.task('Deleting previous build folder and it\'s assets to prepare the build process');
           firstBuildDone = true;
+          message.task('Deleting previous build folder and it\'s assets to prepare the build process');
           var path = paths.server;
           if (paths.server.match(/.*\/$/)) {
             path = paths.server + '**';
@@ -1520,6 +1519,6 @@ task.js = (function(){
 
 message.intro();
 config.load('>=5.4.1');
-message.verbose('Version', '1.11.54');
+message.verbose('Version', '1.11.55');
 message.verbose('Config loaded', config.file());
 tasks.init();
