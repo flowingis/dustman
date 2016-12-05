@@ -396,6 +396,7 @@ var tasks = (function(){
 
   var browserSync = require('browser-sync');
   var emptyDir = require('empty-dir');
+  var del = require('del');
 
   var firstBuildDone = false;
   var buildFine = true;
@@ -586,16 +587,18 @@ var tasks = (function(){
     if (tasksConfig.emptyFolders) {
       var taskName = 'empty';
       gulp.task(taskName, function(done){
-        message.task('Deleting previous build folder and it\'s assets to prepare the build process');
-        message.verbose('Folder to empy', paths.server);
         if (task.core.fileExists(paths.server) && !firstBuildDone) {
+          message.task('Deleting previous build folder and it\'s assets to prepare the build process');
           firstBuildDone = true;
-          emptyDir(paths.server, function (err) {
-            if (err) {
-              console.error(err);
-            }
-            done();
-          });
+          var path = paths.server;
+          if (paths.server.match(/.*\/$/)) {
+            path = paths.server + '**';
+          } else {
+            path = paths.server + '/**';
+          }
+          message.verbose('Folder to empy', path);
+          del.sync([path]);
+          done();
         } else {
           done();
         }
