@@ -50,15 +50,18 @@
     "gulp": "github:gulpjs/gulp#4.0",
     "sass": ">=0.5.0"
   },
+  "devDependencies": {
+    "gulp-hub": "github:frankwallis/gulp-hub#registry-init",
+    "gulp-require-tasks": "^1.0.5",
+    "mocha": "^3.2.0"
+  },
   "engines": {
     "node": ">=5.4.1"
   },
   "bugs": {
     "url": "https://github.com/ideatosrl/dustman/issues"
   },
-  "scripts": {},
-  "devDependencies": {
-    "gulp-hub": "github:frankwallis/gulp-hub#registry-init",
-    "gulp-require-tasks": "^1.0.5"
+  "scripts": {
+    "test": "mocha --recursive"
   }
 }
