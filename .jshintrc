@@ -1,13 +1,11 @@
 {
   "globals": {
-    "config": true,
+    "beforeEach": true,
+    "describe": true,
     "gulp":true,
+    "it": true,
     "message": true,
-    "module": true,
-    "notify": true,
-    "task": true,
-    "tasks": true,
-    "wrapper": true
+    "module": true
   },
   "maxerr": 50,
   "bitwise": true,
@@ -32,6 +30,7 @@
   "maxstatements": false,
   "maxcomplexity": 4,
   "maxlen": false,
+  "esversion": 6,
 
   "asi": false,
   "boss": false,

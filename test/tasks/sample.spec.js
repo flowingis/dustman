@@ -1,8 +1,8 @@
 'use strict';
 
-var assert = require('assert');
-var exec = require('child_process').exec;
-var gulp = '$(which gulp) ';
+const assert = require('assert');
+const exec = require('child_process').exec;
+const gulp = '$(which gulp) ';
 
 describe('Test sample task', function() {
   describe('#sample()', function() {
