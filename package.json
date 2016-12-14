@@ -1,15 +1,15 @@
 {
   "name": "dustman",
   "version": "2.0.0-alpha",
-  "description": "A Gulp based front-end automation boilerplate that helps you to keep your builds clean",
+  "description": "A Gulp based front-end automation starter kit that helps you to keep your builds clean",
   "authors": [
     {
       "name": "Vittorio Vittori",
       "email": "vv@ideato.it"
     },
     {
-      "name": "Carla Soloperto",
-      "email": "cs@ideato.it"
+      "name": "Simone D'Amico",
+      "email": "sd@ideato.it"
     }
   ],
   "license": "MIT",
@@ -48,10 +48,13 @@
   "main": "gulpfile.js",
   "dependencies": {
     "gulp": "github:gulpjs/gulp#4.0",
-    "sass": ">=0.5.0"
+    "gulp-csso": "^2.0.0",
+    "gulp-sass": "^3.0.0"
   },
   "devDependencies": {
+    "expect": "^1.20.2",
     "gulp-hub": "github:frankwallis/gulp-hub#registry-init",
+    "gulp-mocha": "^3.0.1",
     "gulp-require-tasks": "^1.0.5",
     "mocha": "^3.2.0"
   },
@@ -62,6 +65,7 @@
     "url": "https://github.com/ideatosrl/dustman/issues"
   },
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "test-single": "mocha --grep cssCsso.spec.js"
   }
 }

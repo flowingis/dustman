@@ -53,9 +53,7 @@ sassdoc
 test/*.css
 test/*.map
 test/*.diff
-
-test/examples/vendor/
-test/results/
+test/output/
 
 temp/
 cache/

@@ -2,6 +2,7 @@
   "globals": {
     "beforeEach": true,
     "describe": true,
+    "expect":true,
     "gulp":true,
     "it": true,
     "message": true,
